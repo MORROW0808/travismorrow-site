@@ -19,8 +19,8 @@
 
 window.TM_CONFIG = {
   // SHA-256 hash of the password — NOT the password itself.
-  // Temporary demo hash — replace before the demo.   <<< CHANGE ME >>>
-  EXPECTED_HASH: "80ac423f4813c851eefc5b968228e6b23bf72caf693815fd674fbc972949a104",
+  // Live demo password hash (SHA-256). To rotate, use set-password.html.
+  EXPECTED_HASH: "dcd95aa044feafeb28d733d6e300784e40f2dbeaaf1841d692595d30aa25bf59",
 
   // sessionStorage key holding the access token after a correct login.
   AUTH_KEY: "tm_auth",
