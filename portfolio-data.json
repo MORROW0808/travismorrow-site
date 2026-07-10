@@ -1,0 +1,816 @@
+{
+  "generated_at": "2026-07-10T12:00:00-07:00",
+  "mock_data": true,
+  "portfolio": {
+    "occupancy": {
+      "units_total": 24130,
+      "units_occupied": 17674,
+      "occupancy_units_pct": 73.24,
+      "sqft_total": 2619782,
+      "sqft_occupied": 2031897,
+      "occupancy_sqft_pct": 77.56
+    },
+    "move_activity_mtd": {
+      "move_ins": 162,
+      "move_outs": 160,
+      "net_move_ins": 2
+    },
+    "revenue_mtd": {
+      "revenue_authoritative": 673482.98
+    },
+    "revenue_yoy": {
+      "current": 673482.98,
+      "prior": 674415.72,
+      "delta": -932.74
+    },
+    "leads_mtd": {
+      "leads_total": 234,
+      "leads_converted": 158,
+      "conversion_pct": 67.52
+    },
+    "ad_spend_month": {
+      "spend": 5145.0,
+      "stores": 23
+    },
+    "roas": {
+      "roas_standard": 22.82,
+      "roas_conservative": 13.27
+    },
+    "leads_by_channel_mtd": {
+      "web_leads": 89,
+      "phone_leads": 31,
+      "walk_in_leads": 85,
+      "other_leads": 29,
+      "channel_share_pct": {
+        "web_leads": 38.0,
+        "phone_leads": 13.2,
+        "walk_in_leads": 36.3,
+        "other_leads": 12.4
+      }
+    },
+    "campaign_efficiency_month": [
+      {
+        "campaign_name": "NSS - Google Search - El Paso",
+        "cost": 610.0,
+        "conversions": 9,
+        "conversion_value": 5340.0,
+        "cost_per_conversion": 67.78,
+        "value_per_cost": 8.75
+      },
+      {
+        "campaign_name": "AFAM - Google Search - Tucson Core",
+        "cost": 1480.0,
+        "conversions": 21,
+        "conversion_value": 39480.0,
+        "cost_per_conversion": 70.48,
+        "value_per_cost": 26.68
+      },
+      {
+        "campaign_name": "SL Reno - Google Search - Reno",
+        "cost": 445.0,
+        "conversions": 6,
+        "conversion_value": 10190.0,
+        "cost_per_conversion": 74.17,
+        "value_per_cost": 22.9
+      },
+      {
+        "campaign_name": "AFAM - Google Search - Marana / NW",
+        "cost": 430.0,
+        "conversions": 5,
+        "conversion_value": 9350.0,
+        "cost_per_conversion": 86.0,
+        "value_per_cost": 21.74
+      },
+      {
+        "campaign_name": "AFAM - Performance Max - Tucson",
+        "cost": 960.0,
+        "conversions": 11,
+        "conversion_value": 20240.0,
+        "cost_per_conversion": 87.27,
+        "value_per_cost": 21.08
+      },
+      {
+        "campaign_name": "NSS - Performance Max - Tucson NW",
+        "cost": 370.0,
+        "conversions": 4,
+        "conversion_value": 2210.0,
+        "cost_per_conversion": 92.5,
+        "value_per_cost": 5.97
+      },
+      {
+        "campaign_name": "AFAM - Google Search - Green Valley",
+        "cost": 420.0,
+        "conversions": 4,
+        "conversion_value": 6890.0,
+        "cost_per_conversion": 105.0,
+        "value_per_cost": 16.4
+      },
+      {
+        "campaign_name": "NSS - Google Search - Green Valley / Silverbell",
+        "cost": 250.0,
+        "conversions": 2,
+        "conversion_value": 980.0,
+        "cost_per_conversion": 125.0,
+        "value_per_cost": 3.92
+      },
+      {
+        "campaign_name": "AFAM - Display Remarketing - Tucson",
+        "cost": 180.0,
+        "conversions": 0,
+        "conversion_value": 0.0,
+        "cost_per_conversion": null,
+        "value_per_cost": 0.0
+      }
+    ]
+  },
+  "brands": {
+    "NSS": {
+      "occupancy": {
+        "units_total": 5279,
+        "units_occupied": 4539,
+        "occupancy_units_pct": 85.98,
+        "sqft_total": 580418,
+        "sqft_occupied": 523893,
+        "occupancy_sqft_pct": 90.26
+      },
+      "move_activity_mtd": {
+        "move_ins": 48,
+        "move_outs": 36,
+        "net_move_ins": 12
+      },
+      "revenue_mtd": {
+        "revenue_authoritative": 180177.77
+      },
+      "revenue_yoy": {
+        "current": 180177.77,
+        "prior": 169658.92,
+        "delta": 10518.85
+      },
+      "leads_mtd": {
+        "leads_total": 63,
+        "leads_converted": 45,
+        "conversion_pct": 71.43
+      },
+      "ad_spend_month": {
+        "spend": 1230.0,
+        "stores": 3
+      },
+      "roas": {
+        "roas_standard": 9.84,
+        "roas_conservative": 5.71
+      },
+      "leads_by_channel_mtd": {
+        "web_leads": 20,
+        "phone_leads": 11,
+        "walk_in_leads": 27,
+        "other_leads": 5,
+        "channel_share_pct": {
+          "web_leads": 31.7,
+          "phone_leads": 17.5,
+          "walk_in_leads": 42.9,
+          "other_leads": 7.9
+        }
+      },
+      "campaign_efficiency_month": [
+        {
+          "campaign_name": "NSS - Google Search - El Paso",
+          "cost": 610.0,
+          "conversions": 9,
+          "conversion_value": 5340.0,
+          "cost_per_conversion": 67.78,
+          "value_per_cost": 8.75
+        },
+        {
+          "campaign_name": "NSS - Performance Max - Tucson NW",
+          "cost": 370.0,
+          "conversions": 4,
+          "conversion_value": 2210.0,
+          "cost_per_conversion": 92.5,
+          "value_per_cost": 5.97
+        },
+        {
+          "campaign_name": "NSS - Google Search - Green Valley / Silverbell",
+          "cost": 250.0,
+          "conversions": 2,
+          "conversion_value": 980.0,
+          "cost_per_conversion": 125.0,
+          "value_per_cost": 3.92
+        }
+      ]
+    },
+    "AFAM": {
+      "occupancy": {
+        "units_total": 17781,
+        "units_occupied": 12280,
+        "occupancy_units_pct": 69.06,
+        "sqft_total": 1911882,
+        "sqft_occupied": 1393155,
+        "occupancy_sqft_pct": 72.87
+      },
+      "move_activity_mtd": {
+        "move_ins": 103,
+        "move_outs": 112,
+        "net_move_ins": -9
+      },
+      "revenue_mtd": {
+        "revenue_authoritative": 437643.53
+      },
+      "revenue_yoy": {
+        "current": 437643.53,
+        "prior": 451644.51,
+        "delta": -14000.98
+      },
+      "leads_mtd": {
+        "leads_total": 141,
+        "leads_converted": 102,
+        "conversion_pct": 72.34
+      },
+      "ad_spend_month": {
+        "spend": 3470.0,
+        "stores": 19
+      },
+      "roas": {
+        "roas_standard": 27.41,
+        "roas_conservative": 15.62
+      },
+      "leads_by_channel_mtd": {
+        "web_leads": 58,
+        "phone_leads": 16,
+        "walk_in_leads": 52,
+        "other_leads": 15,
+        "channel_share_pct": {
+          "web_leads": 41.1,
+          "phone_leads": 11.3,
+          "walk_in_leads": 36.9,
+          "other_leads": 10.6
+        }
+      },
+      "campaign_efficiency_month": [
+        {
+          "campaign_name": "AFAM - Google Search - Tucson Core",
+          "cost": 1480.0,
+          "conversions": 21,
+          "conversion_value": 39480.0,
+          "cost_per_conversion": 70.48,
+          "value_per_cost": 26.68
+        },
+        {
+          "campaign_name": "AFAM - Google Search - Marana / NW",
+          "cost": 430.0,
+          "conversions": 5,
+          "conversion_value": 9350.0,
+          "cost_per_conversion": 86.0,
+          "value_per_cost": 21.74
+        },
+        {
+          "campaign_name": "AFAM - Performance Max - Tucson",
+          "cost": 960.0,
+          "conversions": 11,
+          "conversion_value": 20240.0,
+          "cost_per_conversion": 87.27,
+          "value_per_cost": 21.08
+        },
+        {
+          "campaign_name": "AFAM - Google Search - Green Valley",
+          "cost": 420.0,
+          "conversions": 4,
+          "conversion_value": 6890.0,
+          "cost_per_conversion": 105.0,
+          "value_per_cost": 16.4
+        },
+        {
+          "campaign_name": "AFAM - Display Remarketing - Tucson",
+          "cost": 180.0,
+          "conversions": 0,
+          "conversion_value": 0.0,
+          "cost_per_conversion": null,
+          "value_per_cost": 0.0
+        }
+      ]
+    },
+    "SL Reno": {
+      "occupancy": {
+        "units_total": 1070,
+        "units_occupied": 855,
+        "occupancy_units_pct": 79.91,
+        "sqft_total": 127482,
+        "sqft_occupied": 114849,
+        "occupancy_sqft_pct": 90.09
+      },
+      "move_activity_mtd": {
+        "move_ins": 11,
+        "move_outs": 12,
+        "net_move_ins": -1
+      },
+      "revenue_mtd": {
+        "revenue_authoritative": 55661.68
+      },
+      "revenue_yoy": {
+        "current": 55661.68,
+        "prior": 53112.29,
+        "delta": 2549.39
+      },
+      "leads_mtd": {
+        "leads_total": 30,
+        "leads_converted": 11,
+        "conversion_pct": 36.67
+      },
+      "ad_spend_month": {
+        "spend": 445.0,
+        "stores": 1
+      },
+      "roas": {
+        "roas_standard": 22.9,
+        "roas_conservative": 15.87
+      },
+      "leads_by_channel_mtd": {
+        "web_leads": 11,
+        "phone_leads": 4,
+        "walk_in_leads": 6,
+        "other_leads": 9,
+        "channel_share_pct": {
+          "web_leads": 36.7,
+          "phone_leads": 13.3,
+          "walk_in_leads": 20.0,
+          "other_leads": 30.0
+        }
+      },
+      "campaign_efficiency_month": [
+        {
+          "campaign_name": "SL Reno - Google Search - Reno",
+          "cost": 445.0,
+          "conversions": 6,
+          "conversion_value": 10190.0,
+          "cost_per_conversion": 74.17,
+          "value_per_cost": 22.9
+        }
+      ]
+    }
+  },
+  "facilities": [
+    {
+      "facility_code": "DEM1",
+      "facility_name": "Little Vineyard Self Storage - Deming",
+      "brand": "NSS",
+      "occupancy_sqft_pct": 85.56,
+      "occupancy_units_pct": 76.27,
+      "rent_per_sqft": 0.5,
+      "leads_mtd": 6,
+      "conversion_pct": 68.36,
+      "move_ins_mtd": 4,
+      "move_outs_mtd": 2,
+      "net_move_ins_mtd": 2,
+      "delinquency_pct": 11.72,
+      "revenue_net_mtd": 10031.13,
+      "roas_standard": null
+    },
+    {
+      "facility_code": "DOV1",
+      "facility_name": "National Self Storage - Dove Mountain",
+      "brand": "NSS",
+      "occupancy_sqft_pct": 92.86,
+      "occupancy_units_pct": 87.42,
+      "rent_per_sqft": 1.83,
+      "leads_mtd": 4,
+      "conversion_pct": 68.02,
+      "move_ins_mtd": 2,
+      "move_outs_mtd": 7,
+      "net_move_ins_mtd": -5,
+      "delinquency_pct": 6.01,
+      "revenue_net_mtd": 36828.9,
+      "roas_standard": null
+    },
+    {
+      "facility_code": "ELP5",
+      "facility_name": "National Self Storage - Kenazo (Horizon City)",
+      "brand": "NSS",
+      "occupancy_sqft_pct": 96.8,
+      "occupancy_units_pct": 94.78,
+      "rent_per_sqft": 1.08,
+      "leads_mtd": 5,
+      "conversion_pct": 76.77,
+      "move_ins_mtd": 3,
+      "move_outs_mtd": 4,
+      "net_move_ins_mtd": -1,
+      "delinquency_pct": 7.38,
+      "revenue_net_mtd": 17658.81,
+      "roas_standard": null
+    },
+    {
+      "facility_code": "ELP6",
+      "facility_name": "National Self Storage - Joe Battle",
+      "brand": "NSS",
+      "occupancy_sqft_pct": 92.55,
+      "occupancy_units_pct": 90.81,
+      "rent_per_sqft": 0.98,
+      "leads_mtd": 8,
+      "conversion_pct": 47.55,
+      "move_ins_mtd": 5,
+      "move_outs_mtd": 6,
+      "net_move_ins_mtd": -1,
+      "delinquency_pct": 8.53,
+      "revenue_net_mtd": 31957.1,
+      "roas_standard": 20.4
+    },
+    {
+      "facility_code": "ELP7",
+      "facility_name": "National Self Storage - Trevino Drive",
+      "brand": "NSS",
+      "occupancy_sqft_pct": 92.78,
+      "occupancy_units_pct": 89.04,
+      "rent_per_sqft": 0.96,
+      "leads_mtd": 2,
+      "conversion_pct": 66.75,
+      "move_ins_mtd": 2,
+      "move_outs_mtd": 3,
+      "net_move_ins_mtd": -1,
+      "delinquency_pct": 7.21,
+      "revenue_net_mtd": 10952.86,
+      "roas_standard": null
+    },
+    {
+      "facility_code": "ELP8",
+      "facility_name": "National Self Storage - 7620 N Loop",
+      "brand": "NSS",
+      "occupancy_sqft_pct": 92.35,
+      "occupancy_units_pct": 89.54,
+      "rent_per_sqft": 1.24,
+      "leads_mtd": 11,
+      "conversion_pct": 72.0,
+      "move_ins_mtd": 7,
+      "move_outs_mtd": 4,
+      "net_move_ins_mtd": 3,
+      "delinquency_pct": 10.85,
+      "revenue_net_mtd": 21183.38,
+      "roas_standard": null
+    },
+    {
+      "facility_code": "ELP9",
+      "facility_name": "National Self Storage - 10560 N Loop",
+      "brand": "NSS",
+      "occupancy_sqft_pct": 95.0,
+      "occupancy_units_pct": 87.9,
+      "rent_per_sqft": 0.9,
+      "leads_mtd": 13,
+      "conversion_pct": 87.14,
+      "move_ins_mtd": 11,
+      "move_outs_mtd": 4,
+      "net_move_ins_mtd": 7,
+      "delinquency_pct": 10.6,
+      "revenue_net_mtd": 20565.22,
+      "roas_standard": null
+    },
+    {
+      "facility_code": "GRN1",
+      "facility_name": "National Self Storage - Green Valley",
+      "brand": "NSS",
+      "occupancy_sqft_pct": 86.16,
+      "occupancy_units_pct": 87.11,
+      "rent_per_sqft": 0.89,
+      "leads_mtd": 3,
+      "conversion_pct": 63.96,
+      "move_ins_mtd": 2,
+      "move_outs_mtd": 2,
+      "net_move_ins_mtd": 0,
+      "delinquency_pct": 7.6,
+      "revenue_net_mtd": 13688.69,
+      "roas_standard": 1.5
+    },
+    {
+      "facility_code": "SIL1",
+      "facility_name": "National Self Storage - Continental Reserve",
+      "brand": "NSS",
+      "occupancy_sqft_pct": 77.96,
+      "occupancy_units_pct": 71.7,
+      "rent_per_sqft": 1.07,
+      "leads_mtd": 11,
+      "conversion_pct": 72.85,
+      "move_ins_mtd": 12,
+      "move_outs_mtd": 4,
+      "net_move_ins_mtd": 8,
+      "delinquency_pct": 5.42,
+      "revenue_net_mtd": 17311.68,
+      "roas_standard": 6.86
+    },
+    {
+      "facility_code": "RNO1",
+      "facility_name": "Storelocal Reno",
+      "brand": "SL Reno",
+      "occupancy_sqft_pct": 90.09,
+      "occupancy_units_pct": 79.94,
+      "rent_per_sqft": 1.41,
+      "leads_mtd": 30,
+      "conversion_pct": 35.29,
+      "move_ins_mtd": 11,
+      "move_outs_mtd": 12,
+      "net_move_ins_mtd": -1,
+      "delinquency_pct": 2.92,
+      "revenue_net_mtd": 55661.68,
+      "roas_standard": 21.25
+    },
+    {
+      "facility_code": "301",
+      "facility_name": "A Family Storage - I-10",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 84.81,
+      "occupancy_units_pct": 87.18,
+      "rent_per_sqft": 0.84,
+      "leads_mtd": 9,
+      "conversion_pct": 57.22,
+      "move_ins_mtd": 4,
+      "move_outs_mtd": 5,
+      "net_move_ins_mtd": -1,
+      "delinquency_pct": 4.26,
+      "revenue_net_mtd": 14251.12,
+      "roas_standard": 29.37
+    },
+    {
+      "facility_code": "304",
+      "facility_name": "A Family Storage - Romero",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 64.85,
+      "occupancy_units_pct": 55.93,
+      "rent_per_sqft": 0.86,
+      "leads_mtd": 14,
+      "conversion_pct": 47.48,
+      "move_ins_mtd": 7,
+      "move_outs_mtd": 4,
+      "net_move_ins_mtd": 3,
+      "delinquency_pct": 11.42,
+      "revenue_net_mtd": 13600.35,
+      "roas_standard": 33.08
+    },
+    {
+      "facility_code": "305",
+      "facility_name": "A Family Storage - Speedway 305",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 80.03,
+      "occupancy_units_pct": 74.02,
+      "rent_per_sqft": 1.01,
+      "leads_mtd": 10,
+      "conversion_pct": 86.53,
+      "move_ins_mtd": 8,
+      "move_outs_mtd": 8,
+      "net_move_ins_mtd": 0,
+      "delinquency_pct": 6.94,
+      "revenue_net_mtd": 33778.7,
+      "roas_standard": 21.95
+    },
+    {
+      "facility_code": "308",
+      "facility_name": "A Family Storage - 22nd",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 83.09,
+      "occupancy_units_pct": 79.19,
+      "rent_per_sqft": 1.05,
+      "leads_mtd": 3,
+      "conversion_pct": 71.66,
+      "move_ins_mtd": 3,
+      "move_outs_mtd": 4,
+      "net_move_ins_mtd": -1,
+      "delinquency_pct": 5.51,
+      "revenue_net_mtd": 15704.11,
+      "roas_standard": 7.09
+    },
+    {
+      "facility_code": "310",
+      "facility_name": "A Family Storage - New Magee",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 78.25,
+      "occupancy_units_pct": 78.36,
+      "rent_per_sqft": 1.11,
+      "leads_mtd": 8,
+      "conversion_pct": 100.0,
+      "move_ins_mtd": 11,
+      "move_outs_mtd": 4,
+      "net_move_ins_mtd": 7,
+      "delinquency_pct": 4.08,
+      "revenue_net_mtd": 25370.47,
+      "roas_standard": 33.91
+    },
+    {
+      "facility_code": "312",
+      "facility_name": "A Family Storage - Golf Links",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 85.02,
+      "occupancy_units_pct": 85.74,
+      "rent_per_sqft": 1.0,
+      "leads_mtd": 9,
+      "conversion_pct": 54.05,
+      "move_ins_mtd": 7,
+      "move_outs_mtd": 10,
+      "net_move_ins_mtd": -3,
+      "delinquency_pct": 7.82,
+      "revenue_net_mtd": 33879.63,
+      "roas_standard": 20.01
+    },
+    {
+      "facility_code": "315",
+      "facility_name": "A Family Storage - Orange Grove",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 81.67,
+      "occupancy_units_pct": 79.49,
+      "rent_per_sqft": 0.97,
+      "leads_mtd": 10,
+      "conversion_pct": 80.78,
+      "move_ins_mtd": 7,
+      "move_outs_mtd": 5,
+      "net_move_ins_mtd": 2,
+      "delinquency_pct": 3.07,
+      "revenue_net_mtd": 26144.82,
+      "roas_standard": 40.25
+    },
+    {
+      "facility_code": "318",
+      "facility_name": "A Family Storage - Ina",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 75.46,
+      "occupancy_units_pct": 65.44,
+      "rent_per_sqft": 1.05,
+      "leads_mtd": 7,
+      "conversion_pct": 82.43,
+      "move_ins_mtd": 5,
+      "move_outs_mtd": 6,
+      "net_move_ins_mtd": -1,
+      "delinquency_pct": 6.44,
+      "revenue_net_mtd": 19463.78,
+      "roas_standard": 27.31
+    },
+    {
+      "facility_code": "320",
+      "facility_name": "A Family Storage - Green Valley",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 56.32,
+      "occupancy_units_pct": 53.36,
+      "rent_per_sqft": 0.94,
+      "leads_mtd": 4,
+      "conversion_pct": 80.48,
+      "move_ins_mtd": 3,
+      "move_outs_mtd": 3,
+      "net_move_ins_mtd": 0,
+      "delinquency_pct": 5.92,
+      "revenue_net_mtd": 10337.58,
+      "roas_standard": 126.85
+    },
+    {
+      "facility_code": "322",
+      "facility_name": "A Family Storage - Oracle",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 78.73,
+      "occupancy_units_pct": 72.73,
+      "rent_per_sqft": 0.9,
+      "leads_mtd": 7,
+      "conversion_pct": 73.48,
+      "move_ins_mtd": 9,
+      "move_outs_mtd": 7,
+      "net_move_ins_mtd": 2,
+      "delinquency_pct": 9.21,
+      "revenue_net_mtd": 29743.02,
+      "roas_standard": 43.56
+    },
+    {
+      "facility_code": "324",
+      "facility_name": "A Family Storage - Old Magee",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 65.64,
+      "occupancy_units_pct": 64.39,
+      "rent_per_sqft": 0.94,
+      "leads_mtd": 6,
+      "conversion_pct": 100.0,
+      "move_ins_mtd": 3,
+      "move_outs_mtd": 10,
+      "net_move_ins_mtd": -7,
+      "delinquency_pct": 6.11,
+      "revenue_net_mtd": 20700.27,
+      "roas_standard": 40.57
+    },
+    {
+      "facility_code": "326",
+      "facility_name": "A Family Storage - Kolb",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 74.37,
+      "occupancy_units_pct": 71.76,
+      "rent_per_sqft": 1.0,
+      "leads_mtd": 5,
+      "conversion_pct": 68.68,
+      "move_ins_mtd": 3,
+      "move_outs_mtd": 4,
+      "net_move_ins_mtd": -1,
+      "delinquency_pct": 8.83,
+      "revenue_net_mtd": 20416.72,
+      "roas_standard": 22.33
+    },
+    {
+      "facility_code": "328",
+      "facility_name": "A Family Storage - Rita Ranch",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 62.4,
+      "occupancy_units_pct": 54.93,
+      "rent_per_sqft": 0.75,
+      "leads_mtd": 11,
+      "conversion_pct": 63.83,
+      "move_ins_mtd": 4,
+      "move_outs_mtd": 5,
+      "net_move_ins_mtd": -1,
+      "delinquency_pct": 4.64,
+      "revenue_net_mtd": 32012.06,
+      "roas_standard": 29.89
+    },
+    {
+      "facility_code": "330",
+      "facility_name": "A Family Storage - Tanque Verde",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 82.05,
+      "occupancy_units_pct": 78.1,
+      "rent_per_sqft": 1.05,
+      "leads_mtd": 6,
+      "conversion_pct": 43.04,
+      "move_ins_mtd": 3,
+      "move_outs_mtd": 5,
+      "net_move_ins_mtd": -2,
+      "delinquency_pct": 3.0,
+      "revenue_net_mtd": 20181.33,
+      "roas_standard": 14.38
+    },
+    {
+      "facility_code": "332",
+      "facility_name": "A Family Storage - Country Club",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 76.87,
+      "occupancy_units_pct": 78.65,
+      "rent_per_sqft": 0.74,
+      "leads_mtd": 8,
+      "conversion_pct": 82.22,
+      "move_ins_mtd": 8,
+      "move_outs_mtd": 10,
+      "net_move_ins_mtd": -2,
+      "delinquency_pct": 9.61,
+      "revenue_net_mtd": 21931.78,
+      "roas_standard": 19.63
+    },
+    {
+      "facility_code": "335",
+      "facility_name": "A Family Storage - Swan",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 76.07,
+      "occupancy_units_pct": 75.79,
+      "rent_per_sqft": 0.97,
+      "leads_mtd": 8,
+      "conversion_pct": 63.15,
+      "move_ins_mtd": 6,
+      "move_outs_mtd": 3,
+      "net_move_ins_mtd": 3,
+      "delinquency_pct": 7.9,
+      "revenue_net_mtd": 13445.72,
+      "roas_standard": 28.86
+    },
+    {
+      "facility_code": "338",
+      "facility_name": "A Family Storage - Broadway",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 82.26,
+      "occupancy_units_pct": 77.97,
+      "rent_per_sqft": 0.94,
+      "leads_mtd": 8,
+      "conversion_pct": 86.98,
+      "move_ins_mtd": 6,
+      "move_outs_mtd": 6,
+      "net_move_ins_mtd": 0,
+      "delinquency_pct": 5.05,
+      "revenue_net_mtd": 30626.78,
+      "roas_standard": 46.99
+    },
+    {
+      "facility_code": "340",
+      "facility_name": "A Family Storage - Valencia",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 49.97,
+      "occupancy_units_pct": 45.38,
+      "rent_per_sqft": 0.8,
+      "leads_mtd": 4,
+      "conversion_pct": 80.17,
+      "move_ins_mtd": 4,
+      "move_outs_mtd": 6,
+      "net_move_ins_mtd": -2,
+      "delinquency_pct": 4.41,
+      "revenue_net_mtd": 31782.13,
+      "roas_standard": 10.51
+    },
+    {
+      "facility_code": "343",
+      "facility_name": "A Family Storage - Speedway 343",
+      "brand": "AFAM",
+      "occupancy_sqft_pct": 90.13,
+      "occupancy_units_pct": 84.59,
+      "rent_per_sqft": 0.89,
+      "leads_mtd": 4,
+      "conversion_pct": 84.18,
+      "move_ins_mtd": 2,
+      "move_outs_mtd": 7,
+      "net_move_ins_mtd": -5,
+      "delinquency_pct": 8.4,
+      "revenue_net_mtd": 24273.16,
+      "roas_standard": 13.41
+    }
+  ]
+}

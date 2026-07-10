@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- ===== travismorrow.com access guard — must run before anything renders ===== -->
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script>
+  /* Bounce to login.html if this browser session has not unlocked.
+     Client-side only, demo-grade — see README. */
+  TMAuth.guard();
+</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio Snapshot — living dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --bg:#0d1117;
+    --panel-bg:rgba(13,17,23,0.72);
+    --panel-solid:#11161d;
+    --border:rgba(255,255,255,0.08);
+    --text:#c9d1d9;
+    --dim:#8b98a5;
+    --bright:#e6edf3;
+    --accent:#4da3ff;
+    --accent-2:#22b8cf;
+    --error:#f85149;
+
+    /* status semantics (shared with the memory map) */
+    --pos:#3fb950;       /* good / positive delta   */
+    --warn:#f5a524;      /* caution                 */
+    --neg:#f85149;       /* bad / negative delta    */
+    --flat:#8b98a5;      /* zero / no signal        */
+
+    /* leads-by-channel categorical hues — validated for CVD + contrast
+       on this surface (dataviz six-checks, dark mode, #0d1117) */
+    --ch-web:#2b7de9;
+    --ch-phone:#c08a1e;
+    --ch-walkin:#00a3bf;
+    --ch-other:#9a6ee0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0; min-height:100%;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  /* signature soft radial glow */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 0%,
+      rgba(77,163,255,0.10) 0%, rgba(34,184,207,0.05) 30%, rgba(13,17,23,0) 62%);
+  }
+  .wrap{ position:relative; z-index:1; max-width:1240px; margin:0 auto; padding:0 20px; }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+    justify-content:space-between; padding:20px 0 6px;
+  }
+  .h-title .t1{ font-size:19px; font-weight:700; letter-spacing:.4px; color:var(--bright); }
+  .h-title .t2{ font-size:12px; color:var(--dim); margin-top:3px; }
+  .h-right{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .pill{
+    font-size:11.5px; color:var(--dim); padding:6px 12px; border-radius:999px;
+    border:1px solid var(--border); background:rgba(255,255,255,0.03);
+    white-space:nowrap;
+  }
+  .pill b{ color:var(--text); font-weight:600; }
+  .pill.mock{
+    color:#ffd88a; border-color:rgba(245,165,36,0.45); background:rgba(245,165,36,0.08);
+    font-weight:600; letter-spacing:.06em;
+  }
+  a.hdr-btn, button.hdr-btn{
+    font-family:inherit; font-size:12px; font-weight:600; text-decoration:none;
+    padding:7px 14px; border-radius:8px; border:1px solid var(--border);
+    background:rgba(255,255,255,0.04); color:var(--text); cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  a.hdr-btn:hover, button.hdr-btn:hover{ background:rgba(255,255,255,0.09); }
+
+  /* ---------- hero tiles ---------- */
+  #hero{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:16px;
+  }
+  .tile{
+    font-family:inherit; text-align:left; color:var(--text);
+    background:var(--panel-bg); border:1px solid var(--border); border-radius:14px;
+    padding:16px 18px 14px; cursor:pointer; position:relative;
+    box-shadow:0 4px 18px rgba(0,0,0,0.25);
+    transition:border-color .15s, box-shadow .15s, transform .12s, background .15s;
+  }
+  .tile:hover{ border-color:rgba(77,163,255,0.45); transform:translateY(-1px); }
+  .tile[aria-pressed="true"]{
+    border-color:rgba(77,163,255,0.75);
+    background:linear-gradient(180deg, rgba(77,163,255,0.10), rgba(13,17,23,0.72));
+    box-shadow:0 6px 26px rgba(77,163,255,0.22);
+  }
+  .tile .brand{
+    display:flex; align-items:baseline; gap:8px; margin-bottom:10px;
+  }
+  .tile .brand .nm{ font-size:13px; font-weight:700; letter-spacing:.08em; color:var(--bright); text-transform:uppercase; }
+  .tile .brand .ct{ font-size:11px; color:var(--dim); }
+  .tile .halves{ display:flex; align-items:stretch; }
+  .tile .half{ flex:1 1 50%; min-width:0; }
+  .tile .divider{ width:1px; background:var(--border); margin:2px 14px; }
+  .tile .lbl{ font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-bottom:4px; }
+  .tile .big{ font-size:24px; font-weight:700; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .tile .sub{ font-size:11px; color:var(--dim); margin-top:4px; white-space:nowrap; }
+  .up{ color:var(--pos); } .down{ color:var(--neg); } .zero{ color:var(--flat); }
+  .warm{ color:var(--warn); }
+
+  /* ---------- scope KPI row ---------- */
+  #scopebar{
+    display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+    margin:26px 0 10px;
+  }
+  #scopebar h2{ margin:0; font-size:15px; font-weight:700; color:var(--bright); letter-spacing:.03em; }
+  #scopebar .hint{ font-size:11.5px; color:var(--dim); }
+  #kpis{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
+  }
+  .card{
+    background:var(--panel-bg); border:1px solid var(--border); border-radius:14px;
+    padding:15px 17px 13px; box-shadow:0 4px 18px rgba(0,0,0,0.25); min-width:0;
+  }
+  .card .lbl{ font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-bottom:7px; }
+  .card .big{ font-size:23px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; }
+  .card .big small{ font-size:13px; font-weight:600; color:var(--dim); }
+  .card .sub{ font-size:11.5px; color:var(--dim); margin-top:4px; }
+  .card .sub b{ color:var(--text); font-weight:600; }
+
+  /* occupancy bullet vs target */
+  .bullet{ position:relative; height:8px; border-radius:4px; background:rgba(255,255,255,0.06); margin-top:10px; overflow:visible; }
+  .bullet .fill{ position:absolute; inset:0 auto 0 0; border-radius:4px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+  .bullet .target{ position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--bright); opacity:.75; border-radius:1px; }
+  .bullet-cap{ display:flex; justify-content:space-between; font-size:10px; color:var(--dim); margin-top:5px; }
+
+  /* channel stacked bar */
+  .stack{ display:flex; height:14px; border-radius:5px; overflow:hidden; margin-top:8px; background:var(--bg); }
+  .stack .seg{ min-width:3px; }
+  .stack .seg + .seg{ border-left:2px solid var(--bg); }  /* 2px surface gap between fills */
+  .legend{ margin-top:9px; display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; }
+  .legend .li{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--text); white-space:nowrap; }
+  .legend .dot{ width:9px; height:9px; border-radius:3px; flex:none; }
+  .legend .n{ margin-left:auto; font-variant-numeric:tabular-nums; color:var(--bright); font-weight:600; }
+  .legend .s{ color:var(--dim); font-variant-numeric:tabular-nums; }
+  .foot-note{ font-size:10.5px; color:var(--dim); margin-top:8px; line-height:1.45; }
+
+  /* ---------- sections ---------- */
+  section.block{ margin-top:30px; }
+  .sec-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+  .sec-head h2{ margin:0; font-size:15px; font-weight:700; color:var(--bright); letter-spacing:.03em; }
+  .sec-head .hint{ font-size:11.5px; color:var(--dim); }
+  input#facSearch{
+    font-family:inherit; font-size:12px; padding:7px 11px; border-radius:8px;
+    border:1px solid var(--border); background:rgba(255,255,255,0.04);
+    color:var(--text); width:190px; outline:none;
+  }
+  input#facSearch:focus{ border-color:rgba(77,163,255,0.6); }
+
+  .tbl-wrap{
+    border:1px solid var(--border); border-radius:14px; overflow-x:auto;
+    background:var(--panel-bg); box-shadow:0 4px 18px rgba(0,0,0,0.25);
+  }
+  table{ border-collapse:collapse; width:100%; min-width:980px; font-size:12.5px; }
+  thead th{
+    position:sticky; top:0; z-index:2;
+    background:var(--panel-solid); color:var(--dim);
+    font-size:10px; letter-spacing:.08em; text-transform:uppercase; font-weight:600;
+    text-align:right; padding:0; border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+  thead th:first-child{ text-align:left; }
+  thead th button{
+    font:inherit; color:inherit; letter-spacing:inherit; text-transform:inherit;
+    background:none; border:0; cursor:pointer; width:100%; text-align:inherit;
+    padding:10px 12px; display:inline-flex; justify-content:flex-end; gap:4px;
+  }
+  thead th:first-child button{ justify-content:flex-start; }
+  thead th button:hover{ color:var(--text); }
+  thead th .arrow{ opacity:.9; color:var(--accent); }
+  tbody td{
+    padding:8px 12px; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05);
+    font-variant-numeric:tabular-nums; white-space:nowrap;
+  }
+  tbody td:first-child{ text-align:left; }
+  tbody tr.fac{ cursor:pointer; transition:background .12s; }
+  tbody tr.fac:hover{ background:rgba(77,163,255,0.06); }
+  tbody tr.fac[aria-expanded="true"]{ background:rgba(77,163,255,0.09); }
+  tbody tr:last-child td{ border-bottom:0; }
+  td .code{ color:var(--dim); font-size:10.5px; margin-right:7px; }
+  td .btag{
+    display:inline-block; font-size:9.5px; letter-spacing:.06em; color:var(--dim);
+    border:1px solid var(--border); border-radius:5px; padding:1px 5px; margin-left:7px;
+    vertical-align:1px;
+  }
+  tr.total td{ font-weight:700; color:var(--bright); background:rgba(255,255,255,0.025);
+    border-top:1px solid var(--border); }
+  .caret{ display:inline-block; margin-right:7px; color:var(--dim); font-size:9px;
+    transition:transform .15s; }
+  tr[aria-expanded="true"] .caret{ transform:rotate(90deg); color:var(--accent); }
+
+  /* expanded facility detail row */
+  tr.detail > td{ background:rgba(13,17,23,0.9); padding:14px 16px 16px; white-space:normal; cursor:default; }
+  .mini-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .mini{
+    background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px;
+    padding:10px 12px; text-align:left;
+  }
+  .mini .lbl{ font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--dim); margin-bottom:5px; }
+  .mini .v{ font-size:17px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; }
+  .mini .s{ font-size:10.5px; color:var(--dim); margin-top:3px; }
+  .mini .bar{ height:5px; border-radius:3px; background:rgba(255,255,255,0.07); margin-top:7px; position:relative; overflow:hidden; }
+  .mini .bar i{ position:absolute; inset:0 auto 0 0; border-radius:3px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+
+  /* campaigns */
+  #campTbl{ min-width:760px; }
+  #campTbl td:first-child{ white-space:normal; }
+  .rank{ color:var(--dim); font-size:10.5px; margin-right:8px; }
+
+  footer{
+    margin-top:36px; padding-top:18px; border-top:1px solid var(--border);
+    font-size:11.5px; color:var(--dim); line-height:1.6;
+  }
+
+  /* loading / error */
+  #status{ padding:60px 0; text-align:center; color:var(--dim); font-size:13px; }
+  #status .err{ color:var(--error); font-weight:600; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:980px){
+    #hero{ grid-template-columns:repeat(2,1fr); }
+    #kpis{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width:480px){
+    #hero{ grid-template-columns:1fr; }
+    #kpis{ grid-template-columns:1fr; }
+    .tile .big{ font-size:21px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="h-title">
+      <div class="t1">PORTFOLIO SNAPSHOT</div>
+      <div class="t2" id="subTitle">29 facilities · NSS · AFAM · SL Reno</div>
+    </div>
+    <div class="h-right">
+      <span class="pill mock" id="mockBadge" hidden
+            title="This page is rendering the sample portfolio-data.json committed with the dashboard. The badge disappears automatically once the real twice-daily export replaces that file.">SAMPLE&nbsp;DATA</span>
+      <span class="pill" id="freshness">Loading…</span>
+      <a class="hdr-btn" href="memory-map.html">Memory map</a>
+      <button class="hdr-btn" id="lockBtn" title="Lock this session and return to the landing page">Lock</button>
+    </div>
+  </header>
+
+  <div id="status">Loading portfolio data…</div>
+
+  <div id="dash" hidden>
+
+    <!-- ===== hero: the MTD KPI strip, now clickable scope selectors ===== -->
+    <div id="hero" role="group" aria-label="Brand scope selector"></div>
+
+    <!-- ===== supporting KPIs for the selected scope ===== -->
+    <div id="scopebar">
+      <h2 id="scopeTitle"></h2>
+      <span class="hint">click a tile above to drill into a brand · Portfolio resets</span>
+    </div>
+    <div id="kpis"></div>
+
+    <!-- ===== per-facility drill-down table ===== -->
+    <section class="block">
+      <div class="sec-head">
+        <h2 id="facTitle">Facilities</h2>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span class="hint">click a row for its full KPI set · click headers to sort</span>
+          <input id="facSearch" type="search" placeholder="Filter facilities…" aria-label="Filter facilities">
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table id="facTbl" aria-label="Per-facility detail">
+          <thead><tr id="facHead"></tr></thead>
+          <tbody id="facBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== campaign efficiency ===== -->
+    <section class="block">
+      <div class="sec-head">
+        <h2 id="campTitle">Campaign efficiency</h2>
+        <span class="hint">this month · ranked cheapest cost-per-conversion first</span>
+      </div>
+      <div class="tbl-wrap">
+        <table id="campTbl" aria-label="Campaign efficiency">
+          <thead>
+            <tr>
+              <th style="text-align:left"><button type="button" disabled style="cursor:default">Campaign</button></th>
+              <th><button type="button" disabled style="cursor:default">Cost</button></th>
+              <th><button type="button" disabled style="cursor:default">Conversions</button></th>
+              <th><button type="button" disabled style="cursor:default">Cost / conv</button></th>
+              <th><button type="button" disabled style="cursor:default">Conv. value</button></th>
+              <th><button type="button" disabled style="cursor:default">Value / cost</button></th>
+            </tr>
+          </thead>
+          <tbody id="campBody"></tbody>
+        </table>
+      </div>
+      <p class="foot-note">Campaigns with zero conversions show “—” for cost per conversion — no number is fabricated for them.</p>
+    </section>
+
+    <footer>
+      <div id="footFresh"></div>
+      <div>ROAS is shown as an ×-multiple under both the standard and the more conservative LTV assumption.
+           Per-channel lead conversion is not trackable at the source, so channel cards show counts and share only.</div>
+      <div>Data via Hummingbird / Nectar API · National Self Storage / StoreLocal · Private demo</div>
+    </footer>
+
+  </div><!-- /dash -->
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  document.getElementById("lockBtn").addEventListener("click", function () {
+    TMAuth.logout(); location.href = "index.html";
+  });
+
+  /* ------------------------------------------------------------------ *
+   *  state & constants
+   * ------------------------------------------------------------------ */
+  var DATA = null;
+  var scope = "portfolio";              // "portfolio" | "NSS" | "AFAM" | "SL Reno"
+  var BRANDS = ["NSS", "AFAM", "SL Reno"];
+  var sortKey = null, sortDir = -1;     // facility table sort state
+  var expanded = null;                  // facility_code of the expanded row
+
+  var CHANNELS = [
+    { key:"web_leads",     label:"Web",     color:"var(--ch-web)"    },
+    { key:"phone_leads",   label:"Phone",   color:"var(--ch-phone)"  },
+    { key:"walk_in_leads", label:"Walk-in", color:"var(--ch-walkin)" },
+    { key:"other_leads",   label:"Other",   color:"var(--ch-other)"  }
+  ];
+
+  var OCC_TARGET = 85;   // portfolio occupancy target from the monthly report
+
+  /* ------------------------------------------------------------------ *
+   *  formatting helpers
+   * ------------------------------------------------------------------ */
+  function fmtMoney(v) {                       // compact: $1.98M / $673K / $845
+    if (v == null) return "—";
+    var a = Math.abs(v);
+    if (a >= 1e6) return "$" + (v / 1e6).toFixed(2) + "M";
+    if (a >= 1e4) return "$" + Math.round(v / 1e3) + "K";
+    if (a >= 1e3) return "$" + (v / 1e3).toFixed(1) + "K";
+    return "$" + Math.round(v);
+  }
+  function fmtMoneyFull(v) {
+    if (v == null) return "—";
+    return "$" + Math.round(v).toLocaleString("en-US");
+  }
+  function fmtSignedMoney(v) {
+    if (v == null) return "—";
+    return (v > 0 ? "+" : v < 0 ? "−" : "") + fmtMoney(Math.abs(v));
+  }
+  function fmtSigned(v) {
+    if (v == null) return "—";
+    return (v > 0 ? "+" : "") + v;
+  }
+  function fmtPct(v, dp) {
+    if (v == null) return "—";
+    return v.toFixed(dp == null ? 1 : dp) + "%";
+  }
+  function fmtX(v) { return v == null ? "—" : v.toFixed(1) + "x"; }
+  function signClass(v) { return v > 0 ? "up" : v < 0 ? "down" : "zero"; }
+  function delinqClass(v) { return v == null ? "" : v > 8 ? "down" : v >= 5 ? "warm" : "up"; }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
+  function azTime(iso, opts) {
+    try {
+      return new Date(iso).toLocaleString("en-US", Object.assign({
+        timeZone: "America/Phoenix", month: "short", day: "numeric",
+        hour: "numeric", minute: "2-digit"
+      }, opts || {}));
+    } catch (e) { return iso; }
+  }
+
+  function scopeData()  { return scope === "portfolio" ? DATA.portfolio : DATA.brands[scope]; }
+  function scopeLabel() { return scope === "portfolio" ? "Portfolio" : scope; }
+  function scopeFacs()  {
+    return DATA.facilities.filter(function (f) {
+      return scope === "portfolio" || f.brand === scope;
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  hero tiles — NSS / AFAM / SL Reno / Portfolio
+   * ------------------------------------------------------------------ */
+  function renderHero() {
+    var counts = {};
+    DATA.facilities.forEach(function (f) { counts[f.brand] = (counts[f.brand] || 0) + 1; });
+
+    var host = document.getElementById("hero");
+    host.innerHTML = "";
+    var entries = BRANDS.map(function (b) {
+      return { key:b, label:b, count:counts[b] || 0, d:DATA.brands[b] };
+    }).concat([{ key:"portfolio", label:"Portfolio", count:DATA.facilities.length, d:DATA.portfolio }]);
+
+    entries.forEach(function (e) {
+      var mv  = e.d.move_activity_mtd;
+      var yoy = e.d.revenue_yoy;
+      var priorYr = new Date(DATA.generated_at).getFullYear() - 1;
+      var yoyWord = yoy.delta > 0 ? "ahead of" : yoy.delta < 0 ? "behind" : "flat vs";
+
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "tile";
+      btn.setAttribute("aria-pressed", String(scope === e.key));
+      btn.innerHTML =
+        '<div class="brand"><span class="nm">' + esc(e.label) + '</span>' +
+        '<span class="ct">' + e.count + (e.count === 1 ? " store" : " stores") + '</span></div>' +
+        '<div class="halves">' +
+          '<div class="half"><div class="lbl">Net move-ins · MTD</div>' +
+            '<div class="big ' + signClass(mv.net_move_ins) + '">' + fmtSigned(mv.net_move_ins) + '</div>' +
+            '<div class="sub">' + mv.move_ins + ' in / ' + mv.move_outs + ' out</div></div>' +
+          '<div class="divider"></div>' +
+          '<div class="half"><div class="lbl">Revenue vs LY · MTD</div>' +
+            '<div class="big ' + signClass(yoy.delta) + '">' + fmtSignedMoney(yoy.delta) + '</div>' +
+            '<div class="sub">' + yoyWord + ' ' + priorYr + ' · ' + fmtMoney(yoy.current) + '</div></div>' +
+        '</div>';
+      btn.addEventListener("click", function () { setScope(e.key); });
+      host.appendChild(btn);
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  scope KPI cards
+   * ------------------------------------------------------------------ */
+  function renderKpis() {
+    var d = scopeData();
+    var host = document.getElementById("kpis");
+    var occ = d.occupancy, leads = d.leads_mtd, ads = d.ad_spend_month, roas = d.roas;
+    var ch = d.leads_by_channel_mtd;
+
+    document.getElementById("scopeTitle").textContent =
+      scopeLabel() + " — " + scopeFacs().length + " " + (scopeFacs().length === 1 ? "facility" : "facilities");
+
+    /* occupancy bullet vs 85% target */
+    var pct = occ.occupancy_sqft_pct;
+    var occCard =
+      '<div class="card"><div class="lbl">Occupancy</div>' +
+      '<div class="big">' + fmtPct(pct, 2) + ' <small>sq ft</small></div>' +
+      '<div class="sub"><b>' + fmtPct(occ.occupancy_units_pct, 2) + '</b> of units · ' +
+        occ.units_occupied.toLocaleString() + ' / ' + occ.units_total.toLocaleString() + ' units</div>' +
+      '<div class="bullet"><div class="fill" style="width:' + Math.min(100, pct) + '%"></div>' +
+        '<div class="target" style="left:' + OCC_TARGET + '%" title="' + OCC_TARGET + '% target"></div></div>' +
+      '<div class="bullet-cap"><span>0%</span><span>' + OCC_TARGET + '% target</span><span>100%</span></div></div>';
+
+    var convCard =
+      '<div class="card"><div class="lbl">Lead conversion · MTD</div>' +
+      '<div class="big">' + fmtPct(leads.conversion_pct, 1) + '</div>' +
+      '<div class="sub"><b>' + leads.leads_converted + '</b> converted of <b>' + leads.leads_total + '</b> leads</div></div>';
+
+    var roasCard =
+      '<div class="card"><div class="lbl">Ad spend &amp; ROAS · month</div>' +
+      '<div class="big">' + fmtX(roas.roas_standard) + ' <small>standard LTV</small></div>' +
+      '<div class="sub"><b>' + fmtX(roas.roas_conservative) + '</b> conservative LTV</div>' +
+      '<div class="sub">' + fmtMoneyFull(ads.spend) + ' spend · ' + ads.stores +
+        (ads.stores === 1 ? " store" : " stores") + ' advertising</div></div>';
+
+    /* channels — counts & share only (per-channel conversion is not tracked) */
+    var total = CHANNELS.reduce(function (s, c) { return s + (ch[c.key] || 0); }, 0) || 1;
+    var segs = "", lis = "";
+    CHANNELS.forEach(function (c) {
+      var n = ch[c.key] || 0;
+      var share = ch.channel_share_pct && ch.channel_share_pct[c.key] != null
+        ? ch.channel_share_pct[c.key] : (100 * n / total);
+      segs += '<div class="seg" style="flex:' + Math.max(n, 0.001) + ';background:' + c.color + '" ' +
+              'title="' + esc(c.label) + ': ' + n + ' leads (' + fmtPct(share, 1) + ')"></div>';
+      lis  += '<div class="li"><span class="dot" style="background:' + c.color + '"></span>' +
+              esc(c.label) + '<span class="n">' + n + '</span><span class="s">' + fmtPct(share, 0) + '</span></div>';
+    });
+    var chCard =
+      '<div class="card"><div class="lbl">Leads by channel · MTD</div>' +
+      '<div class="big">' + total + ' <small>leads</small></div>' +
+      '<div class="stack" role="img" aria-label="Lead share by channel">' + segs + '</div>' +
+      '<div class="legend">' + lis + '</div>' +
+      '<div class="foot-note">Counts &amp; share only — per-channel conversion isn’t trackable at the source.</div></div>';
+
+    host.innerHTML = occCard + convCard + roasCard + chCard;
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  facility table
+   * ------------------------------------------------------------------ */
+  var COLS = [
+    { key:"facility_name",       label:"Facility",     num:false },
+    { key:"occupancy_sqft_pct",  label:"Sq Ft Occ",    num:true, fmt:function(v){ return fmtPct(v,2); } },
+    { key:"occupancy_units_pct", label:"Space Occ",    num:true, fmt:function(v){ return fmtPct(v,2); } },
+    { key:"rent_per_sqft",       label:"Rent/SF",      num:true, fmt:function(v){ return "$" + v.toFixed(2); } },
+    { key:"leads_mtd",           label:"Leads",        num:true, fmt:String },
+    { key:"conversion_pct",      label:"Conv",         num:true, fmt:function(v){ return fmtPct(v,1); } },
+    { key:"move_ins_mtd",        label:"Ins",          num:true, fmt:String },
+    { key:"move_outs_mtd",       label:"Outs",         num:true, fmt:String },
+    { key:"net_move_ins_mtd",    label:"Net",          num:true, fmt:fmtSigned, cls:signClass },
+    { key:"delinquency_pct",     label:"Delinq",       num:true, fmt:function(v){ return fmtPct(v,1); }, cls:delinqClass },
+    { key:"revenue_net_mtd",     label:"Net Rev MTD",  num:true, fmt:fmtMoneyFull },
+    { key:"roas_standard",       label:"ROAS",         num:true, fmt:fmtX }
+  ];
+
+  function renderFacHead() {
+    var tr = document.getElementById("facHead");
+    tr.innerHTML = "";
+    COLS.forEach(function (c) {
+      var th = document.createElement("th");
+      if (sortKey === c.key) th.setAttribute("aria-sort", sortDir === 1 ? "ascending" : "descending");
+      var b = document.createElement("button");
+      b.type = "button";
+      b.innerHTML = esc(c.label) +
+        (sortKey === c.key ? ' <span class="arrow">' + (sortDir === 1 ? "▲" : "▼") + "</span>" : "");
+      b.addEventListener("click", function () {
+        if (sortKey === c.key) { sortDir = -sortDir; }
+        else { sortKey = c.key; sortDir = c.num ? -1 : 1; }
+        renderFacHead(); renderFacBody();
+      });
+      th.appendChild(b);
+      tr.appendChild(th);
+    });
+  }
+
+  function facRows() {
+    var q = document.getElementById("facSearch").value.trim().toLowerCase();
+    var rows = scopeFacs().filter(function (f) {
+      return !q || (f.facility_name + " " + f.facility_code).toLowerCase().indexOf(q) !== -1;
+    });
+    if (sortKey) {
+      var col = COLS.filter(function (c) { return c.key === sortKey; })[0];
+      rows = rows.slice().sort(function (a, b) {
+        var x = a[sortKey], y = b[sortKey];
+        if (x == null && y == null) return 0;
+        if (x == null) return 1;                    // nulls (no ROAS) always sink
+        if (y == null) return -1;
+        if (!col.num) return sortDir * String(x).localeCompare(String(y));
+        return sortDir * (x - y);
+      });
+    }
+    return rows;
+  }
+
+  function detailHTML(f) {
+    function bar(pct) {
+      return '<div class="bar"><i style="width:' + Math.min(100, Math.max(0, pct)) + '%"></i></div>';
+    }
+    return '<div class="mini-grid">' +
+      '<div class="mini"><div class="lbl">Sq ft occupancy</div><div class="v">' + fmtPct(f.occupancy_sqft_pct, 2) + '</div>' + bar(f.occupancy_sqft_pct) + '</div>' +
+      '<div class="mini"><div class="lbl">Space occupancy</div><div class="v">' + fmtPct(f.occupancy_units_pct, 2) + '</div>' + bar(f.occupancy_units_pct) + '</div>' +
+      '<div class="mini"><div class="lbl">Net move-ins · MTD</div><div class="v ' + signClass(f.net_move_ins_mtd) + '">' + fmtSigned(f.net_move_ins_mtd) + '</div>' +
+        '<div class="s">' + f.move_ins_mtd + ' in / ' + f.move_outs_mtd + ' out</div></div>' +
+      '<div class="mini"><div class="lbl">Leads &amp; conversion</div><div class="v">' + f.leads_mtd + ' <small style="font-size:11px;color:var(--dim)">leads</small></div>' +
+        '<div class="s">' + fmtPct(f.conversion_pct, 1) + ' converted MTD</div></div>' +
+      '<div class="mini"><div class="lbl">Delinquency</div><div class="v ' + delinqClass(f.delinquency_pct) + '">' + fmtPct(f.delinquency_pct, 1) + '</div>' +
+        '<div class="s">of units delinquent</div></div>' +
+      '<div class="mini"><div class="lbl">Net revenue · MTD</div><div class="v">' + fmtMoneyFull(f.revenue_net_mtd) + '</div>' +
+        '<div class="s">$' + f.rent_per_sqft.toFixed(2) + ' / sq ft</div></div>' +
+      '<div class="mini"><div class="lbl">ROAS · standard LTV</div><div class="v">' + fmtX(f.roas_standard) + '</div>' +
+        '<div class="s">' + (f.roas_standard == null ? "no paid campaigns attributed" : "this month") + '</div></div>' +
+      '</div>';
+  }
+
+  function renderFacBody() {
+    var rows = facRows();
+    var body = document.getElementById("facBody");
+    body.innerHTML = "";
+
+    document.getElementById("facTitle").textContent =
+      "Facilities — " + scopeLabel() + " (" + rows.length + ")";
+
+    rows.forEach(function (f) {
+      var tr = document.createElement("tr");
+      tr.className = "fac";
+      tr.setAttribute("aria-expanded", String(expanded === f.facility_code));
+      tr.tabIndex = 0;
+
+      var cells = COLS.map(function (c, i) {
+        var v = f[c.key];
+        if (i === 0) {
+          return '<td><span class="caret">▶</span><span class="code">' + esc(f.facility_code) + '</span>' +
+                 esc(f.facility_name) +
+                 (scope === "portfolio" ? '<span class="btag">' + esc(f.brand) + "</span>" : "") + "</td>";
+        }
+        var cls = c.cls ? c.cls(v) : "";
+        return "<td" + (cls ? ' class="' + cls + '"' : "") + ">" + (v == null ? "—" : c.fmt(v)) + "</td>";
+      });
+      tr.innerHTML = cells.join("");
+
+      function toggle() {
+        expanded = (expanded === f.facility_code) ? null : f.facility_code;
+        renderFacBody();
+      }
+      tr.addEventListener("click", toggle);
+      tr.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggle(); }
+      });
+      body.appendChild(tr);
+
+      if (expanded === f.facility_code) {
+        var dtr = document.createElement("tr");
+        dtr.className = "detail";
+        dtr.innerHTML = '<td colspan="' + COLS.length + '">' + detailHTML(f) + "</td>";
+        body.appendChild(dtr);
+      }
+    });
+
+    /* totals row = the currently selected scope's real rollup */
+    var d = scopeData(), mv = d.move_activity_mtd;
+    var trTot = document.createElement("tr");
+    trTot.className = "total";
+    trTot.innerHTML =
+      "<td>TOTAL · " + esc(scopeLabel()) + " (" + rows.length + ")</td>" +
+      "<td>" + fmtPct(d.occupancy.occupancy_sqft_pct, 2) + "</td>" +
+      "<td>" + fmtPct(d.occupancy.occupancy_units_pct, 2) + "</td>" +
+      "<td>—</td>" +
+      "<td>" + d.leads_mtd.leads_total + "</td>" +
+      "<td>" + fmtPct(d.leads_mtd.conversion_pct, 1) + "</td>" +
+      "<td>" + mv.move_ins + "</td>" +
+      "<td>" + mv.move_outs + "</td>" +
+      '<td class="' + signClass(mv.net_move_ins) + '">' + fmtSigned(mv.net_move_ins) + "</td>" +
+      "<td>—</td>" +
+      "<td>" + fmtMoneyFull(d.revenue_mtd.revenue_authoritative) + "</td>" +
+      "<td>" + fmtX(d.roas.roas_standard) + "</td>";
+    body.appendChild(trTot);
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  campaign efficiency
+   * ------------------------------------------------------------------ */
+  function renderCampaigns() {
+    var camps = scopeData().campaign_efficiency_month || [];
+    var body = document.getElementById("campBody");
+    document.getElementById("campTitle").textContent =
+      "Campaign efficiency — " + scopeLabel() + " (" + camps.length + ")";
+    body.innerHTML = "";
+
+    if (!camps.length) {
+      body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">No campaigns for this scope this month.</td></tr>';
+      return;
+    }
+    camps.forEach(function (c, i) {
+      var zero = !c.conversions;
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td><span class="rank">' + (i + 1) + '</span>' + esc(c.campaign_name) + "</td>" +
+        "<td>" + fmtMoneyFull(c.cost) + "</td>" +
+        '<td' + (zero ? ' class="zero"' : "") + ">" + c.conversions + "</td>" +
+        "<td>" + (c.cost_per_conversion == null ? "—" : fmtMoneyFull(c.cost_per_conversion)) + "</td>" +
+        "<td>" + (zero ? "—" : fmtMoneyFull(c.conversion_value)) + "</td>" +
+        "<td>" + (c.value_per_cost == null || zero ? "—" : c.value_per_cost.toFixed(1) + "x") + "</td>";
+      body.appendChild(tr);
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  scope switching & boot
+   * ------------------------------------------------------------------ */
+  function setScope(s) {
+    if (scope === s) return;
+    scope = s; expanded = null;
+    renderHero(); renderKpis(); renderFacBody(); renderCampaigns();
+  }
+
+  function renderAll() {
+    var fresh = "Data as of " + azTime(DATA.generated_at) + " AZ";
+    document.getElementById("freshness").innerHTML =
+      "<b>" + esc(fresh) + "</b> · refreshed twice daily";
+    document.getElementById("footFresh").textContent =
+      fresh + " · refreshed twice daily (12pm & 7pm Arizona) from the portfolio datastore.";
+    document.getElementById("mockBadge").hidden = !DATA.mock_data;
+    document.getElementById("subTitle").textContent =
+      DATA.facilities.length + " facilities · NSS · AFAM · SL Reno · month-to-date";
+
+    renderHero(); renderKpis(); renderFacHead(); renderFacBody(); renderCampaigns();
+    document.getElementById("status").hidden = true;
+    document.getElementById("dash").hidden = false;
+  }
+
+  document.getElementById("facSearch").addEventListener("input", renderFacBody);
+
+  fetch("portfolio-data.json", { cache: "no-store" })
+    .then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(function (json) { DATA = json; renderAll(); })
+    .catch(function (err) {
+      document.getElementById("status").innerHTML =
+        '<div class="err">Couldn’t load portfolio-data.json</div>' +
+        '<div style="margin-top:8px">' + esc(err.message) +
+        " — if you’re viewing this from the filesystem, serve it over HTTP (e.g. <code>python3 -m http.server</code>).</div>";
+    });
+})();
+</script>
+</body>
+</html>
