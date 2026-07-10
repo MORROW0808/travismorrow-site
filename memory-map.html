@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- ===== travismorrow.com access guard (added to the DEPLOYED copy only; the Dropbox source Demo/Taylor-Memory-Map.html is untouched) ===== -->
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script>
+  /* Runs before <body> paints: bounce to login.html if this browser
+     session has not unlocked. Client-side only — see README. */
+  TMAuth.guard();
+</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
+<title>TAYLOR — memory map</title>
+<style>
+  :root{
+    --bg:#0d1117;
+    --panel-bg:rgba(13,17,23,0.92);
+    --panel-border:rgba(255,255,255,0.08);
+    --text-main:#c9d1d9;
+    --text-dim:#8b98a5;
+    --text-bright:#e6edf3;
+
+    --hub-base:#0b2a4a;   --hub-fill:#123a63;   --hub-glow:#4da3ff;
+    --teal-base:#0e7490;  --teal-fill:#22b8cf;
+    --amber-base:#b45309; --amber-fill:#f5a524;
+    --grey-base:#6b7280;  --grey-fill:#8b98a5;
+    --steel-fill:#6ea8d8;
+    --violet-fill:#b18ae0;
+    --green-base:#15803d; --green-fill:#3fb950;
+
+    --status-live:#3fb950;
+    --status-limited:#f5a524;
+    --status-planned:#8b98a5;
+    --status-seasonal:#22b8cf;
+    --status-done:#6ea8d8;
+
+    --edge-data:#22b8cf;
+    --edge-workaround:#f5a524;
+    --edge-route:#8b98a5;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; width:100%; height:100%; overflow:hidden;
+    background:var(--bg);
+    font-family:-apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color:var(--text-main);
+    -webkit-user-select:none; user-select:none;
+    touch-action:none;
+  }
+  #app{ position:relative; width:100vw; height:100vh; }
+
+  /* radial vignette */
+  #vignette{
+    position:absolute; inset:0; pointer-events:none; z-index:1;
+    background: radial-gradient(ellipse at 50% 45%, rgba(30,40,55,0.35) 0%, rgba(13,17,23,0) 55%),
+                radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%);
+  }
+
+  svg#graph{
+    position:absolute; inset:0; width:100%; height:100%; z-index:2;
+    cursor:grab;
+  }
+  svg#graph.panning{ cursor:grabbing; }
+
+  .node-label{
+    font-size:10px; fill:var(--text-main); pointer-events:none;
+    font-family:-apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .node-label.hub{ font-size:14px; font-weight:700; fill:var(--text-bright); }
+  .node-circle{ cursor:pointer; }
+  .node-group{ }
+
+  .edge-line{ pointer-events:none; }
+
+  /* ---------- Top bar ---------- */
+  #topbar{
+    position:absolute; top:0; left:0; right:0; z-index:10;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:14px 16px; pointer-events:none;
+  }
+  #title-block{ pointer-events:auto; }
+  #title-block .t1{
+    font-size:15px; font-weight:700; letter-spacing:0.5px; color:var(--text-bright);
+  }
+  #title-block .t2{
+    font-size:11px; color:var(--text-dim); margin-top:2px;
+  }
+  #controls{
+    display:flex; gap:8px; align-items:center; pointer-events:auto;
+    flex-wrap:wrap; justify-content:flex-end;
+  }
+  button.ctrl-btn{
+    font-family:inherit; font-size:12px; font-weight:600;
+    padding:7px 14px; border-radius:6px; border:1px solid var(--panel-border);
+    background:rgba(255,255,255,0.04); color:var(--text-main);
+    cursor:pointer; transition:background 0.15s, border-color 0.15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  button.ctrl-btn:hover{ background:rgba(255,255,255,0.09); }
+  button#growBtn{
+    background:linear-gradient(180deg, rgba(77,163,255,0.25), rgba(77,163,255,0.12));
+    border-color:rgba(77,163,255,0.5); color:#dbeaff;
+  }
+  button#growBtn:hover{ background:linear-gradient(180deg, rgba(77,163,255,0.38), rgba(77,163,255,0.20)); }
+  #searchWrap{ position:relative; }
+  input#searchBox{
+    font-family:inherit; font-size:12px;
+    padding:7px 10px; border-radius:6px; border:1px solid var(--panel-border);
+    background:rgba(255,255,255,0.04); color:var(--text-main);
+    width:130px; outline:none;
+  }
+  input#searchBox:focus{ border-color:rgba(77,163,255,0.6); width:170px; }
+  #searchResults{
+    position:absolute; top:32px; right:0; width:220px;
+    background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:8px;
+    max-height:220px; overflow-y:auto; display:none; z-index:20;
+    backdrop-filter: blur(6px);
+  }
+  #searchResults div{
+    padding:7px 10px; font-size:12px; cursor:pointer; color:var(--text-main);
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  #searchResults div:last-child{ border-bottom:none; }
+  #searchResults div:hover{ background:rgba(77,163,255,0.15); }
+  #searchResults div .sr-group{ color:var(--text-dim); font-size:10px; }
+
+  /* ---------- Legend ---------- */
+  #legend{
+    position:absolute; left:14px; bottom:14px; z-index:10;
+    background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:10px;
+    padding:10px 12px; font-size:10.5px; color:var(--text-dim);
+    max-width:210px; backdrop-filter: blur(6px);
+    pointer-events:auto;
+  }
+  #legend .lg-title{ font-size:10px; font-weight:700; color:var(--text-main); margin-bottom:6px; letter-spacing:0.4px; text-transform:uppercase; }
+  #legend .lg-row{ display:flex; align-items:center; gap:6px; margin:3px 0; }
+  #legend .lg-dot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
+  #legend .lg-line{ width:16px; height:0; border-top:2px solid; flex:0 0 auto; }
+  #legend .lg-sep{ height:1px; background:rgba(255,255,255,0.08); margin:6px 0; }
+  #legend.collapsed .lg-body{ display:none; }
+  #legend .lg-toggle{ position:absolute; top:8px; right:10px; cursor:pointer; color:var(--text-dim); font-size:11px; }
+
+  /* ---------- Ticker ---------- */
+  #ticker{
+    position:absolute; right:14px; bottom:14px; z-index:10;
+    background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:8px;
+    padding:7px 12px; font-size:11px; color:var(--text-dim);
+    backdrop-filter: blur(6px);
+  }
+
+  /* ---------- Stage label for Grow ---------- */
+  #stageLabel{
+    position:absolute; left:50%; bottom:110px; transform:translateX(-50%);
+    z-index:11; text-align:center; pointer-events:none;
+    opacity:0; transition:opacity 0.4s ease;
+    padding:6px 18px; border-radius:10px;
+    background:radial-gradient(ellipse at center, rgba(13,17,23,0.55) 0%, rgba(13,17,23,0) 75%);
+  }
+  #stageLabel.show{ opacity:1; }
+  #stageLabel .sl-ver{ font-size:26px; font-weight:800; color:rgba(201,209,217,0.5); letter-spacing:1px; }
+  #stageLabel .sl-txt{ font-size:13px; color:rgba(139,152,165,0.85); margin-top:2px; }
+
+  /* ---------- Side panel ---------- */
+  #panel{
+    position:absolute; top:0; right:0; height:100%; width:300px; max-width:88vw;
+    background:var(--panel-bg); border-left:1px solid var(--panel-border);
+    z-index:15; transform:translateX(100%); transition:transform 0.28s ease;
+    overflow-y:auto; backdrop-filter: blur(10px);
+    pointer-events:auto;
+  }
+  #panel.open{ transform:translateX(0); }
+  #panel .p-inner{ padding:20px 18px 30px; }
+  #panel .p-close{
+    position:absolute; top:12px; right:14px; cursor:pointer; font-size:18px;
+    color:var(--text-dim); line-height:1; padding:4px;
+  }
+  #panel .p-close:hover{ color:var(--text-bright); }
+  #panel .p-name{ font-size:18px; font-weight:700; color:var(--text-bright); margin:2px 26px 8px 0; }
+  #panel .p-chip{
+    display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.4px;
+    padding:3px 9px; border-radius:20px; margin-bottom:12px; text-transform:uppercase;
+  }
+  #panel .p-blurb{ font-size:13px; line-height:1.55; color:var(--text-main); margin-bottom:14px; }
+  #panel .p-ver{ font-size:11px; color:var(--text-dim); margin-bottom:16px; }
+  #panel .p-conn-title{
+    font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;
+    letter-spacing:0.4px; margin-bottom:8px; border-top:1px solid var(--panel-border); padding-top:14px;
+  }
+  #panel .p-conn-list{ display:flex; flex-direction:column; gap:4px; }
+  #panel .p-conn-item{
+    font-size:12.5px; color:var(--text-main); cursor:pointer; padding:5px 8px;
+    border-radius:5px; background:rgba(255,255,255,0.03);
+    display:flex; align-items:center; gap:7px;
+  }
+  #panel .p-conn-item:hover{ background:rgba(77,163,255,0.14); color:var(--text-bright); }
+  #panel .p-conn-dot{ width:7px; height:7px; border-radius:50%; flex:0 0 auto; }
+
+  /* overlay for closing panel by tapping background on mobile */
+  #panelOverlay{
+    position:absolute; inset:0; z-index:14; display:none;
+  }
+  #panelOverlay.show{ display:block; }
+
+  /* ---------- Mobile bottom sheet ---------- */
+  @media (max-width:640px){
+    #panel{
+      top:auto; bottom:0; left:0; right:0; width:100%; max-width:100%; height:62vh;
+      border-left:none; border-top:1px solid var(--panel-border);
+      border-radius:14px 14px 0 0;
+      transform:translateY(100%);
+    }
+    #panel.open{ transform:translateY(0); }
+    #title-block .t2{ display:none; }
+    #title-block .t1{ font-size:12px; }
+    #topbar{ padding:10px 8px; align-items:flex-start; }
+    #controls{ gap:5px; }
+    button.ctrl-btn{ padding:6px 9px; font-size:11px; white-space:nowrap; }
+    input#searchBox{ width:56px; padding:6px 8px; }
+    input#searchBox:focus{ width:104px; }
+    #searchResults{ width:190px; }
+    /* Legend sizing on mobile; starting collapsed state is set at init via JS (see LEGEND TOGGLE) */
+    #legend{ max-width:150px; font-size:9.5px; padding:8px 30px 8px 10px; bottom:10px; left:10px; }
+    /* Ticker hidden on mobile — no room in the top bar without crowding Grow/Reset */
+    #ticker{ display:none; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="vignette"></div>
+  <svg id="graph" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="glow-soft" x="-150%" y="-150%" width="400%" height="400%">
+        <feGaussianBlur stdDeviation="3.2" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="glow-strong" x="-200%" y="-200%" width="500%" height="500%">
+        <feGaussianBlur stdDeviation="7" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="glow-hub" x="-200%" y="-200%" width="500%" height="500%">
+        <feGaussianBlur stdDeviation="10" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+    <g id="viewport">
+      <g id="edgeLayer"></g>
+      <g id="nodeLayer"></g>
+    </g>
+  </svg>
+
+  <div id="topbar">
+    <div id="title-block">
+      <div class="t1">TAYLOR — memory map</div>
+      <div class="t2" id="subtitleText"></div>
+    </div>
+    <div id="controls">
+      <div id="searchWrap">
+        <input id="searchBox" type="text" placeholder="Search…" autocomplete="off" spellcheck="false">
+        <div id="searchResults"></div>
+      </div>
+      <button class="ctrl-btn" id="growBtn">⟲ Grow</button>
+      <button class="ctrl-btn" id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  <div id="stageLabel">
+    <div class="sl-ver" id="stageVer"></div>
+    <div class="sl-txt" id="stageTxt"></div>
+  </div>
+
+  <div id="legend">
+    <span class="lg-toggle" id="legendToggle">−</span>
+    <div class="lg-title">Legend</div>
+    <div class="lg-body">
+      <div class="lg-row"><span class="lg-dot" style="background:var(--hub-fill)"></span>Hub</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--teal-fill)"></span>Sources / access</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--amber-fill)"></span>Workarounds / memory</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--grey-fill)"></span>Routing / delivery / surfaces</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--steel-fill)"></span>Business workstreams</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--violet-fill)"></span>Personal workstreams</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--green-fill)"></span>Skills</div>
+      <div class="lg-sep"></div>
+      <div class="lg-row"><span class="lg-line" style="border-color:var(--edge-data)"></span>Data path</div>
+      <div class="lg-row"><span class="lg-line" style="border-color:var(--edge-workaround)"></span>Workaround</div>
+      <div class="lg-row"><span class="lg-line" style="border-color:var(--edge-route)"></span>Route / delivery</div>
+    </div>
+  </div>
+
+  <div id="ticker"></div>
+
+  <div id="panelOverlay"></div>
+  <div id="panel">
+    <div class="p-close" id="panelClose">✕</div>
+    <div class="p-inner">
+      <div class="p-name" id="p-name"></div>
+      <div class="p-chip" id="p-chip"></div>
+      <div class="p-blurb" id="p-blurb"></div>
+      <div class="p-ver" id="p-ver"></div>
+      <div class="p-conn-title">Connected to:</div>
+      <div class="p-conn-list" id="p-conn-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* =========================================================
+   1. DATA MODEL
+   ========================================================= */
+
+var GROUP_COLOR = {
+  hub:      { fill:"var(--hub-fill)",   base:"var(--hub-base)",   glow:"var(--hub-glow)" },
+  surface:  { fill:"var(--grey-fill)",  base:"var(--grey-base)",  glow:"var(--grey-fill)" },
+  home:     { fill:"var(--grey-fill)",  base:"var(--grey-base)",  glow:"var(--grey-fill)" },
+  source:   { fill:"var(--teal-fill)",  base:"var(--teal-base)",  glow:"var(--teal-fill)" },
+  access:   { fill:"var(--teal-fill)",  base:"var(--teal-base)",  glow:"var(--teal-fill)" },
+  memory:   { fill:"var(--amber-fill)", base:"var(--amber-base)", glow:"var(--amber-fill)" },
+  delivery: { fill:"var(--grey-fill)",  base:"var(--grey-base)",  glow:"var(--grey-fill)" },
+  workaround:{fill:"var(--amber-fill)", base:"var(--amber-base)", glow:"var(--amber-fill)" },
+  pro:      { fill:"var(--steel-fill)", base:"var(--steel-fill)", glow:"var(--steel-fill)" },
+  personal: { fill:"var(--violet-fill)",base:"var(--violet-fill)",glow:"var(--violet-fill)" },
+  skill:    { fill:"var(--green-fill)", base:"var(--green-base)", glow:"var(--green-fill)" }
+};
+
+var GROUP_RADIUS = {
+  hub:26, surface:8, home:8, source:8, access:8, memory:8, delivery:8,
+  workaround:9, pro:9, personal:9, skill:7
+};
+
+var GRAPH = {"meta": {"title": "TAYLOR — memory map", "subtitle_prefix": "How it's wired · Living History", "subtitle_date": "July 2026", "current_version": "1.9"}, "versions": {"1.0": "v1.0 · June 22, 2026", "1.2": "v1.2 · June 22", "1.3": "v1.3 · June 22", "1.5": "v1.5 · June 22", "1.6": "v1.6 · June 23", "1.7": "v1.7 · June 27", "1.8": "v1.8 · July 1", "1.9": "v1.9 · July 10"}, "stages": [{"vers": ["1.0"], "ver_label": "v1.0", "stage_text": "June 22 — first inventory"}, {"vers": ["1.2", "1.3", "1.5"], "ver_label": "v1.2–1.5", "stage_text": "the close, the skills, multi-location"}, {"vers": ["1.6"], "ver_label": "v1.6", "stage_text": "June 23 — the real-time listener"}, {"vers": ["1.7"], "ver_label": "v1.7", "stage_text": "June 27 — reliability + the Dropbox memory lane"}, {"vers": ["1.8"], "ver_label": "v1.8", "stage_text": "July 1 — the handoff rail grows up"}, {"vers": ["1.9"], "ver_label": "v1.9", "stage_text": "July 10 — the data layer: a portfolio datastore, live ad-spend ROAS, and a private CEO knowledgebase"}], "nodes": [{"id": "taylor", "label": "Taylor", "group": "hub", "status": "LIVE", "ver": "1.0", "blurb": "The center of everything: an always-on Mac at home that reads, plans, and builds — reaching outward through connectors and engineered workarounds, then sending work back as texts and filed reports."}, {"id": "dispatch", "label": "Phone Dispatch", "group": "surface", "status": "LIVE", "ver": "1.3", "blurb": "The mobile app's window into the same home-Mac Taylor — message a task from anywhere and the home Mac runs it."}, {"id": "laptop", "label": "Laptop Taylor", "group": "surface", "status": "LIVE", "ver": "1.3", "blurb": "A one-tap project that boots from a local log, works locally, and writes back — folded into the main memory every couple hours."}, {"id": "chat", "label": "Chat Claude", "group": "surface", "status": "LIVE", "ver": "1.3", "blurb": "A third access point sharing the same portable memory as Dispatch and the home Mac."}, {"id": "tucson", "label": "Tucson, AZ", "group": "home", "status": "LIVE", "ver": "1.0", "blurb": "One of two home bases anchored at the hub — where Travis is currently based."}, {"id": "canton", "label": "Canton, GA", "group": "home", "status": "LIVE", "ver": "1.0", "blurb": "The second home base anchored at the hub, alongside Tucson."}, {"id": "nectar", "label": "Hummingbird / Nectar API", "group": "source", "status": "LIVE", "ver": "1.0", "blurb": "Read-only storage-ops data across the full facility portfolio — the engine behind every portfolio report."}, {"id": "tractiq", "label": "TractIQ market intel", "group": "source", "status": "LIVE", "ver": "1.0", "blurb": "Live market and competition intelligence feeding the markets-overview sections of portfolio reports."}, {"id": "brandsites", "label": "Brand websites", "group": "source", "status": "LIVE", "ver": "1.0", "blurb": "Source for Google reviews, scraped per brand to build a ratings history over time."}, {"id": "msmhub", "label": "MSM Publication Hub", "group": "source", "status": "LIVE", "ver": "1.0", "blurb": "The archive sheet Taylor reads nightly to distill industry publication issues."}, {"id": "maxpreps", "label": "MaxPreps", "group": "source", "status": "LIVE", "ver": "1.0", "blurb": "High-school sports stats scraped in to feed the Ty volleyball stat hub."}, {"id": "sportwrench", "label": "SportWrench / AES", "group": "source", "status": "LIVE", "ver": "1.0", "blurb": "Tournament and schedule data scraped via browser for club volleyball tracking."}, {"id": "hudl", "label": "Hudl", "group": "source", "status": "LIVE", "ver": "1.0", "blurb": "Club-level video and stats pulled in on request for the volleyball hub."}, {"id": "timetree", "label": "TimeTree", "group": "source", "status": "LIVE", "ver": "1.0", "blurb": "The whereabouts calendar mirrored into Google Calendar as the source of truth for where Travis is."}, {"id": "xposts", "label": "X (Twitter) posts", "group": "source", "status": "LIVE", "ver": "1.8", "blurb": "Drop a post link in a thread and Taylor fetches and summarizes it."}, {"id": "linkedin", "label": "LinkedIn posts", "group": "source", "status": "LIVE", "ver": "1.8", "blurb": "Same post-lookup pattern as X, routed through browser rendering since LinkedIn is JS-heavy."}, {"id": "github", "label": "GitHub", "group": "source", "status": "LIMITED", "ver": "1.7", "blurb": "Connected but not yet wired in — gated on a private-repo secrets scrub before first use."}, {"id": "chatdb", "label": "Messages chat.db", "group": "source", "status": "LIVE", "ver": "1.6", "blurb": "The local Messages database read every few seconds so the inbound listener can catch new texts in real time."}, {"id": "web", "label": "Live web", "group": "source", "status": "LIVE", "ver": "1.0", "blurb": "General web research and lookups done live through the browser."}, {"id": "mcp", "label": "MCP connectors", "group": "access", "status": "LIVE", "ver": "1.0", "blurb": "The clean API integration layer — calendar, storage ops, market intel, and more, wired in directly."}, {"id": "gcal", "label": "Google Calendar", "group": "access", "status": "LIVE", "ver": "1.0", "blurb": "Read/write calendar access — destination for the TimeTree mirror, Ty's schedule, and handoff-rail calendar actions."}, {"id": "gmail", "label": "Gmail", "group": "access", "status": "LIMITED", "ver": "1.0", "blurb": "Draft-only by design — composes but never sends, a deliberate safety boundary."}, {"id": "dropboxc", "label": "Dropbox connector", "group": "access", "status": "LIVE", "ver": "1.7", "blurb": "The primary portable-memory lane shared by every instance, and the drop point for the save-file pipeline."}, {"id": "gdrive", "label": "Google Drive", "group": "access", "status": "LIMITED", "ver": "1.0", "blurb": "Create-only access, now the legacy backup lane since memory moved to Dropbox."}, {"id": "hubspot", "label": "HubSpot", "group": "access", "status": "LIMITED", "ver": "1.8", "blurb": "Read-only CRM access; the THE Show registration playbook is staged and waiting on write access."}, {"id": "browser", "label": "'Taylor' browser", "group": "access", "status": "LIVE", "ver": "1.0", "blurb": "Live browser automation for web work and JS-rendered lookups that a plain fetch can't reach."}, {"id": "sched", "label": "Scheduled tasks", "group": "access", "status": "LIVE", "ver": "1.0", "blurb": "Time-based automation running on the home Mac — the clockwork behind daily and monthly reports."}, {"id": "ledger", "label": "LIVE-LEDGER", "group": "memory", "status": "LIVE", "ver": "1.7", "blurb": "The real-time shared state file every instance reads first to catch up on what's current."}, {"id": "state", "label": "Taylor-STATE.md", "group": "memory", "status": "LIVE", "ver": "1.0", "blurb": "The insurance policy — a full operating picture rebuilt every couple hours so any session can catch up fast."}, {"id": "aihandoff", "label": "AI Handoff journal", "group": "memory", "status": "LIVE", "ver": "1.0", "blurb": "An append-only cross-instance history that different sessions write into and read from."}, {"id": "memlane", "label": "Dropbox memory lane", "group": "memory", "status": "LIVE", "ver": "1.7", "blurb": "The shared substrate all three instances (phone, laptop, chat) read and write memory through."}, {"id": "livinghist", "label": "Living History", "group": "memory", "status": "LIVE", "ver": "1.0", "blurb": "The running story this whole map is drawn from — every new capability earns a new version."}, {"id": "backlog", "label": "Project backlog", "group": "memory", "status": "LIVE", "ver": "1.8", "blurb": "A living project tracker kept in sync between a human-facing spreadsheet and a machine-readable file."}, {"id": "imsg11", "label": "iMessage — Travis 1:1", "group": "delivery", "status": "LIVE", "ver": "1.6", "blurb": "The full real-time conversation thread with Travis."}, {"id": "imsgsen", "label": "iMessage — Senators", "group": "delivery", "status": "LIVE", "ver": "1.6", "blurb": "The couple's group thread, handled in gated real time so it only responds when actually addressed."}, {"id": "imsgnss", "label": "iMessage — NSS owners", "group": "delivery", "status": "LIVE", "ver": "1.6", "blurb": "The owner-group thread used for daily reporting to the ownership group."}, {"id": "dbxfiles", "label": "Dropbox deliverables", "group": "delivery", "status": "LIVE", "ver": "1.0", "blurb": "Where reports and files land for pickup."}, {"id": "driveout", "label": "Google Drive (bridge)", "group": "delivery", "status": "LIVE", "ver": "1.0", "blurb": "The Drive-side leg of the two-way bridge mirroring files with Dropbox."}, {"id": "calout", "label": "Calendar & TimeTree", "group": "delivery", "status": "LIVE", "ver": "1.0", "blurb": "Where events get written back out to the calendar and travel tracker."}, {"id": "reports", "label": "PDF reports & dashboards", "group": "delivery", "status": "LIVE", "ver": "1.0", "blurb": "Monthly snapshots, EOM packages, and one-pagers — the finished, ready-to-read output."}, {"id": "rail", "label": "Handoff rail", "group": "workaround", "status": "LIVE", "ver": "1.8", "blurb": "The headline addition: listener flags a request, a durable job queue picks it up, and three executors handle lookups and gated actions — four action types are fully live."}, {"id": "listener", "label": "Inbound real-time listener", "group": "workaround", "status": "LIVE", "ver": "1.6", "blurb": "An always-on daemon that reads the Messages database every few seconds and composes real replies to genuinely new texts."}, {"id": "relay", "label": "Send relay (outbox→Shortcuts)", "group": "workaround", "status": "LIVE", "ver": "1.0", "blurb": "Sends texts despite there being no direct send API — a written job picked up by a worker and a Shortcut."}, {"id": "savefile", "label": "Save-file / HEIC pipeline", "group": "workaround", "status": "LIVE", "ver": "1.8", "blurb": "Text 'save this photo' with an attachment and it's filed into Dropbox automatically, converting HEIC to JPEG along the way."}, {"id": "addrbook", "label": "Maps / address-book rail", "group": "workaround", "status": "LIVE", "ver": "1.8", "blurb": "Location questions and address requests route through a curated address book as the single source of truth."}, {"id": "postlookup", "label": "X / LinkedIn post lookup", "group": "workaround", "status": "LIVE", "ver": "1.8", "blurb": "Drop a social post link in a thread and get a fetched, summarized reply back."}, {"id": "routing", "label": "Model routing + quiet hours", "group": "workaround", "status": "LIVE", "ver": "1.8", "blurb": "Right-sizes which AI model handles which thread, and stays quiet overnight rather than composing at odd hours."}, {"id": "bridge", "label": "Drive ↔ Dropbox bridge", "group": "workaround", "status": "LIVE", "ver": "1.0", "blurb": "A two-way mirror keeping files in sync across both file systems, refreshed nightly and on demand."}, {"id": "hardening", "label": "iMessage reliability stack", "group": "workaround", "status": "LIVE", "ver": "1.7", "blurb": "Exactly-once sends, post-send delivery confirmation, and watchdog monitoring so texts don't silently fail or duplicate."}, {"id": "memberset", "label": "Member-set thread binding", "group": "workaround", "status": "LIVE", "ver": "1.7", "blurb": "Threads are identified by who's in them, not by a fragile stored ID — rotation-proof against platform quirks."}, {"id": "watchdog", "label": "Worker watchdog", "group": "workaround", "status": "LIVE", "ver": "1.6", "blurb": "Heartbeat monitoring with automatic recovery if a background worker stalls."}, {"id": "refresh", "label": "Portable state refresh", "group": "workaround", "status": "LIVE", "ver": "1.0", "blurb": "Rebuilds the catch-up state snapshot roughly every two hours so any fresh session is current."}, {"id": "scrape", "label": "Sports web scraping", "group": "workaround", "status": "LIVE", "ver": "1.0", "blurb": "Gathers stats from multiple sports sites via browser and folds them into the volleyball hub."}, {"id": "snapshot", "label": "Portfolio Snapshot — monthly", "group": "pro", "status": "LIVE", "ver": "1.8", "blurb": "An 8-page dark-themed monthly PDF covering portfolio summary, by-brand performance, and market overviews — delivered unasked."}, {"id": "desk", "label": "Portfolio Insights Desk — daily", "group": "pro", "status": "LIVE", "ver": "1.8", "blurb": "A daily read of the full-portfolio management summary with outliers flagged, texted first thing every morning."}, {"id": "mtd", "label": "Weekly MTD one-pager", "group": "pro", "status": "LIVE", "ver": "1.0", "blurb": "A Saturday-night month-to-date snapshot of the whole portfolio."}, {"id": "eom", "label": "EOM close & report packages", "group": "pro", "status": "LIVE", "ver": "1.2", "blurb": "The month-end close turned into per-facility report packages, fed straight from the operations API."}, {"id": "sil1", "label": "SIL1 daily owner card", "group": "pro", "status": "LIVE", "ver": "1.0", "blurb": "A partner's entire daily reporting stack reduced to a single, well-formatted text message."}, {"id": "msmnews", "label": "Daily MSM industry news", "group": "pro", "status": "LIVE", "ver": "1.0", "blurb": "A morning brief on industry news, texted early each day."}, {"id": "msmarch", "label": "MSM archives reader", "group": "pro", "status": "LIVE", "ver": "1.7", "blurb": "Nightly distillation of the industry publication archive into a digestible read."}, {"id": "reviews", "label": "Google reviews by brand", "group": "pro", "status": "LIVE", "ver": "1.0", "blurb": "Per-brand rating and review count with history, tracked over time."}, {"id": "theshow", "label": "THE Show 2026 drive", "group": "pro", "status": "PLANNED", "ver": "1.8", "blurb": "A staged registration playbook aimed at driving conference attendance, ready to go live once marketing access is reauthorized."}, {"id": "opschecks", "label": "Daily operational checks", "group": "pro", "status": "LIVE", "ver": "1.0", "blurb": "Routine health and email checks that stay silent when everything's fine and only speak up when something's not."}, {"id": "adams", "label": "Adams Property Group demo", "group": "pro", "status": "DONE", "ver": "1.7", "blurb": "A completed live portfolio walkthrough that demonstrated strong advertising ROAS across the portfolio."}, {"id": "ty", "label": "Ty volleyball stat hub", "group": "personal", "status": "LIVE", "ver": "1.0", "blurb": "A stat hub combining spreadsheet tracking, a stat card, and video for a family member's volleyball season."}, {"id": "tywatch", "label": "Tournament schedule watchers", "group": "personal", "status": "SEASONAL", "ver": "1.0", "blurb": "Seasonal watchers that pull tournament schedules into the calendar and text results as they come in."}, {"id": "ttmirror", "label": "TimeTree whereabouts mirror", "group": "personal", "status": "LIVE", "ver": "1.0", "blurb": "Mirrors the travel calendar into Google Calendar as the source of truth for where Travis is."}, {"id": "senwatch", "label": "Senators watcher", "group": "personal", "status": "LIVE", "ver": "1.0", "blurb": "Answers calendar and whereabouts questions automatically in the couple's group thread."}, {"id": "stream", "label": "Weekly streaming digest", "group": "personal", "status": "LIVE", "ver": "1.0", "blurb": "A Saturday-morning roundup of new streaming releases."}, {"id": "xrp", "label": "XRP / Ripple news watch", "group": "personal", "status": "LIVE", "ver": "1.0", "blurb": "A standing watch on XRP/Ripple news."}, {"id": "calrail", "label": "Calendar actions by text", "group": "personal", "status": "LIVE", "ver": "1.8", "blurb": "Create, update, or delete calendar events just by texting a request."}, {"id": "skeom", "label": "eom-close", "group": "skill", "status": "LIVE", "ver": "1.5", "blurb": "An installed playbook that runs the month-end close end to end — spreadsheet, graphs, and per-facility packages — leaving only the final mail-merge as a manual step."}, {"id": "skdelta", "label": "delta-booking", "group": "skill", "status": "LIVE", "ver": "1.5", "blurb": "Books, changes, cancels, and checks in on Delta trips, then files them to the calendar — never completes a booking without explicit go-ahead."}, {"id": "skcal", "label": "calendar-travel", "group": "skill", "status": "LIVE", "ver": "1.5", "blurb": "Handles general calendar adds and travel filing with sensible defaults, and keeps flight schedules off the personal calendar by hard rule."}, {"id": "skcut", "label": "vintage-jacks-booking", "group": "skill", "status": "LIVE", "ver": "1.5", "blurb": "Books a usual haircut appointment through guest checkout, stopping right before the final confirmation."}, {"id": "skphoto", "label": "daily-photo-post", "group": "skill", "status": "LIVE", "ver": "1.5", "blurb": "Composes a daily couple-photo post with rotating tone, keeping work topics out and protecting personal surprises."}, {"id": "skdd", "label": "order-doordash", "group": "skill", "status": "LIVE", "ver": "1.7", "blurb": "End-to-end food ordering with a hard confirm-before-checkout gate — either partner can approve."}, {"id": "skintro", "label": "introduce-taylor-to-thread", "group": "skill", "status": "LIVE", "ver": "1.7", "blurb": "Onboards Taylor into a brand-new group or 1:1 thread using the proven setup mechanics, turning it into a guided few-minute job."}, {"id": "sknails", "label": "serenity-nails-booking", "group": "skill", "status": "LIVE", "ver": "1.8", "blurb": "Books a nail salon appointment for either partner, one person per pass, behind a hard confirmation gate."}, {"id": "sktsa", "label": "atl-tsa-wait-times", "group": "skill", "status": "LIVE", "ver": "1.8", "blurb": "Checks the live airport security wait time at a home airport's PreCheck checkpoint — a simple, no-login lookup."}, {"id": "supermetrics", "label": "Supermetrics (Google Ads)", "group": "source", "status": "LIVE", "ver": "1.9", "blurb": "Live Google Ads ad-spend, upgraded to a paid plan and reconnected — the real cost side behind every ROAS number, pulled per facility and brand."}, {"id": "store", "label": "Portfolio Datastore", "group": "memory", "status": "LIVE", "ver": "1.9", "blurb": "A local analytics database (facilities, daily metrics, budgets, ad spend) built beside the live pipeline and validated to the penny — a queryable spine under the portfolio reports, added without disturbing the existing CSV/API path."}, {"id": "roas", "label": "Live ad-spend ROAS", "group": "pro", "status": "LIVE", "ver": "1.9", "blurb": "Real advertising ROAS by facility and brand — live Supermetrics ad spend against real Nectar leads, conversions, and LTV (June portfolio 22.5x) — delivered as an ad-spend leaderboard and folded into the monthly snapshot, refreshed by a monthly sync job."}, {"id": "adspendqa", "label": "ROAS / ad-spend Q&A by text", "group": "workaround", "status": "LIVE", "ver": "1.9", "blurb": "Ask a ROAS or ad-spend question by text — for any facility, brand, or the whole portfolio — and the lookup rail answers from live data, right in the owners' thread. No brand fencing: the NSS owners get any answer they want."}, {"id": "ceokb", "label": "CEO Knowledgebase (1:1 only)", "group": "memory", "status": "LIMITED", "ver": "1.9", "blurb": "A private knowledgebase of company briefs (Tenant, StoreLocal, SLP, MSM, Storelocal Storage). Taylor answers strictly from the briefs and never fabricates — reachable ONLY from Travis's personal 1:1, fail-closed across three independent gates so it can never surface in a group thread."}, {"id": "ingest", "label": "Twice-daily datastore ingest", "group": "workaround", "status": "LIVE", "ver": "1.9", "blurb": "A twice-daily job (noon + 7 PM AZ) that refreshes the portfolio datastore from live operations data across all 29 facilities, so every store-backed report stays current — loaded and verified running on the host, with healthy data flowing into the store."}, {"id": "attrib", "label": "Attribution-lite Q&A by text", "group": "workaround", "status": "LIVE", "ver": "1.9", "blurb": "Ask by text for the lead-channel mix (web / phone / walk-in / other) or the most cost-effective ad campaigns — any facility, brand, or the whole portfolio, answered live from the datastore in the owners' thread. Deeper click-to-move-in attribution still waits on a Hummingbird product change."}], "edges": [{"source": "nectar", "target": "mcp", "kind": "data"}, {"source": "tractiq", "target": "mcp", "kind": "data"}, {"source": "github", "target": "mcp", "kind": "data"}, {"source": "gcal", "target": "mcp", "kind": "data"}, {"source": "gmail", "target": "mcp", "kind": "data"}, {"source": "dropboxc", "target": "mcp", "kind": "data"}, {"source": "gdrive", "target": "mcp", "kind": "data"}, {"source": "hubspot", "target": "mcp", "kind": "data"}, {"source": "brandsites", "target": "browser", "kind": "data"}, {"source": "msmhub", "target": "browser", "kind": "data"}, {"source": "maxpreps", "target": "browser", "kind": "data"}, {"source": "sportwrench", "target": "browser", "kind": "data"}, {"source": "hudl", "target": "browser", "kind": "data"}, {"source": "timetree", "target": "browser", "kind": "data"}, {"source": "xposts", "target": "browser", "kind": "data"}, {"source": "linkedin", "target": "browser", "kind": "data"}, {"source": "web", "target": "browser", "kind": "data"}, {"source": "mcp", "target": "taylor", "kind": "data"}, {"source": "browser", "target": "taylor", "kind": "data"}, {"source": "sched", "target": "taylor", "kind": "data"}, {"source": "chatdb", "target": "listener", "kind": "workaround"}, {"source": "dispatch", "target": "taylor", "kind": "route"}, {"source": "laptop", "target": "taylor", "kind": "route"}, {"source": "chat", "target": "taylor", "kind": "route"}, {"source": "tucson", "target": "taylor", "kind": "route"}, {"source": "canton", "target": "taylor", "kind": "route"}, {"source": "taylor", "target": "memlane", "kind": "workaround"}, {"source": "memlane", "target": "ledger", "kind": "workaround"}, {"source": "memlane", "target": "state", "kind": "workaround"}, {"source": "memlane", "target": "aihandoff", "kind": "workaround"}, {"source": "memlane", "target": "livinghist", "kind": "workaround"}, {"source": "memlane", "target": "backlog", "kind": "workaround"}, {"source": "refresh", "target": "state", "kind": "workaround"}, {"source": "refresh", "target": "taylor", "kind": "workaround"}, {"source": "bridge", "target": "memlane", "kind": "workaround"}, {"source": "bridge", "target": "driveout", "kind": "workaround"}, {"source": "listener", "target": "taylor", "kind": "workaround"}, {"source": "listener", "target": "rail", "kind": "workaround"}, {"source": "taylor", "target": "rail", "kind": "workaround"}, {"source": "rail", "target": "relay", "kind": "workaround"}, {"source": "taylor", "target": "relay", "kind": "workaround"}, {"source": "relay", "target": "imsg11", "kind": "route"}, {"source": "relay", "target": "imsgsen", "kind": "route"}, {"source": "relay", "target": "imsgnss", "kind": "route"}, {"source": "hardening", "target": "relay", "kind": "workaround"}, {"source": "memberset", "target": "imsgsen", "kind": "workaround"}, {"source": "memberset", "target": "listener", "kind": "workaround"}, {"source": "watchdog", "target": "relay", "kind": "workaround"}, {"source": "watchdog", "target": "listener", "kind": "workaround"}, {"source": "routing", "target": "listener", "kind": "workaround"}, {"source": "savefile", "target": "rail", "kind": "workaround"}, {"source": "savefile", "target": "dbxfiles", "kind": "route"}, {"source": "addrbook", "target": "rail", "kind": "workaround"}, {"source": "postlookup", "target": "rail", "kind": "workaround"}, {"source": "postlookup", "target": "browser", "kind": "data"}, {"source": "calrail", "target": "rail", "kind": "workaround"}, {"source": "calrail", "target": "gcal", "kind": "data"}, {"source": "taylor", "target": "reports", "kind": "route"}, {"source": "reports", "target": "dbxfiles", "kind": "route"}, {"source": "taylor", "target": "dbxfiles", "kind": "route"}, {"source": "taylor", "target": "driveout", "kind": "route"}, {"source": "taylor", "target": "calout", "kind": "route"}, {"source": "taylor", "target": "snapshot", "kind": "route"}, {"source": "taylor", "target": "desk", "kind": "route"}, {"source": "taylor", "target": "mtd", "kind": "route"}, {"source": "taylor", "target": "eom", "kind": "route"}, {"source": "taylor", "target": "sil1", "kind": "route"}, {"source": "taylor", "target": "msmnews", "kind": "route"}, {"source": "taylor", "target": "msmarch", "kind": "route"}, {"source": "taylor", "target": "reviews", "kind": "route"}, {"source": "taylor", "target": "theshow", "kind": "route"}, {"source": "taylor", "target": "opschecks", "kind": "route"}, {"source": "taylor", "target": "adams", "kind": "route"}, {"source": "nectar", "target": "snapshot", "kind": "data"}, {"source": "tractiq", "target": "snapshot", "kind": "data"}, {"source": "nectar", "target": "desk", "kind": "data"}, {"source": "nectar", "target": "mtd", "kind": "data"}, {"source": "nectar", "target": "eom", "kind": "data"}, {"source": "nectar", "target": "sil1", "kind": "data"}, {"source": "brandsites", "target": "reviews", "kind": "data"}, {"source": "msmhub", "target": "msmarch", "kind": "data"}, {"source": "web", "target": "msmnews", "kind": "data"}, {"source": "hubspot", "target": "theshow", "kind": "data"}, {"source": "snapshot", "target": "imsg11", "kind": "route"}, {"source": "desk", "target": "imsg11", "kind": "route"}, {"source": "mtd", "target": "imsg11", "kind": "route"}, {"source": "sil1", "target": "imsgnss", "kind": "route"}, {"source": "msmnews", "target": "imsg11", "kind": "route"}, {"source": "eom", "target": "reports", "kind": "route"}, {"source": "taylor", "target": "ty", "kind": "route"}, {"source": "taylor", "target": "tywatch", "kind": "route"}, {"source": "taylor", "target": "ttmirror", "kind": "route"}, {"source": "taylor", "target": "senwatch", "kind": "route"}, {"source": "taylor", "target": "stream", "kind": "route"}, {"source": "taylor", "target": "xrp", "kind": "route"}, {"source": "taylor", "target": "calrail", "kind": "route"}, {"source": "maxpreps", "target": "ty", "kind": "data"}, {"source": "hudl", "target": "ty", "kind": "data"}, {"source": "sportwrench", "target": "tywatch", "kind": "data"}, {"source": "scrape", "target": "ty", "kind": "workaround"}, {"source": "timetree", "target": "ttmirror", "kind": "data"}, {"source": "ttmirror", "target": "gcal", "kind": "data"}, {"source": "tywatch", "target": "calout", "kind": "route"}, {"source": "senwatch", "target": "imsgsen", "kind": "route"}, {"source": "taylor", "target": "skeom", "kind": "route"}, {"source": "taylor", "target": "skdelta", "kind": "route"}, {"source": "taylor", "target": "skcal", "kind": "route"}, {"source": "taylor", "target": "skcut", "kind": "route"}, {"source": "taylor", "target": "skphoto", "kind": "route"}, {"source": "taylor", "target": "skdd", "kind": "route"}, {"source": "taylor", "target": "skintro", "kind": "route"}, {"source": "taylor", "target": "sknails", "kind": "route"}, {"source": "taylor", "target": "sktsa", "kind": "route"}, {"source": "skeom", "target": "eom", "kind": "route"}, {"source": "skdd", "target": "rail", "kind": "workaround"}, {"source": "sknails", "target": "rail", "kind": "workaround"}, {"source": "skcut", "target": "rail", "kind": "workaround"}, {"source": "supermetrics", "target": "mcp", "kind": "data"}, {"source": "supermetrics", "target": "roas", "kind": "data"}, {"source": "supermetrics", "target": "store", "kind": "data"}, {"source": "nectar", "target": "roas", "kind": "data"}, {"source": "nectar", "target": "store", "kind": "data"}, {"source": "nectar", "target": "ingest", "kind": "data"}, {"source": "ingest", "target": "store", "kind": "data"}, {"source": "sched", "target": "ingest", "kind": "route"}, {"source": "store", "target": "sil1", "kind": "data"}, {"source": "store", "target": "attrib", "kind": "data"}, {"source": "roas", "target": "snapshot", "kind": "data"}, {"source": "roas", "target": "adspendqa", "kind": "data"}, {"source": "taylor", "target": "roas", "kind": "route"}, {"source": "roas", "target": "imsg11", "kind": "route"}, {"source": "adspendqa", "target": "rail", "kind": "workaround"}, {"source": "adspendqa", "target": "imsgnss", "kind": "route"}, {"source": "taylor", "target": "ceokb", "kind": "route"}, {"source": "ceokb", "target": "imsg11", "kind": "route"}, {"source": "attrib", "target": "rail", "kind": "workaround"}, {"source": "attrib", "target": "imsgnss", "kind": "route"}]};
+
+var VER_LABEL = GRAPH.versions;
+
+var STATUS_COLOR = {
+  LIVE:"var(--status-live)", LIMITED:"var(--status-limited)", PLANNED:"var(--status-planned)",
+  SEASONAL:"var(--status-seasonal)", DONE:"var(--status-done)"
+};
+
+/* Seed layout: spine left->right; x/y are seed "home" targets (soft force), not pins. */
+var SEED = {
+  source:{x:-620,y:0}, access:{x:-320,y:0}, hub:{x:0,y:0},
+  memory:{x:320,y:0}, delivery:{x:620,y:0},
+  surface:{x:0,y:-380}, home:{x:0,y:-160},
+  pro:{x:-260,y:260}, personal:{x:260,y:260},
+  skill:{x:0,y:420}, workaround:{x:0,y:-40}
+};
+
+// id | label | group | status | ver | blurb (from GRAPH.nodes)
+var NODES_RAW = GRAPH.nodes.map(function(n){
+  return [n.id, n.label, n.group, n.status, n.ver, n.blurb];
+});
+
+// a>b|kind (from GRAPH.edges)
+var EDGES_RAW = GRAPH.edges.map(function(e){
+  return e.source + ">" + e.target + "|" + e.kind;
+});
+
+function hashStr(s){
+  var h=0;
+  for(var i=0;i<s.length;i++){ h = ((h<<5)-h + s.charCodeAt(i))|0; }
+  return Math.abs(h) % 200;
+}
+
+var nodes = NODES_RAW.map(function(r){
+  var id=r[0], label=r[1], group=r[2], status=r[3], ver=r[4], blurb=r[5];
+  var seed = SEED[group] || {x:0,y:0};
+  // jitter so same-group nodes don't stack exactly
+  var jitterX = (hashStr(id) % 200 - 100);
+  var jitterY = ((hashStr(id+"y")) % 200 - 100);
+  return {
+    id:id, label:label, group:group, status:status, ver:ver, blurb:blurb,
+    r: GROUP_RADIUS[group] || 8,
+    homeX: seed.x + jitterX*0.9,
+    homeY: seed.y + jitterY*0.9,
+    x: seed.x + jitterX, y: seed.y + jitterY,
+    px:0, py:0, vx:0, vy:0,
+    fixed:false, visible:true
+  };
+});
+
+var nodeById = {};
+nodes.forEach(function(n){ nodeById[n.id]=n; });
+
+var edges = EDGES_RAW.map(function(str){
+  var parts = str.split("|");
+  var kind = parts[1];
+  var ab = parts[0].split(">");
+  return { a:ab[0], b:ab[1], kind:kind, visible:true };
+}).filter(function(e){ return nodeById[e.a] && nodeById[e.b]; });
+
+/* neighbor index */
+var neighbors = {};
+nodes.forEach(function(n){ neighbors[n.id] = []; });
+edges.forEach(function(e){
+  neighbors[e.a].push(e.b);
+  neighbors[e.b].push(e.a);
+});
+
+/* stage groupings for Grow replay, by ver thresholds — driven by GRAPH.stages */
+var STAGES = GRAPH.stages.map(function(s, i){
+  return { key:"stage"+i, vers:s.vers, ver:s.ver_label, label:s.stage_text };
+});
+var VER_ORDER = Object.keys(GRAPH.versions);
+function verIndex(v){ return VER_ORDER.indexOf(v); }
+
+/* =========================================================
+   2. SVG SETUP / RENDERING
+   ========================================================= */
+
+var svg = document.getElementById("graph");
+var viewport = document.getElementById("viewport");
+var edgeLayer = document.getElementById("edgeLayer");
+var nodeLayer = document.getElementById("nodeLayer");
+
+var W = window.innerWidth, H = window.innerHeight;
+var camX = 0, camY = 0, camScale = 1; // camera: world->screen : screen = (world - cam) * scale + center
+
+function worldToScreen(x,y){
+  return { x: (x - camX)*camScale + W/2, y: (y - camY)*camScale + H/2 };
+}
+function screenToWorld(x,y){
+  return { x: (x - W/2)/camScale + camX, y: (y - H/2)/camScale + camY };
+}
+
+function applyTransform(){
+  viewport.setAttribute("transform",
+    "translate("+(W/2)+","+(H/2)+") scale("+camScale+") translate("+(-camX)+","+(-camY)+")");
+}
+
+/* build DOM elements */
+var edgeEls = {};
+edges.forEach(function(e, idx){
+  var line = document.createElementNS("http://www.w3.org/2000/svg","line");
+  line.setAttribute("class","edge-line");
+  line.setAttribute("stroke", e.kind==="data" ? "var(--edge-data)" : (e.kind==="workaround" ? "var(--edge-workaround)" : "var(--edge-route)"));
+  line.setAttribute("stroke-width","1.2");
+  line.setAttribute("opacity","0.45");
+  edgeLayer.appendChild(line);
+  e.el = line;
+  edgeEls[idx]=line;
+});
+
+var nodeEls = {};
+nodes.forEach(function(n){
+  var g = document.createElementNS("http://www.w3.org/2000/svg","g");
+  g.setAttribute("class","node-group");
+  g.setAttribute("data-id", n.id);
+
+  var circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
+  circle.setAttribute("class","node-circle");
+  circle.setAttribute("r", n.r);
+  circle.setAttribute("fill", GROUP_COLOR[n.group].fill);
+  circle.setAttribute("filter", n.group==="hub" ? "url(#glow-hub)" : "url(#glow-soft)");
+  circle.setAttribute("stroke", GROUP_COLOR[n.group].base);
+  circle.setAttribute("stroke-width", n.group==="hub" ? "2" : "1");
+
+  var label = document.createElementNS("http://www.w3.org/2000/svg","text");
+  label.setAttribute("class", "node-label" + (n.group==="hub" ? " hub" : ""));
+  label.setAttribute("text-anchor","middle");
+  label.setAttribute("y", n.r + (n.group==="hub" ? 18 : 13));
+  label.textContent = n.label;
+
+  g.appendChild(circle);
+  g.appendChild(label);
+  nodeLayer.appendChild(g);
+
+  n.el = g; n.circleEl = circle; n.labelEl = label;
+  n.baseFilter = n.group==="hub" ? "url(#glow-hub)" : "url(#glow-soft)";
+  nodeEls[n.id]=g;
+
+  g.addEventListener("pointerenter", function(){
+    if(n.id !== selectedId) circle.setAttribute("filter","url(#glow-strong)");
+  });
+  g.addEventListener("pointerleave", function(){
+    if(n.id !== selectedId) circle.setAttribute("filter", n.baseFilter);
+  });
+});
+
+function positionAll(){
+  nodes.forEach(function(n){
+    n.el.setAttribute("transform","translate("+n.x+","+n.y+")");
+    n.el.style.display = n.visible ? "" : "none";
+  });
+  edges.forEach(function(e){
+    var a=nodeById[e.a], b=nodeById[e.b];
+    if(!e.visible || !a.visible || !b.visible){
+      e.el.style.display="none"; return;
+    }
+    e.el.style.display="";
+    e.el.setAttribute("x1",a.x); e.el.setAttribute("y1",a.y);
+    e.el.setAttribute("x2",b.x); e.el.setAttribute("y2",b.y);
+  });
+}
+
+/* =========================================================
+   3. PHYSICS SIMULATION (hand-rolled)
+   ========================================================= */
+
+var SIM = {
+  repulsion: 3120,   // +20% vs original 2600 — gives breathing room around the crowded hub ring
+  springLen: 106,     // +18% vs original 90
+  springK: 0.045,
+  centerK: 0.0018,
+  homeK: 0.045,
+  damping: 0.86,
+  collisionPad: 4,
+  maxSpeed: 40
+};
+
+function simTick(activeNodes){
+  var n = activeNodes;
+  var i,j;
+  // pairwise repulsion O(n^2) -- fine for ~80 nodes
+  for(i=0;i<n.length;i++){
+    var a = n[i];
+    if(a.fixed) continue;
+    var fx=0, fy=0;
+    for(j=0;j<n.length;j++){
+      if(i===j) continue;
+      var b = n[j];
+      var dx = a.x-b.x, dy = a.y-b.y;
+      var distSq = dx*dx+dy*dy;
+      if(distSq<0.01) { dx=(Math.random()-0.5); dy=(Math.random()-0.5); distSq=dx*dx+dy*dy; }
+      var dist = Math.sqrt(distSq);
+      var minDist = a.r+b.r+SIM.collisionPad;
+      var force;
+      if(dist < minDist){
+        // collision push
+        force = SIM.repulsion / Math.max(distSq,100) + (minDist-dist)*2;
+      } else {
+        force = SIM.repulsion / Math.max(distSq, 400);
+      }
+      fx += (dx/dist)*force;
+      fy += (dy/dist)*force;
+    }
+    a._fx = fx; a._fy = fy;
+  }
+  // springs
+  edges.forEach(function(e){
+    if(!e.visible) return;
+    var a=nodeById[e.a], b=nodeById[e.b];
+    if(!a.visible || !b.visible) return;
+    if(a._fx===undefined) return;
+    var dx = b.x-a.x, dy=b.y-a.y;
+    var dist = Math.sqrt(dx*dx+dy*dy) || 0.01;
+    var stretch = dist - SIM.springLen;
+    var force = stretch * SIM.springK;
+    var fx = (dx/dist)*force, fy=(dy/dist)*force;
+    if(!a.fixed){ a._fx += fx; a._fy += fy; }
+    if(!b.fixed){ b._fx -= fx; b._fy -= fy; }
+  });
+  // centering gravity + home-position force + integrate
+  for(i=0;i<n.length;i++){
+    var node = n[i];
+    if(node.fixed){ node.vx=0; node.vy=0; continue; }
+    var cfx = -node.x*SIM.centerK;
+    var cfy = -node.y*SIM.centerK;
+    var hfx = (node.homeX-node.x)*SIM.homeK;
+    var hfy = (node.homeY-node.y)*SIM.homeK;
+    var totalFx = (node._fx||0) + cfx + hfx;
+    var totalFy = (node._fy||0) + cfy + hfy;
+    node.vx = (node.vx + totalFx*0.016) * SIM.damping;
+    node.vy = (node.vy + totalFy*0.016) * SIM.damping;
+    var speed = Math.sqrt(node.vx*node.vx+node.vy*node.vy);
+    if(speed>SIM.maxSpeed){ node.vx = node.vx/speed*SIM.maxSpeed; node.vy=node.vy/speed*SIM.maxSpeed; }
+    node.x += node.vx;
+    node.y += node.vy;
+  }
+}
+
+function activeNodeList(){
+  return nodes.filter(function(n){ return n.visible; });
+}
+
+var running = true;
+var lastFrameTime = 0;
+
+function frame(ts){
+  if(running){
+    var an = activeNodeList();
+    simTick(an);
+    positionAll();
+    updateEdgeHighlight();
+  }
+  requestAnimationFrame(frame);
+}
+
+/* Pre-warm before first paint */
+function prewarm(steps){
+  var an = activeNodeList();
+  for(var s=0;s<steps;s++){
+    simTick(an);
+  }
+}
+
+/* =========================================================
+   4. CAMERA: PAN / ZOOM / DRAG (Pointer Events)
+   ========================================================= */
+
+var pointers = {}; // id -> {x,y}
+var dragNode = null;
+var isPanning = false;
+var panStart = null;
+var camStart = null;
+var pinchStartDist = null;
+var pinchStartScale = null;
+var pinchMidWorld = null;
+var didDrag = false;
+
+function getSvgPoint(evt){
+  var rect = svg.getBoundingClientRect();
+  return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+}
+
+svg.addEventListener("pointerdown", function(evt){
+  var pt = getSvgPoint(evt);
+  pointers[evt.pointerId] = pt;
+  didDrag = false;
+
+  var targetGroup = evt.target.closest ? evt.target.closest(".node-group") : null;
+  var nodeCount = Object.keys(pointers).length;
+
+  if(nodeCount===1 && targetGroup){
+    var id = targetGroup.getAttribute("data-id");
+    var n = nodeById[id];
+    dragNode = n;
+    n.fixed = true;
+    svg.setPointerCapture(evt.pointerId);
+  } else if(nodeCount===1){
+    isPanning = true;
+    panStart = pt;
+    camStart = { x:camX, y:camY };
+    svg.classList.add("panning");
+    svg.setPointerCapture(evt.pointerId);
+  } else if(nodeCount===2){
+    isPanning = false;
+    dragNode = null;
+    var ids = Object.keys(pointers);
+    var p1 = pointers[ids[0]], p2 = pointers[ids[1]];
+    pinchStartDist = Math.hypot(p2.x-p1.x, p2.y-p1.y) || 1;
+    pinchStartScale = camScale;
+    var midScreen = { x:(p1.x+p2.x)/2, y:(p1.y+p2.y)/2 };
+    pinchMidWorld = screenToWorld(midScreen.x, midScreen.y);
+  }
+});
+
+svg.addEventListener("pointermove", function(evt){
+  if(!pointers[evt.pointerId]) return;
+  var pt = getSvgPoint(evt);
+  pointers[evt.pointerId] = pt;
+  var nodeCount = Object.keys(pointers).length;
+
+  if(nodeCount>=2){
+    var ids = Object.keys(pointers);
+    var p1 = pointers[ids[0]], p2 = pointers[ids[1]];
+    var dist = Math.hypot(p2.x-p1.x, p2.y-p1.y) || 1;
+    if(pinchStartDist){
+      var scale = pinchStartScale * (dist/pinchStartDist);
+      scale = Math.max(0.15, Math.min(4, scale));
+      camScale = scale;
+      var midScreen = { x:(p1.x+p2.x)/2, y:(p1.y+p2.y)/2 };
+      var midWorldNow = screenToWorld(midScreen.x, midScreen.y);
+      camX += (pinchMidWorld.x - midWorldNow.x);
+      camY += (pinchMidWorld.y - midWorldNow.y);
+      applyTransform();
+    }
+    return;
+  }
+
+  if(dragNode){
+    didDrag = true;
+    var world = screenToWorld(pt.x, pt.y);
+    dragNode.x = world.x; dragNode.y = world.y;
+    dragNode.vx = 0; dragNode.vy = 0;
+  } else if(isPanning){
+    var dx = (pt.x - panStart.x)/camScale;
+    var dy = (pt.y - panStart.y)/camScale;
+    if(Math.abs(dx)>2 || Math.abs(dy)>2) didDrag = true;
+    camX = camStart.x - dx;
+    camY = camStart.y - dy;
+    applyTransform();
+  }
+});
+
+function endPointer(evt){
+  delete pointers[evt.pointerId];
+  var nodeCount = Object.keys(pointers).length;
+  if(nodeCount<2){ pinchStartDist=null; }
+
+  if(dragNode){
+    dragNode.fixed = false;
+    if(!didDrag){
+      selectNode(dragNode.id);
+    }
+    dragNode = null;
+  } else if(isPanning){
+    isPanning = false;
+    svg.classList.remove("panning");
+    if(!didDrag){
+      // background tap: close panel
+      closePanel();
+    }
+  }
+}
+svg.addEventListener("pointerup", endPointer);
+svg.addEventListener("pointercancel", endPointer);
+
+svg.addEventListener("wheel", function(evt){
+  evt.preventDefault();
+  var pt = getSvgPoint(evt);
+  var worldBefore = screenToWorld(pt.x, pt.y);
+  var delta = -evt.deltaY * 0.0016;
+  camScale = Math.max(0.15, Math.min(4, camScale * (1+delta)));
+  var worldAfter = screenToWorld(pt.x, pt.y);
+  camX += (worldBefore.x - worldAfter.x);
+  camY += (worldBefore.y - worldAfter.y);
+  applyTransform();
+}, { passive:false });
+
+/* =========================================================
+   5. SELECTION / HIGHLIGHT / PANEL
+   ========================================================= */
+
+var selectedId = null;
+
+function updateEdgeHighlight(){
+  if(!selectedId){
+    edges.forEach(function(e){
+      if(!e.visible) return;
+      e.el.setAttribute("opacity","0.45");
+      e.el.setAttribute("stroke-width","1.2");
+    });
+    nodes.forEach(function(n){
+      n.circleEl.setAttribute("opacity","1");
+      n.labelEl.setAttribute("opacity","1");
+      n.circleEl.setAttribute("filter", n.baseFilter);
+    });
+    return;
+  }
+  var neigh = {};
+  neigh[selectedId]=true;
+  (neighbors[selectedId]||[]).forEach(function(id){ neigh[id]=true; });
+
+  edges.forEach(function(e){
+    if(!e.visible) return;
+    var involved = (e.a===selectedId || e.b===selectedId);
+    e.el.setAttribute("opacity", involved ? "0.95" : "0.12");
+    e.el.setAttribute("stroke-width", involved ? "2" : "1.2");
+  });
+  nodes.forEach(function(n){
+    var dim = !neigh[n.id];
+    n.circleEl.setAttribute("opacity", dim ? "0.22" : "1");
+    n.labelEl.setAttribute("opacity", dim ? "0.22" : "1");
+    n.circleEl.setAttribute("filter", n.id===selectedId ? "url(#glow-strong)" : n.baseFilter);
+  });
+}
+
+function selectNode(id){
+  selectedId = id;
+  openPanel(id);
+  updateEdgeHighlight();
+}
+
+function easeCameraTo(targetX, targetY, targetScale, duration){
+  var startX=camX, startY=camY, startScale=camScale;
+  var t0 = performance.now();
+  duration = duration || 500;
+  function step(now){
+    var t = Math.min(1, (now-t0)/duration);
+    var e = 1 - Math.pow(1-t, 3); // ease-out cubic
+    camX = startX + (targetX-startX)*e;
+    camY = startY + (targetY-startY)*e;
+    camScale = startScale + (targetScale-startScale)*e;
+    applyTransform();
+    if(t<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+var panelEl = document.getElementById("panel");
+var panelOverlay = document.getElementById("panelOverlay");
+
+function openPanel(id){
+  var n = nodeById[id];
+  document.getElementById("p-name").textContent = n.label;
+  var chip = document.getElementById("p-chip");
+  chip.textContent = n.status;
+  chip.style.background = "rgba(255,255,255,0.08)";
+  chip.style.color = STATUS_COLOR[n.status] || "#fff";
+  chip.style.border = "1px solid " + (STATUS_COLOR[n.status]||"#fff");
+  document.getElementById("p-blurb").textContent = n.blurb;
+  document.getElementById("p-ver").textContent = "Added in " + (VER_LABEL[n.ver] || ("v"+n.ver));
+
+  var list = document.getElementById("p-conn-list");
+  list.innerHTML = "";
+  var neigh = neighbors[id] || [];
+  var seen = {};
+  neigh.forEach(function(nid){
+    if(seen[nid]) return; seen[nid]=true;
+    var nn = nodeById[nid];
+    if(!nn) return;
+    var item = document.createElement("div");
+    item.className = "p-conn-item";
+    var dot = document.createElement("span");
+    dot.className = "p-conn-dot";
+    dot.style.background = GROUP_COLOR[nn.group].fill;
+    item.appendChild(dot);
+    var txt = document.createElement("span");
+    txt.textContent = nn.label;
+    item.appendChild(txt);
+    item.addEventListener("click", function(){
+      selectNode(nid);
+      focusCameraOn(nid);
+    });
+    list.appendChild(item);
+  });
+
+  panelEl.classList.add("open");
+  panelOverlay.classList.add("show");
+}
+
+function closePanel(){
+  panelEl.classList.remove("open");
+  panelOverlay.classList.remove("show");
+  selectedId = null;
+  updateEdgeHighlight();
+}
+
+document.getElementById("panelClose").addEventListener("click", closePanel);
+panelOverlay.addEventListener("pointerdown", function(){ closePanel(); });
+
+function focusCameraOn(id){
+  var n = nodeById[id];
+  easeCameraTo(n.x, n.y, Math.max(camScale, 1.1), 550);
+}
+
+/* =========================================================
+   6. SEARCH
+   ========================================================= */
+
+var searchBox = document.getElementById("searchBox");
+var searchResults = document.getElementById("searchResults");
+
+searchBox.addEventListener("input", function(){
+  var q = searchBox.value.trim().toLowerCase();
+  searchResults.innerHTML = "";
+  if(!q){ searchResults.style.display="none"; return; }
+  var matches = nodes.filter(function(n){
+    return n.visible && n.label.toLowerCase().indexOf(q)!==-1;
+  }).slice(0,12);
+  if(matches.length===0){ searchResults.style.display="none"; return; }
+  matches.forEach(function(n){
+    var d = document.createElement("div");
+    d.innerHTML = n.label + ' <span class="sr-group">· '+n.group+'</span>';
+    d.addEventListener("click", function(){
+      selectNode(n.id);
+      focusCameraOn(n.id);
+      searchResults.style.display="none";
+      searchBox.value = n.label;
+    });
+    searchResults.appendChild(d);
+  });
+  searchResults.style.display = "block";
+});
+searchBox.addEventListener("blur", function(){
+  setTimeout(function(){ searchResults.style.display="none"; }, 180);
+});
+searchBox.addEventListener("keydown", function(evt){
+  if(evt.key==="Enter"){
+    var q = searchBox.value.trim().toLowerCase();
+    var match = nodes.find(function(n){ return n.visible && n.label.toLowerCase().indexOf(q)!==-1; });
+    if(match){ selectNode(match.id); focusCameraOn(match.id); }
+  }
+});
+
+/* =========================================================
+   7. LEGEND TOGGLE
+   ========================================================= */
+var legendEl = document.getElementById("legend");
+var legendToggleEl = document.getElementById("legendToggle");
+function setLegendCollapsed(collapsed){
+  legendEl.classList.toggle("collapsed", collapsed);
+  legendToggleEl.textContent = collapsed ? "+" : "−";
+}
+legendToggleEl.addEventListener("click", function(){
+  setLegendCollapsed(!legendEl.classList.contains("collapsed"));
+});
+// Mobile starts collapsed (legend would otherwise cover ~40% of a small screen);
+// desktop starts expanded. Re-evaluated only at load, not on every resize/rotate,
+// so a manual toggle mid-session isn't fought by a resize handler.
+setLegendCollapsed(window.innerWidth < 640);
+
+/* =========================================================
+   8. TICKER
+   ========================================================= */
+function updateTicker(){
+  var total = nodes.length;
+  var skillCount = nodes.filter(function(n){ return n.group==="skill"; }).length;
+  document.getElementById("ticker").textContent = total + " nodes · " + skillCount + " skills · v" + GRAPH.meta.current_version;
+}
+
+function updateSubtitle(){
+  document.getElementById("subtitleText").textContent =
+    GRAPH.meta.subtitle_prefix + " v" + GRAPH.meta.current_version + " · " + GRAPH.meta.subtitle_date;
+  document.title = GRAPH.meta.title;
+}
+
+/* =========================================================
+   9. GROW REPLAY
+   ========================================================= */
+
+var growRunning = false;
+var stageLabelEl = document.getElementById("stageLabel");
+var stageVerEl = document.getElementById("stageVer");
+var stageTxtEl = document.getElementById("stageTxt");
+
+function setAllVisible(vis){
+  nodes.forEach(function(n){ n.visible = vis; });
+  edges.forEach(function(e){ e.visible = vis; });
+}
+
+function showStageLabel(stage){
+  stageVerEl.textContent = stage.ver;
+  stageTxtEl.textContent = stage.label;
+  stageLabelEl.classList.add("show");
+}
+function hideStageLabel(){
+  stageLabelEl.classList.remove("show");
+}
+
+function popInNode(n){
+  // scale spring pop: animate radius from 0 -> r with slight overshoot, plus a glow pulse
+  var el = n.el;
+  var startTime = performance.now();
+  var dur = 480;
+  var baseR = n.r;
+  function step(now){
+    var t = Math.min(1, (now-startTime)/dur);
+    // spring ease-out-back approximation
+    var c1 = 1.70158, c3 = c1+1;
+    var eased = 1 + c3*Math.pow(t-1,3) + c1*Math.pow(t-1,2);
+    var scale = Math.max(0, eased);
+    n.circleEl.setAttribute("r", Math.max(0.5, baseR*scale));
+    if(t<1){ requestAnimationFrame(step); }
+    else { n.circleEl.setAttribute("r", baseR); }
+  }
+  requestAnimationFrame(step);
+}
+
+function runGrowReplay(){
+  if(growRunning) return;
+  growRunning = true;
+  closePanel();
+  document.getElementById("growBtn").disabled = true;
+
+  // start with nothing visible
+  setAllVisible(false);
+  positionAll();
+
+  var stageIdx = 0;
+  var cumulativeVers = [];
+
+  function runStage(){
+    if(stageIdx>=STAGES.length){
+      hideStageLabel();
+      growRunning = false;
+      document.getElementById("growBtn").disabled = false;
+      selectedId = null;
+      updateEdgeHighlight();
+      // final ease camera back to a full fit-to-bounds view
+      var fit = computeFit();
+      easeCameraTo(fit.x, fit.y, fit.scale, 700);
+      return;
+    }
+    var stage = STAGES[stageIdx];
+    showStageLabel(stage);
+
+    var newlyVisible = [];
+    nodes.forEach(function(n){
+      if(!n.visible && stage.vers.indexOf(n.ver)!==-1){
+        n.visible = true;
+        newlyVisible.push(n);
+      }
+    });
+    edges.forEach(function(e){
+      var a = nodeById[e.a], b = nodeById[e.b];
+      if(a.visible && b.visible) e.visible = true;
+    });
+
+    // reposition newly visible nodes near their home before pop so physics can settle them
+    newlyVisible.forEach(function(n){
+      n.x = n.homeX + (Math.random()-0.5)*40;
+      n.y = n.homeY + (Math.random()-0.5)*40;
+      n.vx=0; n.vy=0;
+    });
+
+    positionAll();
+    newlyVisible.forEach(popInNode);
+
+    stageIdx++;
+    setTimeout(runStage, 1600);
+  }
+
+  runStage();
+}
+
+function fitScale(){
+  return computeFit().scale;
+}
+
+/* Generic fit-to-bounds: compute the bounding box of currently-visible nodes
+   and return a camera transform (world center + scale) that fits it in the
+   current window with ~40px screen-space padding on all sides. Used on
+   initial load and on Reset so mobile (narrower, taller viewport) and
+   desktop both frame the whole graph without clipping. */
+function computeFit(padding){
+  padding = (padding===undefined) ? 40 : padding;
+  var an = nodes.filter(function(n){ return n.visible; });
+  if(an.length===0){ return { x:0, y:0, scale:0.72 }; }
+  var minX=Infinity, maxX=-Infinity, minY=Infinity, maxY=-Infinity;
+  an.forEach(function(n){
+    var pad = n.r + 20; // room for label text below/around each node
+    if(n.x-pad<minX) minX=n.x-pad;
+    if(n.x+pad>maxX) maxX=n.x+pad;
+    if(n.y-pad<minY) minY=n.y-pad;
+    if(n.y+pad>maxY) maxY=n.y+pad;
+  });
+  var bw = Math.max(1, maxX-minX);
+  var bh = Math.max(1, maxY-minY);
+  var cx = (minX+maxX)/2, cy = (minY+maxY)/2;
+  var availW = Math.max(50, W - padding*2);
+  var availH = Math.max(50, H - padding*2);
+  var scale = Math.min(availW/bw, availH/bh);
+  scale = Math.max(0.15, Math.min(1.4, scale));
+  return { x:cx, y:cy, scale:scale };
+}
+
+document.getElementById("growBtn").addEventListener("click", runGrowReplay);
+
+/* =========================================================
+   10. RESET
+   ========================================================= */
+
+function resetAll(){
+  growRunning = false;
+  document.getElementById("growBtn").disabled = false;
+  hideStageLabel();
+  closePanel();
+  setAllVisible(true);
+  nodes.forEach(function(n){
+    var jitterX = (hashStr(n.id) % 200 - 100);
+    var jitterY = ((hashStr(n.id+"y")) % 200 - 100);
+    n.x = n.homeX + jitterX*0.3;
+    n.y = n.homeY + jitterY*0.3;
+    n.vx=0; n.vy=0; n.fixed=false;
+    n.circleEl.setAttribute("r", n.r);
+  });
+  prewarm(140);
+  positionAll();
+  var fit = computeFit();
+  easeCameraTo(fit.x, fit.y, fit.scale, 500);
+}
+document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+/* =========================================================
+   11. RESIZE
+   ========================================================= */
+window.addEventListener("resize", function(){
+  W = window.innerWidth; H = window.innerHeight;
+  applyTransform();
+});
+
+/* =========================================================
+   12. INIT
+   ========================================================= */
+updateTicker();
+updateSubtitle();
+prewarm(220); // pre-warm before first paint so it doesn't explode
+var initFit = computeFit();
+camX = initFit.x; camY = initFit.y; camScale = initFit.scale;
+applyTransform();
+positionAll();
+updateEdgeHighlight();
+requestAnimationFrame(frame);
+
+})();
+</script>
+</body>
+</html>
