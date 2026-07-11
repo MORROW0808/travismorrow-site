@@ -1,0 +1,284 @@
+{
+  "_meta": {
+    "purpose": "Facility photo reference for the travismorrow.com facility map hover cards (site-rebrand branch). Local paths are relative to the travismorrow-site repo root.",
+    "generated": "2026-07-11",
+    "source_sites": {
+      "NSS": "nationalselfstorage.com",
+      "AFAM": "afamilystorage.com",
+      "SL Reno": "storelocal.com"
+    },
+    "method": "Each brand site's location page (or the /storage-units/locations/ hub page) embeds a schema.org LocalBusiness/SelfStorage JSON-LD block with each facility's page URL and a representative 'image' field. Images were downloaded from that field (or, when absent, from the facility's own page gallery), then resized to max 800px on the longest edge and re-encoded as JPEG with `sips`. No image is hotlinked in the site — all are hosted locally under assets/facilities/.",
+    "facilities_total": 29,
+    "facilities_with_photo": 28,
+    "facilities_with_gap": 1,
+    "total_download_size_bytes": 3279801
+  },
+  "facilities": {
+    "DEM1": {
+      "facility_name": "Little Vineyard Self Storage (Deming)",
+      "brand": "NSS",
+      "local_path": "assets/facilities/DEM1.jpg",
+      "source_page_url": "https://nationalselfstorage.com/storage-units/new-mexico/deming/national-self-storage-92840/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/DEM1_Hero_Image_Thumbnail__1220x378_-20250306-133922.jpg",
+      "shot_type": "exterior (unit row with solar canopy)",
+      "status": "ok"
+    },
+    "DOV1": {
+      "facility_name": "National Self Storage - Dove Mountain",
+      "brand": "NSS",
+      "local_path": "assets/facilities/DOV1.jpg",
+      "source_page_url": "https://www.nationalselfstorage.com/storage-units/arizona/marana/national-self-storage-dove-mountain-337016/",
+      "source_image_url": "https://d2i6hs4yervu5x.cloudfront.net/owners/own912376a0c75e46649021a283a3f69a41/facilities/fac43820acbb1f141a4aa5942f057dfe9c3/facility_media/exterior-hdr5.jpg",
+      "shot_type": "exterior (hero, dusk)",
+      "status": "ok"
+    },
+    "GRN1": {
+      "facility_name": "National Self Storage - Green Valley",
+      "brand": "NSS",
+      "local_path": "assets/facilities/GRN1.jpg",
+      "source_page_url": "https://www.nationalselfstorage.com/storage-units/arizona/green-valley/titan-self-storage-center-79934/",
+      "source_image_url": "https://d2i6hs4yervu5x.cloudfront.net/owners/own912376a0c75e46649021a283a3f69a41/facilities/facb3ff5f49296c4e4aa401745c46b2c129/facility_media/grn1-hero.JPG",
+      "shot_type": "exterior (entrance)",
+      "status": "ok"
+    },
+    "SIL1": {
+      "facility_name": "National Self Storage - SIL1 (Continental Reserve)",
+      "brand": "NSS",
+      "local_path": "assets/facilities/SIL1.jpg",
+      "source_page_url": "https://www.nationalselfstorage.com/storage-units/arizona/tucson/national-self-storage-sil1-3501024/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_Shot_2_(1800x1168)-20230525-224033.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "ELP5": {
+      "facility_name": "National Self Storage - Kenazo (Horizon City)",
+      "brand": "NSS",
+      "local_path": "assets/facilities/ELP5.jpg",
+      "source_page_url": "https://www.nationalselfstorage.com/storage-units/texas/horizon-city/national-self-storage-horizon-city-117789/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/National_Self_Storage_490_N_Kenazo_Ave-20221227-114159.jpg",
+      "shot_type": "exterior",
+      "status": "ok"
+    },
+    "ELP6": {
+      "facility_name": "National Self Storage - Joe Battle",
+      "brand": "NSS",
+      "local_path": "assets/facilities/ELP6.jpg",
+      "source_page_url": "https://www.nationalselfstorage.com/storage-units/texas/el-paso/national-self-storage-117790/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_Shot-20230104-202519.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "ELP7": {
+      "facility_name": "National Self Storage - Trevino Drive",
+      "brand": "NSS",
+      "local_path": "assets/facilities/ELP7.jpg",
+      "source_page_url": "https://www.nationalselfstorage.com/storage-units/texas/el-paso/national-self-storage-117787/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/National_Self_Storage_2900_N_Lee_Trevino_Dr-20221227-114257.jpg",
+      "shot_type": "exterior",
+      "status": "ok"
+    },
+    "ELP8": {
+      "facility_name": "National Self Storage - 7620 N Loop",
+      "brand": "NSS",
+      "local_path": "assets/facilities/ELP8.jpg",
+      "source_page_url": "https://www.nationalselfstorage.com/storage-units/texas/el-paso/national-self-storage-117788/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_Shot_(1800x1168)-20230412-234227.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "ELP9": {
+      "facility_name": "National Self Storage - 10560 N Loop",
+      "brand": "NSS",
+      "local_path": "assets/facilities/ELP9.jpg",
+      "source_page_url": "https://www.nationalselfstorage.com/storage-units/texas/el-paso/national-self-storage-117784/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_Shot__900x584_-20250306-134323.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "RNO1": {
+      "facility_name": "Storelocal Reno",
+      "brand": "SL Reno",
+      "local_path": "assets/facilities/RNO1.jpg",
+      "source_page_url": "https://www.storelocal.com/storage-units/nevada/reno/storelocal-sky-mountain-378010/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_Shot_v2-20230121-061404.jpg",
+      "shot_type": "exterior (aerial hero)",
+      "status": "ok"
+    },
+    "301": {
+      "facility_name": "A Family Storage - I-10",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/301.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501815/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_1__1800x1168_-20240916-162318.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "304": {
+      "facility_name": "A Family Storage - Romero",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/304.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501805/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/RomeroFrontOfficeParking-20240910-171958.jpg",
+      "shot_type": "exterior (front office/parking)",
+      "status": "ok"
+    },
+    "305": {
+      "facility_name": "A Family Storage - Speedway (305)",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/305.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501812/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_1__1800x1168_-20240916-142544.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "306": {
+      "facility_name": "A Family Storage - 22nd",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/306.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501808/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/22nd-scaled-image-20240910-161926.jpg",
+      "shot_type": "exterior",
+      "status": "ok"
+    },
+    "309": {
+      "facility_name": "A Family Storage - New Magee",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/309.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501819/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Aerial_1__1800x1168_-20251003-140558.jpg",
+      "shot_type": "exterior (aerial)",
+      "status": "ok"
+    },
+    "311": {
+      "facility_name": "A Family Storage - Golf Links",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/311.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501810/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/golf_links-20240910-163214.jpg",
+      "shot_type": "exterior (front office)",
+      "status": "ok"
+    },
+    "314": {
+      "facility_name": "A Family Storage - Orange Grove",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/314.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501820/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Units_1__1800x1168_-20251003-141446.jpg",
+      "shot_type": "exterior (unit row on grounds, not a building/hero front)",
+      "status": "ok"
+    },
+    "316": {
+      "facility_name": "A Family Storage - Ina",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/316.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501817/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Screenshot_2024-09-10_094617-20240910-164625.png",
+      "shot_type": "exterior (front office with signage)",
+      "status": "ok",
+      "note": "Original file was PNG despite site's own .jpg-looking listing; re-encoded to real JPEG here."
+    },
+    "319": {
+      "facility_name": "A Family Storage - Green Valley",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/319.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/green-valley/a-family-storage-3501823/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Screenshot_2024-09-10_093610-20240910-163620.png",
+      "shot_type": "exterior (building + monument sign)",
+      "status": "ok",
+      "note": "Original file was PNG; re-encoded to real JPEG here."
+    },
+    "323": {
+      "facility_name": "A Family Storage - Oracle",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/323.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501807/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Screenshot_2024-09-10_101219-20240910-171405.png",
+      "shot_type": "exterior (building with flags)",
+      "status": "ok",
+      "note": "Original file was PNG; re-encoded to real JPEG here."
+    },
+    "325": {
+      "facility_name": "A Family Storage - Old Magee",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/325.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501818/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_1__1800x1168_-20251003-151420.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "326": {
+      "facility_name": "A Family Storage - Kolb",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/326.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501811/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/FrontOfficeKolb-20240910-170510.jpg",
+      "shot_type": "exterior (front office)",
+      "status": "ok"
+    },
+    "328": {
+      "facility_name": "A Family Storage - Rita Ranch",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/328.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501816/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_1__1800x1168_-20240916-171452.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "329": {
+      "facility_name": "A Family Storage - Tanque Verde",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/329.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501821/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_1__1800x1168_-20240916-155551.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "333": {
+      "facility_name": "A Family Storage - Country Club",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/333.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501822/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Screenshot_2024-09-10_092941-20240910-162955.png",
+      "shot_type": "exterior (monument sign + gate)",
+      "status": "ok",
+      "note": "Original file was PNG; re-encoded to real JPEG here."
+    },
+    "338": {
+      "facility_name": "A Family Storage - Swan",
+      "brand": "AFAM",
+      "local_path": null,
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501806/",
+      "source_image_url": null,
+      "shot_type": null,
+      "status": "gap",
+      "note": "No usable exterior/hero photo found. The facility's location-hub listing had no image entry at all, and its own page gallery has only two photos, both interior (packing-supply retail wall; empty unit interior with roll-up door) — not exterior/building shots. Per the no-silent-placeholder rule, no photo was downloaded for 338; the map should show a neutral fallback (not a generic stock photo) until a better source is found, e.g. Google Business Profile or a fresh site visit photo."
+    },
+    "339": {
+      "facility_name": "A Family Storage - Broadway",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/339.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501809/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_1__1800x1168_-20251003-161643.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "341": {
+      "facility_name": "A Family Storage - Valencia",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/341.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501814/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/Hero_1__1800x1168_-20240927-231242.jpg",
+      "shot_type": "exterior (hero)",
+      "status": "ok"
+    },
+    "343": {
+      "facility_name": "A Family Storage - Speedway (343)",
+      "brand": "AFAM",
+      "local_path": "assets/facilities/343.jpg",
+      "source_page_url": "https://www.afamilystorage.com/storage-units/arizona/tucson/a-family-storage-3501813/",
+      "source_image_url": "https://dr2r4w0s7b8qm.cloudfront.net/image_manager_app/8950_1a-20240910-162528.JPG",
+      "shot_type": "exterior",
+      "status": "ok"
+    }
+  }
+}

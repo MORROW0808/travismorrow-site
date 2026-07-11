@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- ===== travismorrow.com access guard — must run before anything renders ===== -->
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script>TMAuth.guard();</script>
+<script src="theme.js"></script>
+<script>TMTheme.init();</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facility map — 29 locations</title>
+<meta name="robots" content="noindex, nofollow">
+
+<!-- Leaflet (the site's first external dependency — flagged in review
+     notes; can be vendored into the repo before merge if offline demos
+     matter). Chosen over MapLibre GL: raster tiles are plain DOM images,
+     no WebGL/worker/rAF dependence, so the map renders dependably in
+     every environment we tested (GL stalled in constrained renderers).
+     Basemaps: keyless Carto raster tiles, dark/light per theme. -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+  :root{
+    --bg:#141414;
+    --panel-bg:rgba(24,27,31,0.92);
+    --panel-border:rgba(255,255,255,0.09);
+    --text:#d2d2d2; --dim:#9c9c9c; --bright:#f2f2f2;
+    --accent:#B92732; --accent-2:#B62025; --accent-bright:#de5964;
+    --chip-bg:rgba(255,255,255,0.05);
+    --chip-bg-hover:rgba(255,255,255,0.09);
+    --pos:#3fb950; --warn:#f5a524; --neg:#f85149; --flat:#8b98a5;
+    /* brand WAYFINDING colors (validated categorical set) — NSS wears its
+       true red; AFAM's real red is indistinguishable from NSS red at pin
+       size, so on the map AFAM wears amber and SL Reno teal. True branding
+       (the actual logos) lives in the detail cards. */
+    --pin-nss:#B92732;
+    --pin-afam:#c08a1e;
+    --pin-sls:#00a3bf;
+    --track:rgba(255,255,255,0.08);
+  }
+  :root[data-theme="light"]{
+    --bg:#F2F2F0;
+    --panel-bg:rgba(255,255,255,0.94);
+    --panel-border:#D9DBDE;
+    --text:#33363B; --dim:#6B6E73; --bright:#111318;
+    --accent-bright:#B92732;
+    --chip-bg:rgba(0,0,0,0.04);
+    --chip-bg-hover:rgba(0,0,0,0.08);
+    --pos:#1A7F37; --warn:#9A6700; --neg:#CF222E; --flat:#57606A;
+    --track:rgba(0,0,0,0.09);
+  }
+  html.theme-anim body, html.theme-anim body *{
+    transition:background-color .35s ease, color .35s ease, border-color .35s ease !important;
+  }
+  *{box-sizing:border-box;}
+  html,body{ margin:0; width:100%; height:100%; overflow:hidden; }
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  #map{ position:absolute; inset:0; background:var(--bg); }
+  .leaflet-container{ background:var(--bg); font:inherit; }
+  .leaflet-control-attribution{
+    font-size:10px; background:var(--panel-bg) !important; color:var(--dim) !important;
+  }
+  .leaflet-control-attribution a{ color:var(--dim) !important; }
+  .leaflet-bar a{
+    background:var(--panel-bg) !important; color:var(--text) !important;
+    border-color:var(--panel-border) !important;
+  }
+  .leaflet-div-icon{ background:none; border:none; }
+
+  /* ---------- top bar (matches memory-map chrome) ---------- */
+  #topbar{
+    position:absolute; top:0; left:0; right:0; z-index:1000;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:14px 16px; pointer-events:none;
+  }
+  #title-block{ pointer-events:auto; }
+  #title-block .t1{ font-size:15px; font-weight:700; letter-spacing:.5px; color:var(--bright); }
+  #title-block .t2{ font-size:11px; color:var(--dim); margin-top:2px; }
+  #controls{ display:flex; gap:8px; align-items:center; pointer-events:auto; }
+  .ctrl-btn{
+    font-family:inherit; font-size:12px; font-weight:600; text-decoration:none;
+    padding:7px 14px; border-radius:6px; border:1px solid var(--panel-border);
+    background:var(--panel-bg); color:var(--text); cursor:pointer;
+    transition:background .15s, border-color .15s;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .ctrl-btn:hover{ background:var(--chip-bg-hover); }
+  #themeBtn svg{ width:13px; height:13px; display:block; }
+  :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
+  :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
+
+  /* ---------- market panel (left) ---------- */
+  #panel{
+    position:absolute; top:64px; left:16px; z-index:1000;
+    width:300px; max-height:calc(100% - 130px); overflow-y:auto;
+    background:var(--panel-bg); border:1px solid var(--panel-border);
+    border-radius:14px; padding:14px 14px 10px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 10px 34px rgba(0,0,0,0.35);
+  }
+  :root[data-theme="light"] #panel{ box-shadow:0 8px 26px rgba(16,18,20,0.12); }
+  #panel .cap{
+    font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--accent-bright); margin:0 0 10px;
+  }
+  .mkt{
+    border:1px solid var(--panel-border); border-radius:10px;
+    padding:11px 12px 9px; margin-bottom:8px; cursor:pointer;
+    transition:border-color .15s, background .15s;
+  }
+  .mkt:hover{ background:var(--chip-bg); }
+  .mkt.sel{ border-color:rgba(185,39,50,0.6); background:var(--chip-bg); }
+  .mkt .m-head{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .mkt .m-name{ font-size:13px; font-weight:650; color:var(--bright); }
+  .mkt .m-count{ font-size:10.5px; color:var(--dim); white-space:nowrap; }
+  .mkt .m-read{ font-size:10.5px; margin-top:3px; font-weight:650;
+    text-transform:uppercase; letter-spacing:.05em; }
+  .m-read.pos{ color:var(--pos); } .m-read.warn{ color:var(--warn); }
+  .m-read.neg{ color:var(--neg); } .m-read.flat{ color:var(--flat); }
+  /* saturation scale: 0-16 sqft/capita with the 7-8 equilibrium band */
+  .m-scale{ position:relative; height:7px; border-radius:4px; background:var(--track); margin:8px 0 3px; }
+  .m-scale .band{
+    position:absolute; top:0; bottom:0; border-radius:2px;
+    background:var(--flat); opacity:.35;
+  }
+  .m-scale .val{
+    position:absolute; top:-3px; width:3px; height:13px; border-radius:2px;
+  }
+  .m-scale-cap{ display:flex; justify-content:space-between; font-size:9px; color:var(--dim); }
+  .mkt .m-detail{ display:none; margin-top:9px; border-top:1px solid var(--panel-border); padding-top:9px; }
+  .mkt.sel .m-detail{ display:block; }
+  .m-detail .dr{ display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px; }
+  .m-detail .dr b{ color:var(--bright); font-variant-numeric:tabular-nums; font-weight:650; }
+  .m-detail .note{ font-size:10px; color:var(--dim); line-height:1.5; margin-top:6px; }
+
+  /* ---------- legend (bottom right) ---------- */
+  #legend{
+    position:absolute; right:16px; bottom:34px; z-index:1000;
+    background:var(--panel-bg); border:1px solid var(--panel-border);
+    border-radius:10px; padding:9px 12px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    font-size:11px; display:flex; gap:14px;
+  }
+  #legend .li{ display:flex; align-items:center; gap:6px; }
+  #legend .dot{ width:9px; height:9px; border-radius:50%; }
+
+  /* ---------- facility pins ---------- */
+  .pin{
+    width:16px; height:16px; border-radius:50%; cursor:pointer; position:relative;
+    border:2px solid rgba(255,255,255,0.85);
+    box-shadow:0 0 0 2px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.5);
+    transition:transform .15s;
+  }
+  :root[data-theme="light"] .pin{ border-color:rgba(255,255,255,0.95); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 2px 6px rgba(0,0,0,0.25); }
+  .pin:hover{ transform:scale(1.35); }
+  .pin.sel{ transform:scale(1.45); }
+  .pin.sel::after{
+    content:""; position:absolute; inset:-7px; border-radius:50%;
+    border:1.5px solid currentColor; opacity:.7;
+  }
+  .pin.nss{ background:var(--pin-nss); color:var(--pin-nss); }
+  .pin.afam{ background:var(--pin-afam); color:var(--pin-afam); }
+  .pin.sls{ background:var(--pin-sls); color:var(--pin-sls); }
+
+  /* ---------- hover/detail card (memory-map hover-card pattern) ---------- */
+  #card{
+    position:absolute; z-index:1200; width:262px; pointer-events:none;
+    background:var(--panel-bg); border:1px solid var(--panel-border);
+    border-radius:12px; padding:0 0 12px; overflow:hidden;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 12px 36px rgba(0,0,0,0.45);
+    opacity:0; transform:translateY(4px); visibility:hidden;
+    transition:opacity .18s ease, transform .18s ease, visibility .18s;
+  }
+  :root[data-theme="light"] #card{ box-shadow:0 10px 28px rgba(16,18,20,0.16); }
+  #card.show{ opacity:1; transform:none; visibility:visible; }
+  #card .c-photo{
+    height:118px; background:var(--track);
+    display:flex; align-items:center; justify-content:center;
+    border-bottom:1px solid var(--panel-border); position:relative;
+  }
+  #card .c-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  #card .c-photo{ flex-direction:column; gap:6px; }
+  #card .c-photo svg{ width:30px; height:30px; color:var(--dim); opacity:.6; }
+  #card .c-nophoto{ font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
+  #card .c-body{ padding:11px 14px 0; }
+  #card .c-sample{
+    position:absolute; top:8px; right:8px;
+    font-size:8.5px; font-weight:700; letter-spacing:.08em;
+    color:#ffd88a; border:1px solid rgba(245,165,36,0.5);
+    background:rgba(20,20,20,0.65); border-radius:999px; padding:2px 7px;
+  }
+  :root[data-theme="light"] #card .c-sample{
+    color:#7A5200; border-color:rgba(154,103,0,0.5); background:rgba(255,255,255,0.8);
+  }
+  #card .c-stats{
+    display:grid; grid-template-columns:1fr 1fr; gap:6px 12px;
+    margin-top:9px; padding-top:9px; border-top:1px solid var(--panel-border);
+  }
+  #card .c-stat .k{ font-size:8.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--dim); }
+  #card .c-stat .v{ font-size:14.5px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; margin-top:1px; }
+  #card .c-stat .v.up{ color:var(--pos); } #card .c-stat .v.down{ color:var(--neg); } #card .c-stat .v.zero{ color:var(--flat); }
+  #card .c-brand{ display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+  #card .c-brand img{ display:block; }
+  #card .c-brand img.nss{ height:22px; }
+  #card .c-brand img.afam{ height:15px; }
+  #card .c-brand img.sls{ height:11px; }
+  /* #card's ID selector outweighs bare img rules — scope the theme swap
+     to match (same pattern, higher specificity) */
+  :root[data-theme="light"] #card img.for-dark{ display:none; }
+  :root[data-theme="dark"] #card img.for-light{ display:none; }
+  #card .c-code{
+    font-size:9.5px; letter-spacing:.1em; color:var(--dim);
+    border:1px solid var(--panel-border); border-radius:5px; padding:1px 6px;
+    margin-left:auto;
+  }
+  #card .c-name{ font-size:13px; font-weight:650; color:var(--bright); line-height:1.3; }
+  #card .c-addr{ font-size:11px; color:var(--dim); margin-top:4px; line-height:1.45; }
+  #card .c-mkt{ font-size:10.5px; margin-top:7px; padding-top:7px; border-top:1px solid var(--panel-border); color:var(--text); }
+  #card .c-mkt b{ font-variant-numeric:tabular-nums; }
+
+  #fresh{
+    position:absolute; left:16px; bottom:34px; z-index:1000;
+    font-size:10.5px; color:var(--dim);
+    background:var(--panel-bg); border:1px solid var(--panel-border);
+    border-radius:8px; padding:6px 10px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  }
+
+  @media (max-width:720px){
+    #panel{ width:calc(100% - 32px); max-height:38%; top:auto; bottom:64px; }
+    #legend{ bottom:auto; top:64px; }
+    #fresh{ display:none; }
+  }
+</style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <div id="topbar">
+    <div id="title-block">
+      <div class="t1">FACILITY MAP</div>
+      <div class="t2">29 locations · 4 markets · TractIQ overlays</div>
+    </div>
+    <div id="controls">
+      <button class="ctrl-btn" id="themeBtn" title="Toggle light / dark mode" aria-label="Toggle light or dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5"/>
+          <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/>
+        </svg>
+      </button>
+      <a class="ctrl-btn" href="portfolio.html">Dashboard</a>
+      <a class="ctrl-btn" href="memory-map.html">Memory map</a>
+      <button class="ctrl-btn" id="lockBtn" title="Lock this session">Lock</button>
+    </div>
+  </div>
+
+  <div id="panel">
+    <p class="cap">Markets · saturation vs 7–8 sqft/capita equilibrium</p>
+    <div id="mktList"></div>
+  </div>
+
+  <div id="legend"></div>
+  <div id="fresh"></div>
+  <div id="card"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  document.getElementById("lockBtn").addEventListener("click", function () {
+    TMAuth.logout(); location.href = "index.html";
+  });
+
+  var TILES = {
+    dark:  "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+  };
+  var ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
+  var BRAND = {
+    "NSS":     { cls:"nss",  color:"var(--pin-nss)",  label:"NSS" },
+    "AFAM":    { cls:"afam", color:"var(--pin-afam)", label:"AFAM" },
+    "SL Reno": { cls:"sls",  color:"var(--pin-sls)",  label:"SL Reno" }
+  };
+  var LOGOS = {
+    "NSS":     { cls:"nss",  dark:"assets/nss-logo-report.png", light:"assets/nss-logo.png" },
+    "AFAM":    { cls:"afam", dark:"assets/afam-logo.png",       light:"assets/afam-logo-light.png" },
+    "SL Reno": { cls:"sls",  dark:"assets/sls-logo.png",        light:"assets/sls-logo-light.png" }
+  };
+  /* saturation semantics from the owner's seat: below the 7-8 band =
+     room to grow (green), in-band = balanced (neutral), 8-11 = getting
+     competitive (amber), >11 = oversupplied (red) */
+  function satClass(v) {
+    if (v < 7) return "pos";
+    if (v <= 8) return "flat";
+    if (v <= 11) return "warn";
+    return "neg";
+  }
+  /* status colors resolved from the theme vars at render time — the dark
+     set fails contrast on the light basemap (same finding as the
+     dashboard: green 2.5:1, amber 1.7:1 on white), so halos and gauge
+     markers re-resolve and restyle on every theme flip */
+  function satColor(cls) {
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue("--" + cls).trim() || "#8b98a5";
+  }
+  var SCALE_MAX = 16;
+
+  var map, tileLayer, DATA = null, markers = {}, halos = [], selMarket = null, selPin = null;
+  var hoverTimer = null;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
+  function marketOf(code) {
+    for (var i = 0; i < DATA.markets.length; i++)
+      if (DATA.markets[i].facility_codes.indexOf(code) !== -1) return DATA.markets[i];
+    return null;
+  }
+
+  /* ---------- market halos ---------- */
+  function addHalos() {
+    DATA.markets.forEach(function (m) {
+      var col = satColor(satClass(m.sqft_per_capita));
+      halos.push(L.circle([m.center.lat, m.center.lng], {
+        radius: m.radius_miles * 1609.34,
+        color: col, weight: 1.2, opacity: 0.45, dashArray: "5 5",
+        fillColor: col, fillOpacity: 0.06, interactive: false
+      }).addTo(map));
+    });
+  }
+  function restyleHalos() {
+    DATA.markets.forEach(function (m, i) {
+      var col = satColor(satClass(m.sqft_per_capita));
+      halos[i].setStyle({ color: col, fillColor: col });
+    });
+  }
+
+  /* ---------- facility stats: joined live from portfolio-data.json
+     (occupancy_sqft_pct / units_total / net_move_ins_mtd /
+     net_move_ins_ytd) and facility-images.json (local_path; facility 338
+     has a documented photo gap and gets an explicit no-photo state).
+     The deterministic dummies + SAMPLE badge remain only as a fallback
+     if a facility ever goes missing from the export. ---------- */
+  function facStats(f) {
+    var st = DATA.statsByCode[f.facility_code];
+    if (st && st.occupancy_sqft_pct != null) {
+      return {
+        photo: DATA.photoByCode[f.facility_code] || null,
+        occ: st.occupancy_sqft_pct,
+        units: st.units_total,
+        netMtd: Math.round(st.net_move_ins_mtd),
+        netYtd: Math.round(st.net_move_ins_ytd),
+        sample: false
+      };
+    }
+    var h = 0;
+    for (var i = 0; i < f.facility_code.length; i++)
+      h = (h * 31 + f.facility_code.charCodeAt(i)) % 1000;
+    return {
+      photo: DATA.photoByCode[f.facility_code] || null,
+      occ: 68 + (h % 28) + (h % 10) / 10,
+      units: 380 + (h % 52) * 10,
+      netMtd: (h % 17) - 6,
+      netYtd: (h % 61) - 18,
+      sample: true
+    };
+  }
+  function signCls(v) { return v > 0 ? "up" : v < 0 ? "down" : "zero"; }
+  function fmtSigned(v) { return (v > 0 ? "+" : "") + v; }
+
+  var PHOTO_GLYPH =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+    'stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M3 21V8l6-4 6 4v13M9 21v-6h4v6M21 21V11l-5-3"/><path d="M1 21h22"/></svg>';
+
+  /* ---------- hover/detail card (delay + fade, per the memory map) ---------- */
+  var card = document.getElementById("card");
+  function showCard(f) {
+    var lg = LOGOS[f.brand], mk = marketOf(f.facility_code), st = facStats(f);
+    card.innerHTML =
+      '<div class="c-photo">' +
+        (st.photo
+          ? '<img src="' + esc(st.photo) + '" alt="' + esc(f.facility_code) + ' facility photo" loading="lazy">'
+          : PHOTO_GLYPH + '<span class="c-nophoto">No photo available</span>') +
+        (st.sample ? '<span class="c-sample">SAMPLE</span>' : "") +
+      "</div>" +
+      '<div class="c-body">' +
+      '<div class="c-brand">' +
+        '<img class="' + lg.cls + ' for-dark" src="' + lg.dark + '" alt="' + esc(f.brand) + '">' +
+        '<img class="' + lg.cls + ' for-light" src="' + lg.light + '" alt="' + esc(f.brand) + '">' +
+        '<span class="c-code">' + esc(f.facility_code) + "</span></div>" +
+      '<div class="c-name">' + esc(f.address.split(",")[0]) + "</div>" +
+      '<div class="c-addr">' + esc(f.address) + "</div>" +
+      '<div class="c-stats">' +
+        '<div class="c-stat"><div class="k">Occupancy · sq ft</div><div class="v">' + st.occ.toFixed(1) + "%</div></div>" +
+        '<div class="c-stat"><div class="k">Total units</div><div class="v">' + st.units.toLocaleString() + "</div></div>" +
+        '<div class="c-stat"><div class="k">Net move-ins · MTD</div><div class="v ' + signCls(st.netMtd) + '">' + fmtSigned(st.netMtd) + "</div></div>" +
+        '<div class="c-stat"><div class="k">Net move-ins · YTD</div><div class="v ' + signCls(st.netYtd) + '">' + fmtSigned(st.netYtd) + "</div></div>" +
+      "</div>" +
+      (mk ? '<div class="c-mkt">' + esc(mk.market_name) + " · <b>" + mk.sqft_per_capita.toFixed(1) +
+            "</b> sqft/capita · " + mk.operating_facilities + " competitors</div>" : "") +
+      "</div>";
+    var p = map.latLngToContainerPoint([f.lat, f.lng]);
+    var x = Math.min(Math.max(p.x + 16, 10), innerWidth - 278);
+    var y = Math.min(Math.max(p.y - 20, 60), innerHeight - 380);
+    card.style.left = x + "px"; card.style.top = y + "px";
+    card.classList.add("show");
+  }
+  function hideCard() { card.classList.remove("show"); }
+
+  /* ---------- markets panel ---------- */
+  function renderPanel() {
+    var host = document.getElementById("mktList");
+    host.innerHTML = "";
+    DATA.markets.forEach(function (m, i) {
+      var cls = satClass(m.sqft_per_capita);
+      var div = document.createElement("div");
+      div.className = "mkt"; div.setAttribute("data-i", i);
+      var pct = Math.min(100, m.sqft_per_capita / SCALE_MAX * 100);
+      div.innerHTML =
+        '<div class="m-head"><span class="m-name">' + esc(m.market_name) + "</span>" +
+        '<span class="m-count">' + m.facility_codes.length + " ours · " + m.operating_facilities + " total</span></div>" +
+        '<div class="m-read ' + cls + '">' + esc(m.saturation_read.split("—")[0].split(",")[0].trim()) +
+          " · " + m.sqft_per_capita.toFixed(1) + " sqft/cap</div>" +
+        '<div class="m-scale"><div class="band" style="left:' + (7 / SCALE_MAX * 100) + "%;width:" +
+          (1 / SCALE_MAX * 100) + '%"></div>' +
+        '<div class="val" style="left:' + pct + "%;background:" + satColor(cls) + '"></div></div>' +
+        '<div class="m-scale-cap"><span>0</span><span>7–8 equilibrium</span><span>' + SCALE_MAX + "</span></div>" +
+        '<div class="m-detail">' +
+          '<div class="dr"><span>Population</span><b>' + m.population.toLocaleString() + "</b></div>" +
+          '<div class="dr"><span>Projected</span><b>' + m.population_projected.toLocaleString() + "</b></div>" +
+          '<div class="dr"><span>Median HH income</span><b>$' + Math.round(m.median_household_income).toLocaleString() + "</b></div>" +
+          '<div class="dr"><span>Housing starts</span><b>' + m.housing_starts.toLocaleString() + "</b></div>" +
+          '<div class="dr"><span>Under construction</span><b>' + m.under_construction + " facilities</b></div>" +
+          (m.saturation_read.length > 40 ? '<div class="note">' + esc(m.saturation_read) + "</div>" : "") +
+        "</div>";
+      div.addEventListener("click", function () { selectMarket(i); });
+      host.appendChild(div);
+    });
+  }
+
+  var pendingMarket = null;
+  function selectMarket(i) {
+    selMarket = (selMarket === i) ? null : i;
+    Array.prototype.forEach.call(document.querySelectorAll(".mkt"), function (el, j) {
+      el.classList.toggle("sel", j === selMarket);
+    });
+    if (selMarket == null) { fitAll(true); return; }
+    if (!map.getSize().x) { pendingMarket = selMarket; return; }   // container hidden — defer
+    map.flyToBounds(halos[selMarket].getBounds(),
+      { paddingTopLeft:[340, 80], paddingBottomRight:[60, 60], duration:1.3 });
+  }
+
+  var needsFit = false;
+  function fitAll(animate) {
+    var sz = map.getSize();
+    if (!sz.x || !sz.y) { needsFit = true; return; }   // container hidden — defer
+    var b = L.latLngBounds(DATA.facilities.map(function (f) { return [f.lat, f.lng]; }));
+    var opts = { paddingTopLeft:[340, 90], paddingBottomRight:[80, 70] };
+    if (animate) { opts.duration = 1.2; map.flyToBounds(b, opts); }
+    else map.fitBounds(b, opts);
+  }
+
+  /* ---------- pins ---------- */
+  function addPins() {
+    DATA.facilities.forEach(function (f) {
+      var mk = L.marker([f.lat, f.lng], {
+        icon: L.divIcon({ className:"", iconSize:[16, 16],
+          html:'<div class="pin ' + BRAND[f.brand].cls + '" role="button" aria-label="' +
+               esc(f.facility_code + " — " + f.address) + '"></div>' })
+      }).addTo(map);
+      markers[f.facility_code] = mk;
+      var el = mk.getElement().firstChild;
+
+      el.addEventListener("pointerenter", function () {
+        clearTimeout(hoverTimer);
+        hoverTimer = setTimeout(function () { showCard(f); }, 170);
+      });
+      el.addEventListener("pointerleave", function () {
+        clearTimeout(hoverTimer);
+        if (selPin !== f.facility_code) hideCard();
+      });
+      el.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        selPin = (selPin === f.facility_code) ? null : f.facility_code;
+        Array.prototype.forEach.call(document.querySelectorAll(".pin"), function (p) { p.classList.remove("sel"); });
+        if (selPin) {
+          el.classList.add("sel");
+          map.flyTo([f.lat, f.lng], Math.max(map.getZoom(), 12), { duration:1.1 });
+          map.once("moveend", function () { if (selPin === f.facility_code) showCard(f); });
+        } else hideCard();
+      });
+    });
+    map.on("click", function () {
+      selPin = null; hideCard();
+      Array.prototype.forEach.call(document.querySelectorAll(".pin"), function (p) { p.classList.remove("sel"); });
+    });
+    map.on("movestart", function () { hideCard(); });
+  }
+
+  function renderLegend() {
+    var lg = document.getElementById("legend");
+    lg.innerHTML = Object.keys(BRAND).map(function (b) {
+      var n = DATA.facilities.filter(function (f) { return f.brand === b; }).length;
+      return '<span class="li"><span class="dot" style="background:' + BRAND[b].color + '"></span>' +
+             esc(BRAND[b].label) + " · " + n + "</span>";
+    }).join("");
+  }
+
+  /* ---------- boot ---------- */
+  Promise.all([
+    fetch("facility-coordinates.json", { cache:"no-store" }).then(function (r) { return r.json(); }),
+    fetch("facility-market-overlays.json", { cache:"no-store" }).then(function (r) { return r.json(); }),
+    fetch("portfolio-data.json", { cache:"no-store" }).then(function (r) { return r.json(); }),
+    fetch("facility-images.json", { cache:"no-store" }).then(function (r) { return r.json(); })
+  ]).then(function (res) {
+    DATA = { facilities:res[0].facilities, markets:res[1].markets,
+             statsByCode:{}, photoByCode:{} };
+    res[2].facilities.forEach(function (f) { DATA.statsByCode[f.facility_code] = f; });
+    Object.keys(res[3].facilities).forEach(function (code) {
+      DATA.photoByCode[code] = res[3].facilities[code].local_path || null;
+    });
+
+    /* panel, legend & freshness don't need the basemap — render first */
+    renderPanel();
+    renderLegend();
+    document.getElementById("fresh").textContent =
+      "TractIQ market data pulled " + (res[1]._meta.pulled_at || "2026-07-11") +
+      " · coordinates verified " + (res[0]._meta.batch_date || "2026-07-10");
+
+    map = L.map("map", { center:[32.6, -108.5], zoom:6, zoomControl:false });
+    L.control.zoom({ position:"topright" }).addTo(map);
+    map.attributionControl.setPrefix(false);
+    tileLayer = L.tileLayer(TILES[TMTheme.current()], {
+      attribution:ATTR, subdomains:"abcd", maxZoom:19, detectRetina:true
+    }).addTo(map);
+
+    /* keep the map glued to its container if it was laid out while
+       hidden, and run the deferred first fit once it has real size */
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(function () {
+        map.invalidateSize();
+        /* refit the overview whenever the container's size settles and the
+           user hasn't drilled into anything */
+        if (!map.getSize().x) return;
+        if (pendingMarket != null) {
+          var pm = pendingMarket; pendingMarket = null; needsFit = false;
+          selMarket = null; selectMarket(pm);
+        } else if (needsFit || (selMarket == null && !selPin)) {
+          needsFit = false; fitAll(false);
+        }
+      }).observe(document.getElementById("map"));
+    }
+
+    addHalos();
+    addPins();
+    fitAll(false);
+
+    /* deep link: map.html?market=tucson */
+    var q = new URLSearchParams(location.search).get("market");
+    if (q) DATA.markets.forEach(function (m, i) {
+      if (m.market_name.toLowerCase().indexOf(q.toLowerCase()) !== -1) selectMarket(i);
+    });
+
+    /* theme toggle swaps the raster basemap; overlays are DOM/SVG and
+       restyle themselves through the CSS vars */
+    document.getElementById("themeBtn").addEventListener("click", function () {
+      var t = TMTheme.toggle();
+      tileLayer.setUrl(TILES[t]);
+      restyleHalos();
+      var keep = selMarket;                 // re-render gauges in new colors
+      renderPanel();
+      if (keep != null) {
+        selMarket = null;
+        Array.prototype.forEach.call(document.querySelectorAll(".mkt"), function (el, j) {
+          el.classList.toggle("sel", j === keep);
+        });
+        selMarket = keep;
+      }
+    });
+  }).catch(function (err) {
+    document.getElementById("mktList").innerHTML =
+      '<div style="font-size:12px;color:var(--neg)">Couldn’t load map data: ' + esc(err.message) + "</div>";
+  });
+})();
+</script>
+<style>:root{ --tc-bottom:84px; } /* launcher sits above the brand legend */</style>
+<script src="chat.js"></script>
+</body>
+</html>

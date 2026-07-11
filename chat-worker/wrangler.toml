@@ -1,0 +1,21 @@
+name = "taylor-chat"
+main = "src/worker.js"
+compatibility_date = "2026-06-01"
+
+# The worker reads these three public JSON files plus /about-taylor.md from
+# this base URL at request time (with a short in-memory cache). Change only
+# if the site's origin changes.
+[vars]
+SITE_BASE_URL = "https://travismorrow.com"
+MODEL = "claude-sonnet-5"
+
+# KV namespace used for per-IP rate limiting. Create it with:
+#   wrangler kv namespace create RATE_LIMIT_KV
+# then paste the returned `id` below.
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# ANTHROPIC_API_KEY is a secret, not a var — set it with:
+#   wrangler secret put ANTHROPIC_API_KEY
+# Never put it in this file or in [vars].

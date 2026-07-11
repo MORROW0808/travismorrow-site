@@ -3,21 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Travis Morrow</title>
-<meta name="description" content="Travis Morrow — personal site.">
+<title>Travis Morrow — everything we've built, mapped</title>
 <meta name="robots" content="noindex, nofollow">
 <script src="theme.js"></script>
 <script>TMTheme.init();</script>
 <style>
   :root{
-    /* NSS / AFAM brand theme (see Assets/BRAND-GUIDELINES.md):
-       NSS Red #B92732 · AFAM Red #B62025 · shared charcoal #212121.
-       --accent-bright is a lightened brand red for SMALL text on dark
-       (the true brand reds sit ~3:1 on this bg — fine for fills and
-       large numerals, too low for small type). */
     --bg:#141414;
-    --panel:rgba(33,33,33,0.55);
-    --border:rgba(255,255,255,0.08);
+    --panel:rgba(31,34,38,0.72);
+    --border:rgba(255,255,255,0.09);
     --text:#d2d2d2;
     --dim:#9c9c9c;
     --bright:#f2f2f2;
@@ -26,205 +20,236 @@
     --accent-bright:#de5964;
     --chip-bg:rgba(255,255,255,0.04);
     --chip-bg-hover:rgba(255,255,255,0.08);
+    /* canvas field colors (JS reads these) */
+    --node:#7a7f86;
+    --node-hub:#B92732;
+    --edge:rgba(255,255,255,0.10);
+    --edge-hub:rgba(185,39,50,0.28);
+    --pulse:#ffdfe2;           /* synapse flash — hot red-white on dark */
+    /* Taylor reticle mark — gunmetal/steel + ice-cyan lamp (concept 04) */
+    --mk-ring:#3a434d;
+    --mk-tick:#59636e;
+    --mk-tick2:#3a434d;
+    --mk-arc:#8b96a1;
+    --mk-ink:#eef2f6;
+    --mk-lamp:#5AC8FA;
+    --mk-core:#9FD8FF;
+    --mk-halo-a:.38;
   }
   :root[data-theme="light"]{
     --bg:#F2F2F0;
-    --panel:#FFFFFF;
+    --panel:rgba(255,255,255,0.82);
     --border:#D9DBDE;
-    --text:#33363B;
-    --dim:#6B6E73;
-    --bright:#111318;
-    --accent-bright:#B92732;  /* brand red is AA on white — no lightening needed */
-    --chip-bg:rgba(0,0,0,0.035);
-    --chip-bg-hover:rgba(0,0,0,0.07);
+    --text:#33363B; --dim:#6B6E73; --bright:#111318;
+    --accent-bright:#B92732;
+    --chip-bg:rgba(0,0,0,0.035); --chip-bg-hover:rgba(0,0,0,0.07);
+    --node:#a7abb0;
+    --node-hub:#B92732;
+    --edge:rgba(0,0,0,0.09);
+    --edge-hub:rgba(185,39,50,0.22);
+    --pulse:#B92732;           /* synapse flash — brand red reads hot on light */
+    --mk-ring:#b9bec4;
+    --mk-tick:#8a9096;
+    --mk-tick2:#b9bec4;
+    --mk-arc:#5c646c;
+    --mk-ink:#14181c;
+    --mk-lamp:#0B7FA8;
+    --mk-core:#0B7FA8;
+    --mk-halo-a:.15;
   }
-  :root[data-theme="light"] #plx-a{ opacity:.35; }
-  :root[data-theme="light"] #plx-b{ opacity:.3; }
-  :root[data-theme="light"] a.tool{ box-shadow:0 1px 3px rgba(16,18,20,0.07), 0 6px 18px rgba(16,18,20,0.06); }
-  :root[data-theme="light"] a.tool:hover{ box-shadow:0 4px 10px rgba(16,18,20,0.09), 0 12px 26px rgba(16,18,20,0.09), 0 4px 16px rgba(185,39,50,0.08); }
-  /* (logo chips removed — NSS badge matches the PDF's chipless treatment) */
   html.theme-anim body, html.theme-anim body *{
-    transition:background-color .35s ease, color .35s ease,
-               border-color .35s ease, box-shadow .35s ease !important;
+    transition:background-color .35s ease, color .35s ease, border-color .35s ease !important;
   }
   *{box-sizing:border-box;}
-  html{ scroll-behavior:smooth; }
-  html,body{ min-height:100%; }
+  html,body{ height:100%; }
   body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
+    margin:0; background:var(--bg); color:var(--text);
     font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased; overflow:hidden;
+  }
+  canvas#field{ position:fixed; inset:0; z-index:0; display:block; }
+  #vig{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 30%, var(--bg) 92%);
+  }
+  :root[data-theme="light"] #vig{
+    background:radial-gradient(ellipse at 50% 42%, rgba(242,242,240,0) 30%, var(--bg) 92%);
   }
 
-  /* ---------- parallax background layers (scroll-driven, JS sets transform) ---------- */
-  .plx{
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-    will-change:transform;
-  }
-  #plx-a{
-    background:radial-gradient(ellipse 70% 46% at 50% 26%,
-      rgba(185,39,50,0.16) 0%, rgba(182,32,37,0.07) 42%, rgba(20,20,20,0) 68%);
-  }
-  #plx-b{
-    background:
-      radial-gradient(ellipse 34% 26% at 82% 66%, rgba(182,32,37,0.10) 0%, rgba(20,20,20,0) 70%),
-      radial-gradient(ellipse 30% 22% at 12% 88%, rgba(185,39,50,0.07) 0%, rgba(20,20,20,0) 72%);
-  }
-
-  main{ position:relative; z-index:1; }
-
-  /* ---------- hero ---------- */
-  #hero{
-    min-height:100svh;
+  main{
+    position:relative; z-index:2; height:100svh;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:48px 24px 72px;
+    text-align:center; padding:24px;
   }
   .eyebrow{
-    text-transform:uppercase; letter-spacing:.22em; font-size:12px;
-    color:var(--accent-bright); margin:0 0 20px;
+    text-transform:uppercase; letter-spacing:.24em; font-size:11.5px;
+    color:var(--accent-bright); margin:0 0 18px;
   }
   h1{
-    margin:0; font-weight:600; line-height:1.05; color:var(--bright);
-    font-size:clamp(40px,9vw,76px); letter-spacing:-0.02em;
+    margin:0; font-weight:680; line-height:1.04; color:var(--bright);
+    font-size:clamp(38px,7vw,78px); letter-spacing:-0.026em;
+  }
+  h1 .row{ display:block; }
+  h1 .num{ color:var(--accent-bright); font-variant-numeric:tabular-nums; }
+  .mapped{
+    margin:24px 0 0; color:var(--text); font-weight:600;
+    font-size:clamp(18px,2.5vw,25px); letter-spacing:-0.012em;
   }
   .tagline{
-    margin:20px auto 0; max-width:34rem; color:var(--dim);
-    font-size:clamp(15px,2.4vw,18px); line-height:1.6;
+    margin:14px auto 0; max-width:38rem; color:var(--dim);
+    font-size:clamp(13px,1.9vw,15.5px); line-height:1.65;
   }
-  .cta{
-    display:inline-flex; align-items:center; gap:.6em;
-    margin-top:40px; padding:14px 26px;
-    border-radius:12px; text-decoration:none; font-weight:600; font-size:16px;
-    color:#fff; background:linear-gradient(135deg,var(--accent),var(--accent-2));
-    box-shadow:0 8px 30px rgba(185,39,50,0.30);
-    transition:transform .15s ease, box-shadow .15s ease, filter .15s ease;
+
+  .doors{
+    display:flex; gap:16px; margin-top:36px; flex-wrap:wrap; justify-content:center;
   }
-  .cta:hover{ transform:translateY(-2px); box-shadow:0 12px 38px rgba(185,39,50,0.40); filter:brightness(1.08); }
-  .cta:active{ transform:translateY(0); }
-  .cta svg{ width:18px; height:18px; }
-  .cta.secondary{
-    margin-top:14px; color:var(--text); background:var(--chip-bg);
-    border:1px solid var(--border); box-shadow:none;
+  a.door{
+    width:270px; text-align:left; text-decoration:none; color:var(--text);
+    background:var(--panel); border:1px solid var(--border); border-radius:16px;
+    padding:18px 20px 16px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 10px 34px rgba(0,0,0,0.35);
+    transition:border-color .16s, transform .16s, box-shadow .16s;
   }
-  .cta.secondary:hover{ background:var(--chip-bg-hover); border-color:rgba(185,39,50,0.55); box-shadow:none; }
+  :root[data-theme="light"] a.door{ box-shadow:0 8px 26px rgba(16,18,20,0.10); }
+  a.door:hover{
+    border-color:rgba(185,39,50,0.6); transform:translateY(-3px);
+    box-shadow:0 16px 44px rgba(0,0,0,0.45), 0 6px 26px rgba(185,39,50,0.20);
+  }
+  .door .cap{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-bright); }
+  .door h2{ margin:6px 0 6px; font-size:17px; font-weight:650; color:var(--bright); }
+  .door p{ margin:0; font-size:12.5px; color:var(--dim); line-height:1.55; }
+  .door .go{
+    display:inline-flex; align-items:center; gap:6px; margin-top:12px;
+    font-size:12.5px; font-weight:650; color:var(--accent-bright);
+  }
+  .door .go svg{ width:13px; height:13px; transition:transform .15s; }
+  a.door:hover .go svg{ transform:translateX(3px); }
+
   .lock-note{
-    margin-top:18px; font-size:12.5px; color:var(--dim);
+    margin-top:26px; font-size:12px; color:var(--dim);
     display:inline-flex; align-items:center; gap:6px;
   }
-  .lock-note svg{ width:13px; height:13px; opacity:.8; }
-  .scroll-cue{
-    margin-top:52px; color:var(--dim); font-size:11px; letter-spacing:.18em;
-    text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:8px;
-    opacity:.7;
-  }
-  .scroll-cue svg{ width:16px; height:16px; animation:bob 2.2s ease-in-out infinite; }
-  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
+  .lock-note svg{ width:12px; height:12px; opacity:.8; }
 
-  /* ---------- below the fold: tools ---------- */
-  section.tools{
-    max-width:900px; margin:0 auto; padding:40px 24px 30px;
+  .foot{
+    position:fixed; left:0; right:0; bottom:0; z-index:2;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 20px; font-size:11.5px; color:var(--dim);
   }
-  .sec-eyebrow{
-    text-transform:uppercase; letter-spacing:.2em; font-size:11px;
-    color:var(--accent-bright); margin:0 0 10px; text-align:center;
-  }
-  section.tools h2{
-    margin:0 0 30px; text-align:center; color:var(--bright);
-    font-size:clamp(22px,4vw,30px); font-weight:600; letter-spacing:-0.01em;
-  }
-  .cards{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-  a.tool{
-    display:block; text-decoration:none; color:var(--text);
-    background:var(--panel); border:1px solid var(--border); border-radius:16px;
-    padding:26px 26px 22px;
-    box-shadow:0 6px 24px rgba(0,0,0,0.30);
-    transition:border-color .15s, transform .15s, box-shadow .15s;
-    will-change:transform;
-  }
-  a.tool:hover{
-    border-color:rgba(185,39,50,0.55); transform:translateY(-3px);
-    box-shadow:0 12px 34px rgba(0,0,0,0.4), 0 4px 22px rgba(185,39,50,0.18);
-  }
-  .tool .t-ic{
-    width:42px; height:42px; border-radius:11px; margin-bottom:16px;
-    display:flex; align-items:center; justify-content:center; color:#fff;
-    background:linear-gradient(135deg,var(--accent),var(--accent-2));
-    box-shadow:0 4px 16px rgba(185,39,50,0.28);
-  }
-  .tool .t-ic svg{ width:21px; height:21px; }
-  .tool h3{ margin:0 0 7px; color:var(--bright); font-size:17px; font-weight:600; }
-  .tool p{ margin:0; font-size:13.5px; color:var(--dim); line-height:1.55; }
-  .tool .go{
-    display:inline-flex; align-items:center; gap:6px; margin-top:16px;
-    font-size:13px; font-weight:600; color:var(--accent-bright);
-  }
-  .tool .go svg{ width:14px; height:14px; transition:transform .15s; }
-  a.tool:hover .go svg{ transform:translateX(3px); }
+  .foot .logos{ display:flex; align-items:center; gap:22px; }
+  .foot img{ display:block; opacity:.85; }
+  .foot img.nss{ height:26px; }
+  .foot img.afam{ height:16px; }
+  .foot img.sls{ height:12px; }
+  :root[data-theme="light"] img.for-dark{ display:none; }
+  :root[data-theme="dark"] img.for-light{ display:none; }
 
-  /* ---------- brand strip ---------- */
-  section.brands{
-    max-width:900px; margin:0 auto; padding:34px 24px 70px; text-align:center;
-  }
-  section.brands .cap{
-    font-size:11px; letter-spacing:.2em; text-transform:uppercase;
-    color:var(--dim); margin-bottom:26px;
-  }
-  .logo-row{
-    display:flex; align-items:center; justify-content:center; gap:44px; flex-wrap:wrap;
-  }
-  .logo-row img{ display:block; }
-  /* NSS badge sits chipless, exactly as the Portfolio Snapshot PDF renders
-     it (transparent badge body on dark; self-contained black badge on light) */
-  .logo-row img.nss{ height:50px; width:auto; }
-  .logo-row img.afam{ height:32px; width:auto; opacity:.92; }
-  .logo-row img.sls{ height:21px; width:auto; opacity:.92; }
-
-  footer{
-    position:relative; z-index:1;
-    padding:22px; text-align:center; color:var(--dim);
-    font-size:12px; border-top:1px solid var(--border);
-  }
+  :root{ --tc-bottom:64px; }  /* chat launcher clears the footer logo strip */
   #themeBtn{
     position:fixed; top:16px; right:16px; z-index:5;
     width:38px; height:38px; border-radius:50%; cursor:pointer;
     display:flex; align-items:center; justify-content:center;
-    color:var(--text); background:var(--chip-bg);
-    border:1px solid var(--border);
-    transition:background .15s, border-color .15s;
+    color:var(--text); background:var(--chip-bg); border:1px solid var(--border);
   }
   #themeBtn:hover{ background:var(--chip-bg-hover); border-color:rgba(185,39,50,0.5); }
-  #themeBtn:focus-visible{ outline:2px solid var(--accent-bright); outline-offset:2px; }
   #themeBtn svg{ width:16px; height:16px; }
   :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
   :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
-  /* AFAM logo swaps to its charcoal-'STORAGE' variant on light pages */
-  :root[data-theme="light"] img.for-dark{ display:none; }
-  :root[data-theme="dark"] img.for-light{ display:none; }
 
-  @media (max-width:640px){
-    .cards{ grid-template-columns:1fr; }
-    .logo-row{ gap:30px; }
-    .logo-row img.nss{ height:44px; }
-    .logo-row img.afam{ height:26px; }
-    .logo-row img.sls{ height:17px; }
+  /* ---------- boot splash: the reticle assembles, then flies home ---------- */
+  #splash{
+    position:fixed; inset:0; z-index:50;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--bg); transition:background .6s ease;
   }
-  /* entrance reveals (containers only — the parallax cards own their transform) */
-  .reveal{ opacity:0; }
-  .reveal.in{ opacity:1; animation:riseIn .6s cubic-bezier(.2,.7,.3,1) backwards; }
-  @keyframes riseIn{ from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:none; } }
-  .cta:focus-visible, a.tool:focus-visible{ outline:2px solid var(--accent-bright); outline-offset:3px; }
+  #splash.handoff{ background:transparent; pointer-events:none; }
+  #bootMark{ width:clamp(170px,26vw,250px); height:auto; will-change:transform; }
+  /* initial states */
+  #bootMark .b-ring, #bootMark .b-arc, #bootMark .b-bar, #bootMark .b-stem{
+    stroke-dasharray:100; stroke-dashoffset:100; fill:none;
+  }
+  #bootMark .b-tick{ opacity:0; }
+  #bootMark .b-halo, #bootMark .b-core{ opacity:0; transform-origin:60px 42px; }
+  #bootMark .b-arcs{ transform-origin:60px 60px; }
+  /* boot timeline (added with .boot) */
+  #bootMark.boot .b-ring{ animation:drawIn .55s ease-out .05s forwards; }
+  #bootMark.boot .b-tick{ animation:tickIn .28s ease-out forwards; animation-delay:var(--d); }
+  #bootMark.boot .b-arc{ animation:drawIn .5s ease-in-out forwards; animation-delay:var(--d); }
+  #bootMark.boot .b-arcs{ animation:settle .9s cubic-bezier(.2,.7,.3,1) .45s backwards; }
+  #bootMark.boot .b-bar{ animation:drawIn .3s ease-out .85s forwards; }
+  #bootMark.boot .b-stem{ animation:drawIn .35s ease-out 1.02s forwards; }
+  #bootMark.boot .b-halo{ animation:haloIn .5s ease-out 1.32s forwards; }
+  #bootMark.boot .b-core{ animation:ignite .5s cubic-bezier(.3,1.6,.4,1) 1.32s forwards; }
+  @keyframes drawIn{ to{ stroke-dashoffset:0; } }
+  @keyframes tickIn{ to{ opacity:1; } }
+  @keyframes settle{ from{ transform:rotate(-16deg); } to{ transform:rotate(0deg); } }
+  @keyframes haloIn{ 0%{opacity:0} 70%{opacity:calc(var(--mk-halo-a) + .2)} 100%{opacity:var(--mk-halo-a)} }
+  @keyframes ignite{ 0%{opacity:0; transform:scale(0);} 60%{opacity:1; transform:scale(1.5);} 100%{opacity:1; transform:scale(1);} }
+
+  /* the mark's resting slot above the headline */
+  #heroMark{ height:56px; margin-bottom:20px; visibility:hidden; }
+  /* static copy renames the boot classes, so it needs its own fill:none —
+     SVG circles/arcs otherwise fill black and read as a solid coin */
+  #heroMark .s-b-ring, #heroMark .s-arcs path{ fill:none; }
+  #heroMark.lit{ visibility:visible; }
+  #heroMark svg{ height:56px; width:auto; display:block; }
+
+  /* page content waits for the boot to hand off */
+  .rise{ opacity:0; }
+  body.ready .rise{ opacity:1; animation:riseIn .7s cubic-bezier(.2,.7,.3,1) backwards; }
+  @keyframes riseIn{ from{ opacity:0; transform:translateY(16px);} to{ opacity:1; transform:none;} }
+  @media (max-width:640px){
+    body{ overflow:auto; }
+    main{ height:auto; min-height:100svh; padding-bottom:110px; }
+    .foot{ position:static; flex-direction:column; gap:12px; padding-bottom:22px; }
+  }
   @media (prefers-reduced-motion: reduce){
-    .scroll-cue svg{ animation:none; }
-    html{ scroll-behavior:auto; }
-    .reveal{ opacity:1; }
-    .reveal.in{ animation:none; }
+    .rise, body.ready .rise{ opacity:1; animation:none; }
+    #splash{ display:none; }
+    #heroMark{ visibility:visible; }
   }
 </style>
 </head>
 <body>
+  <!-- boot splash: reticle assembles large, then flies to #heroMark -->
+  <div id="splash">
+    <div id="bootMark-wrap"><svg id="bootMark" viewBox="0 0 120 120" role="img" aria-label="Taylor DeMoreaux">
+        <circle class="b-ring" cx="60" cy="60" r="52" pathLength="100" stroke="var(--mk-ring)" stroke-width="1"/>
+        <g stroke="var(--mk-tick)" stroke-width="1.4">
+          <path class="b-tick" style="--d:.30s" d="M60 4 V12"/>
+          <path class="b-tick" style="--d:.36s" d="M108 60 H116"/>
+          <path class="b-tick" style="--d:.42s" d="M60 108 V116"/>
+          <path class="b-tick" style="--d:.48s" d="M4 60 H12"/>
+        </g>
+        <g stroke="var(--mk-tick2)" stroke-width="1">
+          <path class="b-tick" style="--d:.40s" d="M88.3 11.0 L84.3 17.9"/>
+          <path class="b-tick" style="--d:.44s" d="M109 31.7 L102.1 35.7"/>
+          <path class="b-tick" style="--d:.48s" d="M109 88.3 L102.1 84.3"/>
+          <path class="b-tick" style="--d:.52s" d="M88.3 109 L84.3 102.1"/>
+          <path class="b-tick" style="--d:.56s" d="M31.7 109 L35.7 102.1"/>
+          <path class="b-tick" style="--d:.60s" d="M11.0 88.3 L17.9 84.3"/>
+          <path class="b-tick" style="--d:.64s" d="M11.0 31.7 L17.9 35.7"/>
+          <path class="b-tick" style="--d:.68s" d="M31.7 11.0 L35.7 17.9"/>
+        </g>
+        <g class="b-arcs" stroke="var(--mk-arc)" stroke-width="1.6" fill="none">
+          <path class="b-arc" style="--d:.50s" pathLength="100" d="M60 18 A42 42 0 0 1 96.4 39"/>
+          <path class="b-arc" style="--d:.58s" pathLength="100" d="M96.4 81 A42 42 0 0 1 23.6 81"/>
+          <path class="b-arc" style="--d:.66s" pathLength="100" d="M23.6 39 A42 42 0 0 1 42 22.4"/>
+        </g>
+        <g stroke="var(--mk-ink)" stroke-width="3.4" stroke-linecap="square">
+          <path class="b-bar" pathLength="100" d="M34 42 H86"/>
+          <path class="b-stem" pathLength="100" d="M60 42 V92"/>
+        </g>
+        <circle class="b-halo" cx="60" cy="42" r="6.5" fill="var(--mk-lamp)"/>
+        <circle class="b-core" cx="60" cy="42" r="2.6" fill="var(--mk-core)"/>
+      </svg>
+    </div>
+  </div>
+
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div id="vig" aria-hidden="true"></div>
+
   <button id="themeBtn" title="Toggle light / dark mode" aria-label="Toggle light or dark mode">
     <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -237,152 +262,287 @@
     </svg>
   </button>
 
-  <!-- parallax layers: translated on scroll at different rates (JS below) -->
-  <div class="plx" id="plx-a" data-speed="0.25"></div>
-  <div class="plx" id="plx-b" data-speed="0.5"></div>
-
   <main>
-    <section id="hero">
-      <p class="eyebrow">travismorrow.com</p>
-      <h1>Travis&nbsp;Morrow</h1>
-      <p class="tagline">
-        A working record of what we've built — the systems, workflows,
-        and automations behind the storage operation.
-      </p>
+    <div id="heroMark"><svg viewBox="0 0 120 120" role="img" aria-label="Taylor DeMoreaux">
+        <circle class="s-b-ring" cx="60" cy="60" r="52" pathLength="100" stroke="var(--mk-ring)" stroke-width="1"/>
+        <g stroke="var(--mk-tick)" stroke-width="1.4">
+          <path class="s-b-tick" style="--d:.30s" d="M60 4 V12"/>
+          <path class="s-b-tick" style="--d:.36s" d="M108 60 H116"/>
+          <path class="s-b-tick" style="--d:.42s" d="M60 108 V116"/>
+          <path class="s-b-tick" style="--d:.48s" d="M4 60 H12"/>
+        </g>
+        <g stroke="var(--mk-tick2)" stroke-width="1">
+          <path class="s-b-tick" style="--d:.40s" d="M88.3 11.0 L84.3 17.9"/>
+          <path class="s-b-tick" style="--d:.44s" d="M109 31.7 L102.1 35.7"/>
+          <path class="s-b-tick" style="--d:.48s" d="M109 88.3 L102.1 84.3"/>
+          <path class="s-b-tick" style="--d:.52s" d="M88.3 109 L84.3 102.1"/>
+          <path class="s-b-tick" style="--d:.56s" d="M31.7 109 L35.7 102.1"/>
+          <path class="s-b-tick" style="--d:.60s" d="M11.0 88.3 L17.9 84.3"/>
+          <path class="s-b-tick" style="--d:.64s" d="M11.0 31.7 L17.9 35.7"/>
+          <path class="s-b-tick" style="--d:.68s" d="M31.7 11.0 L35.7 17.9"/>
+        </g>
+        <g class="s-arcs" stroke="var(--mk-arc)" stroke-width="1.6" fill="none">
+          <path class="s-b-arc" style="--d:.50s" pathLength="100" d="M60 18 A42 42 0 0 1 96.4 39"/>
+          <path class="s-b-arc" style="--d:.58s" pathLength="100" d="M96.4 81 A42 42 0 0 1 23.6 81"/>
+          <path class="s-b-arc" style="--d:.66s" pathLength="100" d="M23.6 39 A42 42 0 0 1 42 22.4"/>
+        </g>
+        <g stroke="var(--mk-ink)" stroke-width="3.4" stroke-linecap="square">
+          <path class="s-b-bar" pathLength="100" d="M34 42 H86"/>
+          <path class="s-b-stem" pathLength="100" d="M60 42 V92"/>
+        </g>
+        <circle style="opacity:var(--mk-halo-a)" class="s-b-halo" cx="60" cy="42" r="6.5" fill="var(--mk-lamp)"/>
+        <circle class="s-b-core" cx="60" cy="42" r="2.6" fill="var(--mk-core)"/>
+      </svg></div>
+    <p class="eyebrow rise" style="animation-delay:.05s">travismorrow.com · private demo</p>
+    <h1 class="rise" style="animation-delay:.12s">
+      <span class="row"><span class="num">29</span> facilities.</span>
+      <span class="row"><span class="num">3</span> brands.</span>
+      <span class="row"><span class="num">1</span> Taylor.</span>
+    </h1>
+    <p class="mapped rise" style="animation-delay:.22s">Everything we've built, mapped.</p>
+    <p class="tagline rise" style="animation-delay:.3s">
+      Taylor — Executive Digital Assistant — built this site and runs the
+      reporting, automation, and memory behind the whole operation.
+    </p>
 
-      <a class="cta" href="memory-map.html">
-        Enter the memory map
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M5 12h14M13 6l6 6-6 6"/>
-        </svg>
+    <div class="doors">
+      <a class="door rise" style="animation-delay:.3s" href="memory-map.html">
+        <span class="cap">Explore</span>
+        <h2>The memory map</h2>
+        <p>Every system, workflow, and automation as a living graph — hover
+           anything to see how it's wired.</p>
+        <span class="go">Open the map
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
       </a>
-
-      <br>
-      <a class="cta secondary" href="portfolio.html">
-        Portfolio dashboard
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
-        </svg>
+      <a class="door rise" style="animation-delay:.38s" href="portfolio.html">
+        <span class="cap">Measure</span>
+        <h2>The living snapshot</h2>
+        <p>The monthly portfolio report as a live dashboard — 29 facilities,
+           3 brands, refreshed twice a day.</p>
+        <span class="go">Open the dashboard
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
       </a>
+      <a class="door rise" style="animation-delay:.46s" href="map.html">
+        <span class="cap">Locate</span>
+        <h2>The facility map</h2>
+        <p>All 29 locations on a live map with market saturation and
+           demographics from TractIQ.</p>
+        <span class="go">Open the map
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+    </div>
 
-      <p class="lock-note">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="4" y="10" width="16" height="10" rx="2"/>
-          <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
-        </svg>
-        Password required
-      </p>
-
-      <div class="scroll-cue" aria-hidden="true">
-        <span>What's inside</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
-      </div>
-    </section>
-
-    <section class="tools reveal">
-      <p class="sec-eyebrow">Two live tools</p>
-      <h2>What's inside</h2>
-      <div class="cards">
-        <a class="tool" href="memory-map.html" data-speed="-0.06">
-          <div class="t-ic" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="2.5"/><circle cx="5" cy="6" r="2"/>
-              <circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/>
-              <path d="M6.7 7.2 10.2 10.6M17.3 7.2 13.8 10.6M6.7 16.8 10.2 13.4M17.3 16.8 13.8 13.4"/>
-            </svg>
-          </div>
-          <h3>The memory map</h3>
-          <p>An interactive node graph of every system, workflow, and automation
-             in the operation — what's live, what's limited, and how it all connects.</p>
-          <span class="go">Open the map
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
-                 stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </span>
-        </a>
-        <a class="tool" href="portfolio.html" data-speed="0.06">
-          <div class="t-ic" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
-            </svg>
-          </div>
-          <h3>Portfolio snapshot</h3>
-          <p>The monthly report, alive — 29 facilities across three brands with
-             drill-down KPIs, refreshed twice a day from the portfolio datastore.</p>
-          <span class="go">Open the dashboard
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
-                 stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </span>
-        </a>
-      </div>
-    </section>
-
-    <section class="brands reveal">
-      <p class="cap">Built around the operation</p>
-      <div class="logo-row">
-        <img class="nss for-dark" src="assets/nss-logo-report.png" alt="National Self Storage">
-        <img class="nss for-light" src="assets/nss-logo.png" alt="National Self Storage">
-        <img class="afam for-dark" src="assets/afam-logo.png" alt="A Family Storage">
-        <img class="afam for-light" src="assets/afam-logo-light.png" alt="A Family Storage">
-        <img class="sls for-dark" src="assets/sls-logo.png" alt="Storelocal Storage">
-        <img class="sls for-light" src="assets/sls-logo-light.png" alt="Storelocal Storage">
-      </div>
-    </section>
+    <p class="lock-note rise" style="animation-delay:.46s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+      </svg>
+      Password required · access lasts one browser session
+    </p>
   </main>
 
-  <footer>
-    &copy; <span id="yr">2026</span> Travis Morrow &middot; Private demo
-  </footer>
+  <div class="foot">
+    <span>&copy; <span id="yr">2026</span> Travis Morrow</span>
+    <span class="logos">
+      <img class="nss for-dark" src="assets/nss-logo-report.png" alt="National Self Storage">
+      <img class="nss for-light" src="assets/nss-logo.png" alt="National Self Storage">
+      <img class="afam for-dark" src="assets/afam-logo.png" alt="A Family Storage">
+      <img class="afam for-light" src="assets/afam-logo-light.png" alt="A Family Storage">
+      <img class="sls for-dark" src="assets/sls-logo.png" alt="Storelocal Storage">
+      <img class="sls for-light" src="assets/sls-logo-light.png" alt="Storelocal Storage">
+    </span>
+  </div>
 
   <script>
-    // Keep the year fresh without a build step.
     document.getElementById("yr").textContent = new Date().getFullYear();
-    document.getElementById("themeBtn").addEventListener("click", function () {
-      TMTheme.toggle();
-    });
+    document.getElementById("themeBtn").addEventListener("click", function () { TMTheme.toggle(); });
 
-    // Scroll parallax: background glow layers drift slower than the page;
-    // the two tool cards get a gentle counter-drift. Disabled for
-    // prefers-reduced-motion.
+    /* ---- boot sequence: assemble the reticle, then FLIP it to its slot ---- */
     (function () {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      var els = Array.prototype.slice.call(document.querySelectorAll("[data-speed]"));
-      // rAF loop with change detection (not a scroll listener — event
-      // delivery proved unreliable across embedded/headless contexts)
-      var last = null;
-      (function loop() {
-        var y = window.scrollY || 0;
-        if (y !== last) {
-          last = y;
-          els.forEach(function (el) {
-            var v = -y * parseFloat(el.getAttribute("data-speed"));
-            el.style.transform = "translate3d(0," + v.toFixed(1) + "px,0)";
-          });
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var splash = document.getElementById("splash");
+      var mark = document.getElementById("bootMark");
+      var slot = document.getElementById("heroMark");
+      function done() {
+        document.body.classList.add("ready");
+        slot.classList.add("lit");
+        if (splash && splash.parentNode) splash.remove();
+      }
+      if (reduced || !mark) { done(); return; }
+      mark.classList.add("boot");
+      // failsafe: never leave the page hidden if anything above breaks
+      var safety = setTimeout(done, 4500);
+      setTimeout(function () {
+        var sr = mark.getBoundingClientRect();
+        var tr = slot.getBoundingClientRect();
+        var dx = (tr.left + tr.width / 2) - (sr.left + sr.width / 2);
+        var dy = (tr.top + tr.height / 2) - (sr.top + sr.height / 2);
+        var sc = tr.height / sr.height;
+        mark.style.transition = "transform .78s cubic-bezier(.65,.05,.25,1)";
+        mark.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + sc.toFixed(4) + ")";
+        splash.classList.add("handoff");
+        // page rises in while the mark is mid-flight
+        setTimeout(function () { document.body.classList.add("ready"); }, 260);
+        mark.addEventListener("transitionend", function () {
+          clearTimeout(safety);
+          slot.classList.add("lit");
+          splash.remove();
+        }, { once: true });
+      }, 1900);
+    })();
+
+    /* ---- the living node field ----
+       ~46 drifting nodes on two depth layers; edges connect near neighbours.
+       Pointer moves the layers at different rates (depth parallax). Colors
+       come from CSS vars so the theme toggle restyles the field live.
+       Pauses when the tab is hidden; static frame under reduced motion. */
+    (function () {
+      var cv = document.getElementById("field"), cx = cv.getContext("2d");
+      var MOTION = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var DPR = Math.min(2, window.devicePixelRatio || 1);
+      var W, H, nodes = [];
+      var px = 0, py = 0, tx = 0, ty = 0;   // pointer parallax (eased)
+
+      function vars() {
+        var st = getComputedStyle(document.documentElement);
+        return {
+          node: st.getPropertyValue("--node").trim(),
+          hub: st.getPropertyValue("--node-hub").trim(),
+          edge: st.getPropertyValue("--edge").trim(),
+          edgeHub: st.getPropertyValue("--edge-hub").trim(),
+          pulse: st.getPropertyValue("--pulse").trim()
+        };
+      }
+
+      function resize() {
+        W = innerWidth; H = innerHeight;
+        cv.width = W * DPR; cv.height = H * DPR;
+        cv.style.width = W + "px"; cv.style.height = H + "px";
+        cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      }
+      resize(); addEventListener("resize", resize);
+
+      var N = 46;
+      for (var i = 0; i < N; i++) {
+        var hub = i % 9 === 0;             // every 9th node is a red "hub"
+        nodes.push({
+          x: Math.random() * 1, y: Math.random() * 1,
+          vx: (Math.random() - 0.5) * 0.00022,
+          vy: (Math.random() - 0.5) * 0.00022,
+          r: hub ? 4.2 + Math.random() * 1.6 : 1.6 + Math.random() * 1.8,
+          depth: 0.5 + Math.random() * 0.5,   // 0.5 far … 1 near
+          hub: hub
+        });
+      }
+
+      addEventListener("pointermove", function (e) {
+        tx = (e.clientX / W - 0.5) * 2; ty = (e.clientY / H - 0.5) * 2;
+      });
+
+      var LINK = 150;                       // px link radius
+
+      /* ---- synapse pulses: sparse ambient edge flashes ----
+         At most 3 alive at once; each new one waits for a random beat so
+         firings stagger instead of strobing. A pulse lives ~0.9s with a
+         sine envelope (fade in, peak, fade out) and lights its edge and
+         both endpoint nodes. Skipped entirely under reduced motion. */
+      var pulses = [], nextFire = performance.now() + 600;
+      function spawnPulse(pts, now) {
+        var a = Math.floor(Math.random() * pts.length);
+        for (var tries = 0; tries < 8; tries++) {
+          var b = Math.floor(Math.random() * pts.length);
+          if (b === a) continue;
+          var dx = pts[a].sx - pts[b].sx, dy = pts[a].sy - pts[b].sy;
+          if (dx * dx + dy * dy < LINK * LINK * 0.9) {
+            pulses.push({ a: a, b: b, t0: now, dur: 700 + Math.random() * 500 });
+            return;
+          }
         }
+      }
+
+      function frame() {
+        px += (tx - px) * 0.04; py += (ty - py) * 0.04;
+        var c = vars();
+        cx.clearRect(0, 0, W, H);
+
+        // project to screen space (with per-depth pointer offset)
+        var pts = nodes.map(function (n) {
+          if (MOTION) {
+            n.x += n.vx; n.y += n.vy;
+            if (n.x < -0.05) n.x = 1.05; if (n.x > 1.05) n.x = -0.05;
+            if (n.y < -0.05) n.y = 1.05; if (n.y > 1.05) n.y = -0.05;
+          }
+          return {
+            sx: n.x * W + px * 26 * n.depth,
+            sy: n.y * H + py * 18 * n.depth,
+            n: n
+          };
+        });
+
+        // edges (near neighbours only)
+        for (var i = 0; i < pts.length; i++) {
+          for (var j = i + 1; j < pts.length; j++) {
+            var dx = pts[i].sx - pts[j].sx, dy = pts[i].sy - pts[j].sy;
+            var d2 = dx * dx + dy * dy;
+            if (d2 < LINK * LINK) {
+              var a = 1 - Math.sqrt(d2) / LINK;
+              cx.strokeStyle = (pts[i].n.hub || pts[j].n.hub) ? c.edgeHub : c.edge;
+              cx.globalAlpha = a;
+              cx.lineWidth = 1;
+              cx.beginPath(); cx.moveTo(pts[i].sx, pts[i].sy); cx.lineTo(pts[j].sx, pts[j].sy); cx.stroke();
+            }
+          }
+        }
+        cx.globalAlpha = 1;
+
+        // synapse pulses
+        if (MOTION) {
+          var now = performance.now();
+          if (now > nextFire && pulses.length < 3) {
+            spawnPulse(pts, now);
+            nextFire = now + 500 + Math.random() * 1600;   // staggered, sparse
+          }
+          pulses = pulses.filter(function (pu) {
+            var pr = (now - pu.t0) / pu.dur;
+            if (pr >= 1) return false;
+            var env = Math.sin(Math.PI * pr);              // in-peak-out
+            var A = pts[pu.a], B = pts[pu.b];
+            cx.strokeStyle = c.pulse;
+            cx.globalAlpha = env * 0.85;
+            cx.lineWidth = 1.6;
+            cx.beginPath(); cx.moveTo(A.sx, A.sy); cx.lineTo(B.sx, B.sy); cx.stroke();
+            // endpoint blooms
+            cx.fillStyle = c.pulse;
+            cx.globalAlpha = env * 0.7;
+            cx.beginPath(); cx.arc(A.sx, A.sy, A.n.r + 2.2 * env, 0, 6.2832); cx.fill();
+            cx.beginPath(); cx.arc(B.sx, B.sy, B.n.r + 2.2 * env, 0, 6.2832); cx.fill();
+            return true;
+          });
+          cx.globalAlpha = 1;
+        }
+
+        // nodes
+        pts.forEach(function (p) {
+          cx.fillStyle = p.n.hub ? c.hub : c.node;
+          cx.globalAlpha = 0.35 + 0.65 * p.n.depth;
+          cx.beginPath(); cx.arc(p.sx, p.sy, p.n.r, 0, 6.2832); cx.fill();
+        });
+        cx.globalAlpha = 1;
+      }
+
+      if (!MOTION) { frame(); return; }     // one static frame
+      (function loop() {
+        if (!document.hidden) frame();
         requestAnimationFrame(loop);
       })();
     })();
-
-    // Reveal-on-scroll for the below-fold sections.
-    (function () {
-      var els = document.querySelectorAll(".reveal");
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-          !("IntersectionObserver" in window)) {
-        Array.prototype.forEach.call(els, function (el) { el.classList.add("in"); });
-        return;
-      }
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
-        });
-      }, { threshold: 0.1 });
-      Array.prototype.forEach.call(els, function (el) { io.observe(el); });
-    })();
   </script>
+<script src="chat.js" defer></script>
 </body>
 </html>

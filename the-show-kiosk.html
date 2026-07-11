@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Storelocal – Domain Authority Checker</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800;900&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green-light: #88C659;
+  --green-dark:  #25B34B;
+  --bg:          #111213;
+  --bg-card:     #1c1d1e;
+  --bg-key:      #252627;
+  --text:        #ffffff;
+  --muted:       #888;
+  --border:      #333;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
+/* ── screen system ── */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+.screen.active { opacity: 1; pointer-events: all; }
+
+/* ── shared utilities ── */
+.grad { background: linear-gradient(135deg, var(--green-light), var(--green-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.gline { width: 80px; height: 3px; background: linear-gradient(135deg, var(--green-light), var(--green-dark)); border-radius: 2px; box-shadow: 0 0 16px rgba(37,179,75,.5); margin: 0 auto; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--green-light), var(--green-dark));
+  color: #fff;
+  border: none;
+  border-radius: 60px;
+  padding: 22px 64px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: .5px;
+  box-shadow: 0 0 40px rgba(37,179,75,.25);
+  transition: transform .12s, box-shadow .12s;
+}
+.btn-primary:active { transform: scale(.96); box-shadow: 0 0 60px rgba(37,179,75,.4); }
+.btn-primary:disabled { opacity: .35; cursor: default; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid #3a3a3a;
+  border-radius: 60px;
+  padding: 14px 36px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.btn-ghost:hover { border-color: #555; color: #ccc; }
+
+/* ════════════════════════════════
+   SCREEN 1 — SPLASH
+   ════════════════════════════════ */
+#s-splash {
+  justify-content: center;
+  gap: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, #0d2918 0%, var(--bg) 65%);
+}
+#s-splash .logo-wrap { margin-bottom: 52px; }
+#s-splash .logo-wrap svg { height: 64px; width: auto; }
+#s-splash h1 {
+  font-family: 'Raleway', sans-serif;
+  font-size: 80px;
+  font-weight: 900;
+  line-height: 1.08;
+  text-align: center;
+  margin-bottom: 28px;
+}
+#s-splash .sub {
+  font-size: 24px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 680px;
+  margin-bottom: 64px;
+  font-weight: 400;
+}
+#s-splash .gline { margin-bottom: 52px; }
+
+.pill-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid #2a2a2a;
+  border-radius: 40px;
+  padding: 10px 22px;
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 52px;
+}
+.pill-stat .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-dark); box-shadow: 0 0 8px var(--green-dark); }
+
+/* ════════════════════════════════
+   SCREEN 2 — DOMAIN ENTRY
+   ════════════════════════════════ */
+#s-domain {
+  justify-content: flex-start;
+  padding: 44px 80px 32px;
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+.topbar svg { height: 38px; width: auto; }
+
+#s-domain h2 {
+  font-family: 'Raleway', sans-serif;
+  font-size: 50px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 10px;
+}
+#s-domain .hint { color: var(--muted); font-size: 20px; text-align: center; margin-bottom: 30px; }
+
+/* domain display box */
+.domain-box {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  width: 740px;
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 46px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  margin: 0 auto 28px;
+  padding: 0 36px;
+  transition: border-color .2s, box-shadow .2s;
+  position: relative;
+}
+.domain-box.lit {
+  border-color: var(--green-dark);
+  box-shadow: 0 0 28px rgba(37,179,75,.15);
+}
+.domain-box .placeholder { color: #3a3a3a; font-size: 36px; }
+.cursor-blink {
+  display: inline-block; width: 3px; height: 48px;
+  background: var(--green-dark); border-radius: 2px;
+  margin-left: 4px; vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* virtual keyboard */
+.vkb { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 24px; }
+.vkb-row { display: flex; gap: 9px; }
+.key {
+  background: var(--bg-key);
+  border: 1px solid #2e2e2e;
+  border-radius: 10px;
+  color: #ddd;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  width: 66px; height: 66px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background .08s, transform .08s;
+  -webkit-tap-highlight-color: transparent;
+}
+.key:active { background: #2f5c3a; transform: scale(.93); }
+.key.w2 { width: 104px; font-size: 17px; }
+.key.w3 { width: 148px; }
+.key.accent {
+  background: linear-gradient(135deg, var(--green-light), var(--green-dark));
+  border: none; color: #fff; font-weight: 700; font-size: 18px;
+}
+.key.accent:active { background: linear-gradient(135deg, #6fa83a, #1a8a38); }
+.key.tld {
+  width: auto;
+  padding: 0 20px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--green-light);
+  border-color: rgba(136,198,89,.35);
+  background: rgba(136,198,89,.08);
+}
+.key.tld:active { background: rgba(136,198,89,.25); transform: scale(.93); }
+
+.domain-footer { display: flex; gap: 20px; justify-content: center; align-items: center; }
+
+/* ════════════════════════════════
+   SCREEN 3 — LEAD CAPTURE
+   ════════════════════════════════ */
+#s-lead {
+  justify-content: center;
+  align-items: center;
+  padding: 0 80px;
+}
+
+.lead-card {
+  background: var(--bg-card);
+  border: 1px solid #2a2a2a;
+  border-radius: 28px;
+  padding: 40px 56px 44px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.lead-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(37,179,75,.1);
+  border: 1px solid rgba(37,179,75,.3);
+  border-radius: 40px;
+  padding: 8px 20px;
+  font-size: 14px;
+  color: var(--green-dark);
+  font-weight: 600;
+  margin-bottom: 22px;
+  letter-spacing: .3px;
+}
+.badge-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green-dark);
+  box-shadow: 0 0 8px var(--green-dark);
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(.7); }
+}
+
+.lead-card h2 {
+  font-family: 'Raleway', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.lead-card .sub2 { color: var(--muted); font-size: 16px; margin-bottom: 22px; }
+
+.fgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+  margin-bottom: 12px;
+}
+.fgrid-full { margin-bottom: 12px; }
+
+.fg label {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.fg input {
+  width: 100%;
+  background: #111213;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 13px 18px;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  outline: none;
+  transition: border-color .2s;
+  -webkit-user-select: text;
+  user-select: text;
+  cursor: text;
+}
+.fg input:focus { border-color: var(--green-dark); }
+.fg input::placeholder { color: #333; }
+.fg .opt { font-size: 11px; color: #4a4a4a; text-transform: none; letter-spacing: 0; margin-left: 6px; }
+
+/* ════════════════════════════════
+   SCREEN 4 — REVEAL
+   ════════════════════════════════ */
+#s-reveal { justify-content: flex-start; padding: 40px 80px 30px; }
+
+#s-reveal h2 {
+  font-family: 'Raleway', sans-serif;
+  font-size: 42px; font-weight: 800;
+  text-align: center; margin-bottom: 6px;
+}
+#s-reveal .rev-sub { color: var(--muted); font-size: 19px; text-align: center; margin-bottom: 36px; }
+#s-reveal .rev-sub span { color: var(--green-dark); font-weight: 600; }
+
+.scores { display: flex; align-items: center; justify-content: center; gap: 48px; width: 100%; margin-bottom: 30px; }
+
+.score-card {
+  background: var(--bg-card);
+  border: 1px solid #2a2a2a;
+  border-radius: 28px;
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  flex: 0 0 340px;
+}
+.score-card.sl {
+  border-color: rgba(37,179,75,.35);
+  box-shadow: 0 0 40px rgba(37,179,75,.1);
+}
+
+.sc-label { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+.sc-label.green { color: var(--green-dark); }
+.sc-domain { font-size: 20px; font-weight: 600; }
+.sc-domain.green { color: var(--green-dark); }
+
+/* gauge */
+.gauge-wrap { position: relative; width: 180px; height: 180px; }
+.gauge-svg { width: 180px; height: 180px; transform: rotate(-90deg); }
+.g-track { fill: none; stroke: #222; stroke-width: 14; }
+.g-fill {
+  fill: none; stroke-width: 14; stroke-linecap: round;
+  stroke-dasharray: 478;
+  stroke-dashoffset: 478;
+  transition: stroke-dashoffset 1.6s cubic-bezier(.17,.67,.35,1);
+}
+.g-fill.them { stroke: #555; }
+.g-fill.us   { stroke: url(#gg); }
+.gauge-num {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Raleway', sans-serif;
+  font-size: 56px; font-weight: 900;
+}
+.gauge-num.them { color: #666; }
+.gauge-num.us { background: linear-gradient(135deg, var(--green-light), var(--green-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+.sc-meta { font-size: 14px; color: var(--muted); }
+
+.vs { font-family: 'Raleway', sans-serif; font-size: 32px; font-weight: 900; color: #333; flex: 0 0 50px; text-align: center; }
+
+/* insight */
+.insight {
+  background: rgba(37,179,75,.07);
+  border: 1px solid rgba(37,179,75,.18);
+  border-radius: 18px;
+  padding: 24px 44px;
+  text-align: center;
+  max-width: 860px;
+  margin: 0 auto 22px;
+}
+.insight p { font-size: 20px; line-height: 1.55; color: #ddd; }
+.insight strong { color: var(--green-dark); }
+
+.sent-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; font-size: 18px; color: var(--muted); margin-bottom: 18px;
+}
+.sent-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green-dark); box-shadow: 0 0 8px var(--green-dark); animation: pulse 2s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.4)} }
+
+.reset-track { width: 280px; height: 3px; background: #222; border-radius: 2px; margin: 0 auto; overflow: hidden; }
+.reset-fill { height: 100%; background: linear-gradient(90deg, var(--green-light), var(--green-dark)); width: 0%; border-radius: 2px; }
+.reset-txt { text-align: center; font-size: 14px; color: #444; margin-top: 8px; }
+
+/* ── SVG defs (gradients used in gauges + spinner) ── */
+.svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+</style>
+</head>
+<body>
+
+<!-- gradient defs shared across screens -->
+<svg class="svg-defs" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#88C659"/>
+      <stop offset="100%" stop-color="#25B34B"/>
+    </linearGradient>
+    <linearGradient id="gg" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#88C659"/>
+      <stop offset="100%" stop-color="#25B34B"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- ══════════════════════════════════
+     SCREEN 1 — SPLASH
+     ══════════════════════════════════ -->
+<div class="screen active" id="s-splash">
+
+  <div class="logo-wrap">
+    <img src="assets/sls-logo.png" style="height:72px;width:auto;" alt="Storelocal Storage">
+  </div>
+
+  <div class="gline" style="margin-bottom:48px;"></div>
+
+  <h1>How does your facility's<br><span class="grad">website stack up?</span></h1>
+  <p class="sub">Enter your domain and see your Domain Authority score<br>compared to storelocal.com — side by side, in seconds.</p>
+
+  <div class="pill-stat">
+    <span class="dot"></span>
+    Live at THE Show · November 2025
+  </div>
+
+  <button class="btn-primary" onclick="go('domain')">CHECK MY SCORE &nbsp;→</button>
+</div>
+
+
+<!-- ══════════════════════════════════
+     SCREEN 2 — DOMAIN ENTRY
+     ══════════════════════════════════ -->
+<div class="screen" id="s-domain">
+  <div class="topbar">
+    <img src="assets/sls-logo.png" style="height:52px;width:auto;" alt="Storelocal Storage">
+    <button class="btn-ghost" onclick="go('splash')">← Back</button>
+  </div>
+
+  <h2>Enter your facility's website</h2>
+  <p class="hint">Type your domain &nbsp;·&nbsp; example: <span style="color:var(--green-dark)">mystorage.com</span></p>
+
+  <div class="domain-box" id="dbox">
+    <span id="dtext" style="color:#fff"></span>
+    <span class="placeholder" id="dplaceholder">yourfacility.com</span>
+    <span class="cursor-blink" id="dcursor" style="display:none"></span>
+  </div>
+
+  <!-- Virtual keyboard -->
+  <div class="vkb">
+    <div class="vkb-row">
+      <div class="key" data-k="1">1</div><div class="key" data-k="2">2</div><div class="key" data-k="3">3</div>
+      <div class="key" data-k="4">4</div><div class="key" data-k="5">5</div><div class="key" data-k="6">6</div>
+      <div class="key" data-k="7">7</div><div class="key" data-k="8">8</div><div class="key" data-k="9">9</div>
+      <div class="key" data-k="0">0</div>
+    </div>
+    <div class="vkb-row">
+      <div class="key" data-k="q">Q</div><div class="key" data-k="w">W</div><div class="key" data-k="e">E</div>
+      <div class="key" data-k="r">R</div><div class="key" data-k="t">T</div><div class="key" data-k="y">Y</div>
+      <div class="key" data-k="u">U</div><div class="key" data-k="i">I</div><div class="key" data-k="o">O</div>
+      <div class="key" data-k="p">P</div>
+    </div>
+    <div class="vkb-row">
+      <div class="key" data-k="a">A</div><div class="key" data-k="s">S</div><div class="key" data-k="d">D</div>
+      <div class="key" data-k="f">F</div><div class="key" data-k="g">G</div><div class="key" data-k="h">H</div>
+      <div class="key" data-k="j">J</div><div class="key" data-k="k">K</div><div class="key" data-k="l">L</div>
+    </div>
+    <div class="vkb-row">
+      <div class="key w2" data-k="BACK">⌫ Del</div>
+      <div class="key" data-k="z">Z</div><div class="key" data-k="x">X</div><div class="key" data-k="c">C</div>
+      <div class="key" data-k="v">V</div><div class="key" data-k="b">B</div><div class="key" data-k="n">N</div>
+      <div class="key" data-k="m">M</div><div class="key" data-k="-">-</div><div class="key" data-k=".">.</div>
+    </div>
+    <div class="vkb-row">
+      <div class="key tld" data-k=".com">.com</div>
+      <div class="key tld" data-k=".net">.net</div>
+      <div class="key tld" data-k=".org">.org</div>
+      <div class="key tld" data-k=".io">.io</div>
+      <div class="key tld" data-k=".storage">.storage</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:18px;align-items:center;justify-content:center;">
+    <button class="btn-ghost" id="clearbtn" style="display:none" onclick="clearDomain()">Clear</button>
+    <button class="btn-primary" id="lookupbtn" disabled onclick="goReveal()">Look It Up →</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     SCREEN 3 — LEAD CAPTURE
+     ══════════════════════════════════ -->
+<div class="screen" id="s-lead">
+
+  <div class="lead-card">
+
+    <!-- FORM STATE -->
+    <div id="lead-form-body">
+      <div class="lead-status-badge">
+        <span class="badge-dot"></span>
+        Score ready for: <span id="spin-domain-lbl" style="color:#fff;margin-left:3px;"></span>
+      </div>
+
+      <h2>Get your full <span class="grad">SEO breakdown</span></h2>
+      <p class="sub2">We'll email it to you instantly — no spam, ever.</p>
+
+      <div class="fgrid">
+        <div class="fg"><label>First Name</label><input id="f-name" type="text" placeholder="Sarah" autocomplete="off"></div>
+        <div class="fg"><label>Facility Name</label><input id="f-facility" type="text" placeholder="Main Street Storage" autocomplete="off"></div>
+        <div class="fg"><label>Email Address</label><input id="f-email" type="email" placeholder="sarah@mainstorage.com" autocomplete="off"></div>
+        <div class="fg">
+          <label>Phone <span class="opt">(optional — for text delivery)</span></label>
+          <input id="f-phone" type="tel" placeholder="(555) 867-5309" autocomplete="off">
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="goSubmit()" style="width:100%;padding:18px 0;font-size:22px;">
+        Send Me My Results →
+      </button>
+
+      <div style="text-align:center;margin-top:14px;">
+        <button class="btn-ghost" onclick="go('reveal')" style="font-size:15px;padding:10px 28px;">← Back to Scores</button>
+      </div>
+    </div>
+
+    <!-- THANK YOU STATE (hidden until submit) -->
+    <div id="lead-thanks" style="display:none;flex-direction:column;align-items:center;text-align:center;padding:20px 0;">
+      <div style="font-size:72px;margin-bottom:24px;">✅</div>
+      <h2 style="font-family:'Raleway',sans-serif;font-size:38px;font-weight:800;margin-bottom:10px;">You're all set!</h2>
+      <p style="color:var(--muted);font-size:18px;line-height:1.6;max-width:480px;margin-bottom:8px;">
+        Your SEO breakdown is on its way to<br><strong id="thanks-email" style="color:#fff;"></strong>
+      </p>
+      <p style="color:#444;font-size:15px;">Returning to start shortly…</p>
+      <div class="reset-track" style="margin-top:28px;width:100%;"><div class="reset-fill" id="rfill2"></div></div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════
+     SCREEN 4 — REVEAL
+     ══════════════════════════════════ -->
+<div class="screen" id="s-reveal">
+  <div class="topbar">
+    <img src="assets/sls-logo.png" style="height:52px;width:auto;" alt="Storelocal Storage">
+    <div style="font-size:14px;color:#444;letter-spacing:1px;text-transform:uppercase;">THE Show · Demo Mode</div>
+  </div>
+
+  <h2>Your Domain Authority Score</h2>
+  <p class="rev-sub">Here's how <span id="rev-domain"></span> compares to storelocal.com</p>
+
+  <div class="scores">
+    <!-- Their card -->
+    <div class="score-card">
+      <div class="sc-label">Your Facility</div>
+      <div class="sc-domain" id="rev-domain-label"></div>
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle class="g-track" cx="100" cy="100" r="76"/>
+          <circle class="g-fill them" id="gfill-them" cx="100" cy="100" r="76"/>
+        </svg>
+        <div class="gauge-num them" id="gnum-them">0</div>
+      </div>
+      <div class="sc-meta">Domain Authority &nbsp;·&nbsp; Scale 0–100</div>
+    </div>
+
+    <div class="vs">VS</div>
+
+    <!-- SLS card -->
+    <div class="score-card sl">
+      <div class="sc-label green">Storelocal.com</div>
+      <div class="sc-domain green">storelocal.com</div>
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gg2" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#88C659"/><stop offset="100%" stop-color="#25B34B"/>
+            </linearGradient>
+          </defs>
+          <circle class="g-track" cx="100" cy="100" r="76"/>
+          <circle class="g-fill us" id="gfill-us" cx="100" cy="100" r="76" stroke="url(#gg2)"/>
+        </svg>
+        <div class="gauge-num us" id="gnum-us">0</div>
+      </div>
+      <div class="sc-meta" style="color:var(--green-dark)">Domain Authority &nbsp;·&nbsp; Scale 0–100</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <p id="insight-txt"></p>
+  </div>
+
+  <div style="text-align:center;margin-bottom:18px;">
+    <button class="btn-primary" onclick="goLeadCapture()" style="font-size:22px;padding:20px 64px;">
+      Get My Full SEO Report →
+    </button>
+  </div>
+
+  <div class="reset-track"><div class="reset-fill" id="rfill"></div></div>
+  <div class="reset-txt" id="rtxt">Returning to start in 25s — or tap above to get your report</div>
+</div>
+
+
+<script>
+// ── state ──
+let domain = '';
+let resetT = null, resetTickT = null;
+
+// ── screen nav ──
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+}
+
+// ── virtual keyboard ──
+document.querySelectorAll('.key').forEach(k => {
+  k.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    const ch = k.dataset.k;
+    if (ch === 'BACK') {
+      domain = domain.slice(0, -1);
+    } else if (ch.length > 1 && ch.startsWith('.')) {
+      // TLD shortcut — strip any trailing dot then append whole TLD
+      domain = domain.replace(/\.+$/, '') + ch;
+    } else if (domain.length < 50) {
+      domain += ch.toLowerCase();
+    }
+    updateBox();
+  });
+});
+
+// physical keyboard fallback
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('s-domain').classList.contains('active')) return;
+  if (e.key === 'Backspace') domain = domain.slice(0, -1);
+  else if (e.key === 'Enter' && isValid()) goReveal();
+  else if (/^[a-zA-Z0-9.\-]$/.test(e.key) && domain.length < 50) domain += e.key.toLowerCase();
+  else return;
+  updateBox();
+});
+
+function isValid() { return domain.includes('.') && domain.length > 3; }
+
+function updateBox() {
+  const dt = document.getElementById('dtext');
+  const dp = document.getElementById('dplaceholder');
+  const dc = document.getElementById('dcursor');
+  const db = document.getElementById('dbox');
+  dt.textContent = domain;
+  dp.style.display = domain ? 'none' : 'inline';
+  dc.style.display = domain ? 'inline-block' : 'none';
+  db.classList.toggle('lit', domain.length > 0);
+
+  const lb = document.getElementById('lookupbtn');
+  const cb = document.getElementById('clearbtn');
+  lb.disabled = !isValid();
+  cb.style.display = domain ? 'inline-block' : 'none';
+}
+
+function clearDomain() { domain = ''; updateBox(); }
+
+// ── reveal — called directly from "Look It Up" ──
+let revealScore = 0;
+function goReveal() {
+  if (!isValid()) return;
+
+  // DEMO: random score 14–38 so it's always clearly below SLS
+  revealScore = Math.floor(Math.random() * 25) + 14;
+  const slsScore = 62;
+
+  document.getElementById('rev-domain').textContent       = domain;
+  document.getElementById('rev-domain-label').textContent = domain;
+  document.getElementById('spin-domain-lbl').textContent  = domain;
+
+  // Contextual insight
+  let msg = '';
+  if (revealScore < 20) {
+    msg = `A Domain Authority of <strong>${revealScore}</strong> means most renters won't find <strong>${domain}</strong> organically — they'll find your competitors first. Storelocal.com's score of <strong>${slsScore}</strong> gives members a massive head start.`;
+  } else if (revealScore < 35) {
+    msg = `A score of <strong>${revealScore}</strong> shows you have a digital presence, but Storelocal.com's authority of <strong>${slsScore}</strong> means network members are ranked 3× higher in local searches — capturing renters before they ever reach your site.`;
+  } else {
+    msg = `Solid score of <strong>${revealScore}</strong>! Paired with Storelocal.com's network authority of <strong>${slsScore}</strong>, you'd combine your local reputation with a national SEO backbone — the best of both worlds.`;
+  }
+  document.getElementById('insight-txt').innerHTML = msg;
+
+  go('reveal');
+
+  // Animate gauges
+  setTimeout(() => animateGauge('gfill-them', 'gnum-them', revealScore), 350);
+  setTimeout(() => animateGauge('gfill-us',   'gnum-us',   slsScore),    750);
+
+  // Auto-reset (longer — give them time to read & decide)
+  startReset(25);
+}
+
+// ── lead capture — called from "Get My Full SEO Report" on reveal ──
+function goLeadCapture() {
+  clearTimeout(resetT); clearInterval(resetTickT);
+  ['f-name','f-facility','f-email','f-phone'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('lead-form-body').style.display = 'block';
+  document.getElementById('lead-thanks').style.display = 'none';
+  go('lead');
+}
+
+// ── form submit ──
+function goSubmit() {
+  const email = document.getElementById('f-email').value.trim();
+  if (!email) {
+    document.getElementById('f-email').style.borderColor = '#e05555';
+    document.getElementById('f-email').focus();
+    setTimeout(() => document.getElementById('f-email').style.borderColor = '', 1500);
+    return;
+  }
+  document.getElementById('thanks-email').textContent = email;
+  document.getElementById('lead-form-body').style.display = 'none';
+  document.getElementById('lead-thanks').style.display = 'flex';
+  startReset(8, 'rfill2');
+}
+
+function animateGauge(fillId, numId, target) {
+  const circ = 2 * Math.PI * 76; // r=76 → ~477.5
+  const el = document.getElementById(fillId);
+  el.style.strokeDasharray  = circ;
+  el.style.strokeDashoffset = circ;
+  // slight delay then animate
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      el.style.strokeDashoffset = circ - (target / 100) * circ;
+    });
+  });
+  // count up number
+  const numEl = document.getElementById(numId);
+  let cur = 0;
+  const step = target / (1500 / 16);
+  const iv = setInterval(() => {
+    cur = Math.min(cur + step, target);
+    numEl.textContent = Math.round(cur);
+    if (cur >= target) clearInterval(iv);
+  }, 16);
+}
+
+function startReset(secs, fillId = 'rfill') {
+  clearTimeout(resetT); clearInterval(resetTickT);
+  const fill  = document.getElementById(fillId);
+  const label = document.getElementById('rtxt');
+  fill.style.transition = 'none';
+  fill.style.width = '0%';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      fill.style.transition = `width ${secs}s linear`;
+      fill.style.width = '100%';
+    });
+  });
+  if (label) {
+    let rem = secs;
+    resetTickT = setInterval(() => {
+      rem--;
+      label.textContent = `Returning to start in ${rem}s — or tap above to get your report`;
+      if (rem <= 0) { clearInterval(resetTickT); }
+    }, 1000);
+  }
+  resetT = setTimeout(() => {
+    domain = '';
+    updateBox();
+    go('splash');
+  }, secs * 1000);
+}
+
+// init
+updateBox();
+</script>
+</body>
+</html>
