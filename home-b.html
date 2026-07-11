@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travis Morrow — everything we've built, mapped</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="theme.js"></script>
+<script>TMTheme.init();</script>
+<style>
+  :root{
+    --bg:#141414;
+    --panel:rgba(31,34,38,0.72);
+    --border:rgba(255,255,255,0.09);
+    --text:#d2d2d2;
+    --dim:#9c9c9c;
+    --bright:#f2f2f2;
+    --accent:#B92732;
+    --accent-2:#B62025;
+    --accent-bright:#de5964;
+    --chip-bg:rgba(255,255,255,0.04);
+    --chip-bg-hover:rgba(255,255,255,0.08);
+    /* canvas field colors (JS reads these) */
+    --node:#7a7f86;
+    --node-hub:#B92732;
+    --edge:rgba(255,255,255,0.10);
+    --edge-hub:rgba(185,39,50,0.28);
+  }
+  :root[data-theme="light"]{
+    --bg:#F2F2F0;
+    --panel:rgba(255,255,255,0.82);
+    --border:#D9DBDE;
+    --text:#33363B; --dim:#6B6E73; --bright:#111318;
+    --accent-bright:#B92732;
+    --chip-bg:rgba(0,0,0,0.035); --chip-bg-hover:rgba(0,0,0,0.07);
+    --node:#a7abb0;
+    --node-hub:#B92732;
+    --edge:rgba(0,0,0,0.09);
+    --edge-hub:rgba(185,39,50,0.22);
+  }
+  html.theme-anim body, html.theme-anim body *{
+    transition:background-color .35s ease, color .35s ease, border-color .35s ease !important;
+  }
+  *{box-sizing:border-box;}
+  html,body{ height:100%; }
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; overflow:hidden;
+  }
+  canvas#field{ position:fixed; inset:0; z-index:0; display:block; }
+  #vig{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 30%, var(--bg) 92%);
+  }
+  :root[data-theme="light"] #vig{
+    background:radial-gradient(ellipse at 50% 42%, rgba(242,242,240,0) 30%, var(--bg) 92%);
+  }
+
+  main{
+    position:relative; z-index:2; height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:24px;
+  }
+  .eyebrow{
+    text-transform:uppercase; letter-spacing:.24em; font-size:11.5px;
+    color:var(--accent-bright); margin:0 0 18px;
+  }
+  h1{
+    margin:0; font-weight:650; line-height:1.05; color:var(--bright);
+    font-size:clamp(34px,6vw,60px); letter-spacing:-0.02em; max-width:18ch;
+  }
+  .tagline{
+    margin:18px auto 0; max-width:36rem; color:var(--dim);
+    font-size:clamp(14.5px,2vw,17px); line-height:1.65;
+  }
+
+  .doors{
+    display:flex; gap:16px; margin-top:44px; flex-wrap:wrap; justify-content:center;
+  }
+  a.door{
+    width:270px; text-align:left; text-decoration:none; color:var(--text);
+    background:var(--panel); border:1px solid var(--border); border-radius:16px;
+    padding:18px 20px 16px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 10px 34px rgba(0,0,0,0.35);
+    transition:border-color .16s, transform .16s, box-shadow .16s;
+  }
+  :root[data-theme="light"] a.door{ box-shadow:0 8px 26px rgba(16,18,20,0.10); }
+  a.door:hover{
+    border-color:rgba(185,39,50,0.6); transform:translateY(-3px);
+    box-shadow:0 16px 44px rgba(0,0,0,0.45), 0 6px 26px rgba(185,39,50,0.20);
+  }
+  .door .cap{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-bright); }
+  .door h2{ margin:6px 0 6px; font-size:17px; font-weight:650; color:var(--bright); }
+  .door p{ margin:0; font-size:12.5px; color:var(--dim); line-height:1.55; }
+  .door .go{
+    display:inline-flex; align-items:center; gap:6px; margin-top:12px;
+    font-size:12.5px; font-weight:650; color:var(--accent-bright);
+  }
+  .door .go svg{ width:13px; height:13px; transition:transform .15s; }
+  a.door:hover .go svg{ transform:translateX(3px); }
+
+  .lock-note{
+    margin-top:26px; font-size:12px; color:var(--dim);
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .lock-note svg{ width:12px; height:12px; opacity:.8; }
+
+  .foot{
+    position:fixed; left:0; right:0; bottom:0; z-index:2;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 20px; font-size:11.5px; color:var(--dim);
+  }
+  .foot .logos{ display:flex; align-items:center; gap:22px; }
+  .foot img{ display:block; opacity:.85; }
+  .foot img.nss{ height:26px; }
+  .foot img.afam{ height:16px; }
+  .foot img.sls{ height:12px; }
+  :root[data-theme="light"] img.for-dark{ display:none; }
+  :root[data-theme="dark"] img.for-light{ display:none; }
+
+  #themeBtn{
+    position:fixed; top:16px; right:16px; z-index:5;
+    width:38px; height:38px; border-radius:50%; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text); background:var(--chip-bg); border:1px solid var(--border);
+  }
+  #themeBtn:hover{ background:var(--chip-bg-hover); border-color:rgba(185,39,50,0.5); }
+  #themeBtn svg{ width:16px; height:16px; }
+  :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
+  :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
+
+  .rise{ animation:riseIn .7s cubic-bezier(.2,.7,.3,1) backwards; }
+  @keyframes riseIn{ from{ opacity:0; transform:translateY(16px);} to{ opacity:1; transform:none;} }
+  @media (max-width:640px){
+    body{ overflow:auto; }
+    main{ height:auto; min-height:100svh; padding-bottom:110px; }
+    .foot{ position:static; flex-direction:column; gap:12px; padding-bottom:22px; }
+  }
+  @media (prefers-reduced-motion: reduce){ .rise{ animation:none; } }
+</style>
+</head>
+<body>
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div id="vig" aria-hidden="true"></div>
+
+  <button id="themeBtn" title="Toggle light / dark mode" aria-label="Toggle light or dark mode">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.5"/>
+      <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/>
+    </svg>
+  </button>
+
+  <main>
+    <p class="eyebrow rise" style="animation-delay:.05s">travismorrow.com · private demo</p>
+    <h1 class="rise" style="animation-delay:.12s">Everything we've built, mapped.</h1>
+    <p class="tagline rise" style="animation-delay:.2s">
+      An AI back office runs the reporting, automation, and memory for a
+      29-facility storage operation. This site is the working record —
+      and the proof.
+    </p>
+
+    <div class="doors">
+      <a class="door rise" style="animation-delay:.3s" href="memory-map.html">
+        <span class="cap">Explore</span>
+        <h2>The memory map</h2>
+        <p>Every system, workflow, and automation as a living graph — hover
+           anything to see how it's wired.</p>
+        <span class="go">Open the map
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+      <a class="door rise" style="animation-delay:.38s" href="portfolio.html">
+        <span class="cap">Measure</span>
+        <h2>The living snapshot</h2>
+        <p>The monthly portfolio report as a live dashboard — 29 facilities,
+           3 brands, refreshed twice a day.</p>
+        <span class="go">Open the dashboard
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+    </div>
+
+    <p class="lock-note rise" style="animation-delay:.46s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+      </svg>
+      Password required · access lasts one browser session
+    </p>
+  </main>
+
+  <div class="foot">
+    <span>&copy; <span id="yr">2026</span> Travis Morrow</span>
+    <span class="logos">
+      <img class="nss for-dark" src="assets/nss-logo-report.png" alt="National Self Storage">
+      <img class="nss for-light" src="assets/nss-logo.png" alt="National Self Storage">
+      <img class="afam for-dark" src="assets/afam-logo.png" alt="A Family Storage">
+      <img class="afam for-light" src="assets/afam-logo-light.png" alt="A Family Storage">
+      <img class="sls for-dark" src="assets/sls-logo.png" alt="Storelocal Storage">
+      <img class="sls for-light" src="assets/sls-logo-light.png" alt="Storelocal Storage">
+    </span>
+  </div>
+
+  <script>
+    document.getElementById("yr").textContent = new Date().getFullYear();
+    document.getElementById("themeBtn").addEventListener("click", function () { TMTheme.toggle(); });
+
+    /* ---- the living node field ----
+       ~46 drifting nodes on two depth layers; edges connect near neighbours.
+       Pointer moves the layers at different rates (depth parallax). Colors
+       come from CSS vars so the theme toggle restyles the field live.
+       Pauses when the tab is hidden; static frame under reduced motion. */
+    (function () {
+      var cv = document.getElementById("field"), cx = cv.getContext("2d");
+      var MOTION = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var DPR = Math.min(2, window.devicePixelRatio || 1);
+      var W, H, nodes = [];
+      var px = 0, py = 0, tx = 0, ty = 0;   // pointer parallax (eased)
+
+      function vars() {
+        var st = getComputedStyle(document.documentElement);
+        return {
+          node: st.getPropertyValue("--node").trim(),
+          hub: st.getPropertyValue("--node-hub").trim(),
+          edge: st.getPropertyValue("--edge").trim(),
+          edgeHub: st.getPropertyValue("--edge-hub").trim()
+        };
+      }
+
+      function resize() {
+        W = innerWidth; H = innerHeight;
+        cv.width = W * DPR; cv.height = H * DPR;
+        cv.style.width = W + "px"; cv.style.height = H + "px";
+        cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      }
+      resize(); addEventListener("resize", resize);
+
+      var N = 46;
+      for (var i = 0; i < N; i++) {
+        var hub = i % 9 === 0;             // every 9th node is a red "hub"
+        nodes.push({
+          x: Math.random() * 1, y: Math.random() * 1,
+          vx: (Math.random() - 0.5) * 0.00022,
+          vy: (Math.random() - 0.5) * 0.00022,
+          r: hub ? 4.2 + Math.random() * 1.6 : 1.6 + Math.random() * 1.8,
+          depth: 0.5 + Math.random() * 0.5,   // 0.5 far … 1 near
+          hub: hub
+        });
+      }
+
+      addEventListener("pointermove", function (e) {
+        tx = (e.clientX / W - 0.5) * 2; ty = (e.clientY / H - 0.5) * 2;
+      });
+
+      var LINK = 150;                       // px link radius
+      function frame() {
+        px += (tx - px) * 0.04; py += (ty - py) * 0.04;
+        var c = vars();
+        cx.clearRect(0, 0, W, H);
+
+        // project to screen space (with per-depth pointer offset)
+        var pts = nodes.map(function (n) {
+          if (MOTION) {
+            n.x += n.vx; n.y += n.vy;
+            if (n.x < -0.05) n.x = 1.05; if (n.x > 1.05) n.x = -0.05;
+            if (n.y < -0.05) n.y = 1.05; if (n.y > 1.05) n.y = -0.05;
+          }
+          return {
+            sx: n.x * W + px * 26 * n.depth,
+            sy: n.y * H + py * 18 * n.depth,
+            n: n
+          };
+        });
+
+        // edges (near neighbours only)
+        for (var i = 0; i < pts.length; i++) {
+          for (var j = i + 1; j < pts.length; j++) {
+            var dx = pts[i].sx - pts[j].sx, dy = pts[i].sy - pts[j].sy;
+            var d2 = dx * dx + dy * dy;
+            if (d2 < LINK * LINK) {
+              var a = 1 - Math.sqrt(d2) / LINK;
+              cx.strokeStyle = (pts[i].n.hub || pts[j].n.hub) ? c.edgeHub : c.edge;
+              cx.globalAlpha = a;
+              cx.lineWidth = 1;
+              cx.beginPath(); cx.moveTo(pts[i].sx, pts[i].sy); cx.lineTo(pts[j].sx, pts[j].sy); cx.stroke();
+            }
+          }
+        }
+        cx.globalAlpha = 1;
+
+        // nodes
+        pts.forEach(function (p) {
+          cx.fillStyle = p.n.hub ? c.hub : c.node;
+          cx.globalAlpha = 0.35 + 0.65 * p.n.depth;
+          cx.beginPath(); cx.arc(p.sx, p.sy, p.n.r, 0, 6.2832); cx.fill();
+        });
+        cx.globalAlpha = 1;
+      }
+
+      if (!MOTION) { frame(); return; }     // one static frame
+      (function loop() {
+        if (!document.hidden) frame();
+        requestAnimationFrame(loop);
+      })();
+    })();
+  </script>
+</body>
+</html>
