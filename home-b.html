@@ -26,6 +26,15 @@
     --edge:rgba(255,255,255,0.10);
     --edge-hub:rgba(185,39,50,0.28);
     --pulse:#ffdfe2;           /* synapse flash — hot red-white on dark */
+    /* Taylor reticle mark — gunmetal/steel + ice-cyan lamp (concept 04) */
+    --mk-ring:#3a434d;
+    --mk-tick:#59636e;
+    --mk-tick2:#3a434d;
+    --mk-arc:#8b96a1;
+    --mk-ink:#eef2f6;
+    --mk-lamp:#5AC8FA;
+    --mk-core:#9FD8FF;
+    --mk-halo-a:.38;
   }
   :root[data-theme="light"]{
     --bg:#F2F2F0;
@@ -39,6 +48,14 @@
     --edge:rgba(0,0,0,0.09);
     --edge-hub:rgba(185,39,50,0.22);
     --pulse:#B92732;           /* synapse flash — brand red reads hot on light */
+    --mk-ring:#b9bec4;
+    --mk-tick:#8a9096;
+    --mk-tick2:#b9bec4;
+    --mk-arc:#5c646c;
+    --mk-ink:#14181c;
+    --mk-lamp:#0B7FA8;
+    --mk-core:#0B7FA8;
+    --mk-halo-a:.15;
   }
   html.theme-anim body, html.theme-anim body *{
     transition:background-color .35s ease, color .35s ease, border-color .35s ease !important;
@@ -139,17 +156,96 @@
   :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
   :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
 
-  .rise{ animation:riseIn .7s cubic-bezier(.2,.7,.3,1) backwards; }
+  /* ---------- boot splash: the reticle assembles, then flies home ---------- */
+  #splash{
+    position:fixed; inset:0; z-index:50;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--bg); transition:background .6s ease;
+  }
+  #splash.handoff{ background:transparent; pointer-events:none; }
+  #bootMark{ width:clamp(170px,26vw,250px); height:auto; will-change:transform; }
+  /* initial states */
+  #bootMark .b-ring, #bootMark .b-arc, #bootMark .b-bar, #bootMark .b-stem{
+    stroke-dasharray:100; stroke-dashoffset:100; fill:none;
+  }
+  #bootMark .b-tick{ opacity:0; }
+  #bootMark .b-halo, #bootMark .b-core{ opacity:0; transform-origin:60px 42px; }
+  #bootMark .b-arcs{ transform-origin:60px 60px; }
+  /* boot timeline (added with .boot) */
+  #bootMark.boot .b-ring{ animation:drawIn .55s ease-out .05s forwards; }
+  #bootMark.boot .b-tick{ animation:tickIn .28s ease-out forwards; animation-delay:var(--d); }
+  #bootMark.boot .b-arc{ animation:drawIn .5s ease-in-out forwards; animation-delay:var(--d); }
+  #bootMark.boot .b-arcs{ animation:settle .9s cubic-bezier(.2,.7,.3,1) .45s backwards; }
+  #bootMark.boot .b-bar{ animation:drawIn .3s ease-out .85s forwards; }
+  #bootMark.boot .b-stem{ animation:drawIn .35s ease-out 1.02s forwards; }
+  #bootMark.boot .b-halo{ animation:haloIn .5s ease-out 1.32s forwards; }
+  #bootMark.boot .b-core{ animation:ignite .5s cubic-bezier(.3,1.6,.4,1) 1.32s forwards; }
+  @keyframes drawIn{ to{ stroke-dashoffset:0; } }
+  @keyframes tickIn{ to{ opacity:1; } }
+  @keyframes settle{ from{ transform:rotate(-16deg); } to{ transform:rotate(0deg); } }
+  @keyframes haloIn{ 0%{opacity:0} 70%{opacity:calc(var(--mk-halo-a) + .2)} 100%{opacity:var(--mk-halo-a)} }
+  @keyframes ignite{ 0%{opacity:0; transform:scale(0);} 60%{opacity:1; transform:scale(1.5);} 100%{opacity:1; transform:scale(1);} }
+
+  /* the mark's resting slot above the headline */
+  #heroMark{ height:56px; margin-bottom:20px; visibility:hidden; }
+  /* static copy renames the boot classes, so it needs its own fill:none —
+     SVG circles/arcs otherwise fill black and read as a solid coin */
+  #heroMark .s-b-ring, #heroMark .s-arcs path{ fill:none; }
+  #heroMark.lit{ visibility:visible; }
+  #heroMark svg{ height:56px; width:auto; display:block; }
+
+  /* page content waits for the boot to hand off */
+  .rise{ opacity:0; }
+  body.ready .rise{ opacity:1; animation:riseIn .7s cubic-bezier(.2,.7,.3,1) backwards; }
   @keyframes riseIn{ from{ opacity:0; transform:translateY(16px);} to{ opacity:1; transform:none;} }
   @media (max-width:640px){
     body{ overflow:auto; }
     main{ height:auto; min-height:100svh; padding-bottom:110px; }
     .foot{ position:static; flex-direction:column; gap:12px; padding-bottom:22px; }
   }
-  @media (prefers-reduced-motion: reduce){ .rise{ animation:none; } }
+  @media (prefers-reduced-motion: reduce){
+    .rise, body.ready .rise{ opacity:1; animation:none; }
+    #splash{ display:none; }
+    #heroMark{ visibility:visible; }
+  }
 </style>
 </head>
 <body>
+  <!-- boot splash: reticle assembles large, then flies to #heroMark -->
+  <div id="splash">
+    <div id="bootMark-wrap"><svg id="bootMark" viewBox="0 0 120 120" role="img" aria-label="Taylor DeMoreaux">
+        <circle class="b-ring" cx="60" cy="60" r="52" pathLength="100" stroke="var(--mk-ring)" stroke-width="1"/>
+        <g stroke="var(--mk-tick)" stroke-width="1.4">
+          <path class="b-tick" style="--d:.30s" d="M60 4 V12"/>
+          <path class="b-tick" style="--d:.36s" d="M108 60 H116"/>
+          <path class="b-tick" style="--d:.42s" d="M60 108 V116"/>
+          <path class="b-tick" style="--d:.48s" d="M4 60 H12"/>
+        </g>
+        <g stroke="var(--mk-tick2)" stroke-width="1">
+          <path class="b-tick" style="--d:.40s" d="M88.3 11.0 L84.3 17.9"/>
+          <path class="b-tick" style="--d:.44s" d="M109 31.7 L102.1 35.7"/>
+          <path class="b-tick" style="--d:.48s" d="M109 88.3 L102.1 84.3"/>
+          <path class="b-tick" style="--d:.52s" d="M88.3 109 L84.3 102.1"/>
+          <path class="b-tick" style="--d:.56s" d="M31.7 109 L35.7 102.1"/>
+          <path class="b-tick" style="--d:.60s" d="M11.0 88.3 L17.9 84.3"/>
+          <path class="b-tick" style="--d:.64s" d="M11.0 31.7 L17.9 35.7"/>
+          <path class="b-tick" style="--d:.68s" d="M31.7 11.0 L35.7 17.9"/>
+        </g>
+        <g class="b-arcs" stroke="var(--mk-arc)" stroke-width="1.6" fill="none">
+          <path class="b-arc" style="--d:.50s" pathLength="100" d="M60 18 A42 42 0 0 1 96.4 39"/>
+          <path class="b-arc" style="--d:.58s" pathLength="100" d="M96.4 81 A42 42 0 0 1 23.6 81"/>
+          <path class="b-arc" style="--d:.66s" pathLength="100" d="M23.6 39 A42 42 0 0 1 42 22.4"/>
+        </g>
+        <g stroke="var(--mk-ink)" stroke-width="3.4" stroke-linecap="square">
+          <path class="b-bar" pathLength="100" d="M34 42 H86"/>
+          <path class="b-stem" pathLength="100" d="M60 42 V92"/>
+        </g>
+        <circle class="b-halo" cx="60" cy="42" r="6.5" fill="var(--mk-lamp)"/>
+        <circle class="b-core" cx="60" cy="42" r="2.6" fill="var(--mk-core)"/>
+      </svg>
+    </div>
+  </div>
+
   <canvas id="field" aria-hidden="true"></canvas>
   <div id="vig" aria-hidden="true"></div>
 
@@ -166,6 +262,36 @@
   </button>
 
   <main>
+    <div id="heroMark"><svg viewBox="0 0 120 120" role="img" aria-label="Taylor DeMoreaux">
+        <circle class="s-b-ring" cx="60" cy="60" r="52" pathLength="100" stroke="var(--mk-ring)" stroke-width="1"/>
+        <g stroke="var(--mk-tick)" stroke-width="1.4">
+          <path class="s-b-tick" style="--d:.30s" d="M60 4 V12"/>
+          <path class="s-b-tick" style="--d:.36s" d="M108 60 H116"/>
+          <path class="s-b-tick" style="--d:.42s" d="M60 108 V116"/>
+          <path class="s-b-tick" style="--d:.48s" d="M4 60 H12"/>
+        </g>
+        <g stroke="var(--mk-tick2)" stroke-width="1">
+          <path class="s-b-tick" style="--d:.40s" d="M88.3 11.0 L84.3 17.9"/>
+          <path class="s-b-tick" style="--d:.44s" d="M109 31.7 L102.1 35.7"/>
+          <path class="s-b-tick" style="--d:.48s" d="M109 88.3 L102.1 84.3"/>
+          <path class="s-b-tick" style="--d:.52s" d="M88.3 109 L84.3 102.1"/>
+          <path class="s-b-tick" style="--d:.56s" d="M31.7 109 L35.7 102.1"/>
+          <path class="s-b-tick" style="--d:.60s" d="M11.0 88.3 L17.9 84.3"/>
+          <path class="s-b-tick" style="--d:.64s" d="M11.0 31.7 L17.9 35.7"/>
+          <path class="s-b-tick" style="--d:.68s" d="M31.7 11.0 L35.7 17.9"/>
+        </g>
+        <g class="s-arcs" stroke="var(--mk-arc)" stroke-width="1.6" fill="none">
+          <path class="s-b-arc" style="--d:.50s" pathLength="100" d="M60 18 A42 42 0 0 1 96.4 39"/>
+          <path class="s-b-arc" style="--d:.58s" pathLength="100" d="M96.4 81 A42 42 0 0 1 23.6 81"/>
+          <path class="s-b-arc" style="--d:.66s" pathLength="100" d="M23.6 39 A42 42 0 0 1 42 22.4"/>
+        </g>
+        <g stroke="var(--mk-ink)" stroke-width="3.4" stroke-linecap="square">
+          <path class="s-b-bar" pathLength="100" d="M34 42 H86"/>
+          <path class="s-b-stem" pathLength="100" d="M60 42 V92"/>
+        </g>
+        <circle style="opacity:var(--mk-halo-a)" class="s-b-halo" cx="60" cy="42" r="6.5" fill="var(--mk-lamp)"/>
+        <circle class="s-b-core" cx="60" cy="42" r="2.6" fill="var(--mk-core)"/>
+      </svg></div>
     <p class="eyebrow rise" style="animation-delay:.05s">travismorrow.com · private demo</p>
     <h1 class="rise" style="animation-delay:.12s">
       <span class="row"><span class="num">29</span> facilities.</span>
@@ -225,6 +351,40 @@
   <script>
     document.getElementById("yr").textContent = new Date().getFullYear();
     document.getElementById("themeBtn").addEventListener("click", function () { TMTheme.toggle(); });
+
+    /* ---- boot sequence: assemble the reticle, then FLIP it to its slot ---- */
+    (function () {
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var splash = document.getElementById("splash");
+      var mark = document.getElementById("bootMark");
+      var slot = document.getElementById("heroMark");
+      function done() {
+        document.body.classList.add("ready");
+        slot.classList.add("lit");
+        if (splash && splash.parentNode) splash.remove();
+      }
+      if (reduced || !mark) { done(); return; }
+      mark.classList.add("boot");
+      // failsafe: never leave the page hidden if anything above breaks
+      var safety = setTimeout(done, 4500);
+      setTimeout(function () {
+        var sr = mark.getBoundingClientRect();
+        var tr = slot.getBoundingClientRect();
+        var dx = (tr.left + tr.width / 2) - (sr.left + sr.width / 2);
+        var dy = (tr.top + tr.height / 2) - (sr.top + sr.height / 2);
+        var sc = tr.height / sr.height;
+        mark.style.transition = "transform .78s cubic-bezier(.65,.05,.25,1)";
+        mark.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + sc.toFixed(4) + ")";
+        splash.classList.add("handoff");
+        // page rises in while the mark is mid-flight
+        setTimeout(function () { document.body.classList.add("ready"); }, 260);
+        mark.addEventListener("transitionend", function () {
+          clearTimeout(safety);
+          slot.classList.add("lit");
+          splash.remove();
+        }, { once: true });
+      }, 1900);
+    })();
 
     /* ---- the living node field ----
        ~46 drifting nodes on two depth layers; edges connect near neighbours.
