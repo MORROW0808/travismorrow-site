@@ -213,6 +213,100 @@
     display:grid; grid-template-columns:repeat(auto-fit, minmax(272px, 1fr)); gap:14px;
   }
   #kpis .card{ display:flex; flex-direction:column; }
+  /* drillable cards advertise themselves */
+  #kpis .card.drill{ cursor:pointer; }
+  #kpis .card.drill .lbl::after{
+    content:"details \2192"; float:right; font-size:9px; letter-spacing:.08em;
+    color:var(--accent-bright); opacity:0; transition:opacity .15s;
+  }
+  #kpis .card.drill:hover .lbl::after{ opacity:1; }
+
+  /* ---------- drill-down slide-over ---------- */
+  #drillScrim{
+    position:fixed; inset:0; z-index:900; background:rgba(0,0,0,0.45);
+    opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  :root[data-theme="light"] #drillScrim{ background:rgba(20,22,24,0.28); }
+  #drillScrim.open{ opacity:1; pointer-events:auto; }
+  #drill{
+    position:fixed; left:50%; top:50%; z-index:901;
+    width:min(680px, calc(100vw - 28px)); max-height:min(86vh, 900px);
+    background:var(--bg); border:1px solid var(--line); border-radius:16px;
+    box-shadow:0 24px 70px rgba(0,0,0,0.55);
+    transform:translate(-50%, -50%) scale(.96) translateY(14px);
+    opacity:0; visibility:hidden;
+    transition:transform .26s cubic-bezier(.2,.7,.3,1), opacity .26s ease, visibility 0s .26s;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  :root[data-theme="light"] #drill{ box-shadow:0 20px 60px rgba(16,18,20,0.25); }
+  #drill.open{
+    transform:translate(-50%, -50%); opacity:1; visibility:visible; transition-delay:0s;
+  }
+  #drillHead{
+    display:flex; align-items:baseline; gap:10px; flex:none;
+    padding:18px 22px 14px; border-bottom:1px solid var(--line);
+  }
+  #drillHead .t{ font-size:15px; font-weight:700; color:var(--bright); letter-spacing:.02em; }
+  #drillHead .sc{ font-size:11.5px; color:var(--dim); }
+  #drillClose{
+    margin-left:auto; width:30px; height:30px; border-radius:8px; cursor:pointer;
+    border:1px solid var(--border); background:var(--chip-bg); color:var(--text);
+    font-size:15px; line-height:1; display:flex; align-items:center; justify-content:center;
+  }
+  #drillClose:hover{ background:var(--chip-bg-hover); border-color:rgba(185,39,50,0.5); }
+  #drillBody{ flex:1; overflow-y:auto; padding:18px 22px 28px; }
+  .dr-sec{ margin-bottom:22px; }
+  .dr-sec > .cap{
+    font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim);
+    margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .dr-sec > .cap .badge{
+    font-size:8.5px; font-weight:700; letter-spacing:.08em; padding:1px 7px;
+    border-radius:999px; color:#ffd88a; border:1px solid rgba(245,165,36,0.5);
+  }
+  :root[data-theme="light"] .dr-sec > .cap .badge{ color:#7A5200; border-color:rgba(154,103,0,0.5); }
+  .dr-panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:14px 16px; box-shadow:var(--shadow-card);
+  }
+  .dr-hero{ display:flex; align-items:center; gap:18px; }
+  .dr-hero .g-dial{ margin:0; }
+  .dr-hero .nums{ flex:1; min-width:0; }
+  .dr-hero .nums .b{ font-size:22px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; }
+  .dr-hero .nums .b small{ font-size:12px; color:var(--dim); font-weight:600; }
+  .dr-hero .nums .l{ font-size:11.5px; color:var(--dim); margin-top:3px; }
+
+  /* trend chart */
+  .dr-chart{ position:relative; }
+  .dr-chart svg{ display:block; width:100%; height:auto; }
+  .dr-chart .axis{ font-size:8.5px; fill:var(--dim); }
+  .dr-chart .gline{ stroke:var(--track); stroke-width:1; }
+  .dr-chart .target{ stroke:var(--dim); stroke-width:1; stroke-dasharray:3 4; opacity:.7; }
+  .dr-legend{ display:flex; gap:16px; margin-top:8px; font-size:10.5px; color:var(--dim); }
+  .dr-legend i{ display:inline-block; width:14px; height:0; border-top:2.5px solid var(--meter-b); border-radius:2px; margin-right:5px; vertical-align:3px; }
+  .dr-legend i.s2{ border-top-style:dashed; border-top-color:var(--meter-a); }
+  .drTipBox{
+    position:absolute; z-index:5; pointer-events:none; display:none;
+    background:var(--panel2); border:1px solid var(--line); border-radius:8px;
+    padding:7px 10px; font-size:11px; color:var(--text); white-space:nowrap;
+    box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  }
+  .drTipBox b{ color:var(--bright); font-variant-numeric:tabular-nums; }
+  .dr-crosshair{ stroke:var(--dim); stroke-width:1; opacity:0; }
+
+  /* breakdown bars */
+  .dr-bars{ display:flex; flex-direction:column; gap:7px; }
+  .dr-bar{ display:grid; grid-template-columns:118px 1fr 52px; gap:10px; align-items:center; }
+  .dr-bar .nm{ font-size:11px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dr-bar .nm small{ color:var(--dim); margin-right:5px; font-size:9.5px; }
+  .dr-bar .tr{ position:relative; height:9px; border-radius:4px; background:var(--track); overflow:visible; }
+  .dr-bar .tr i{ position:absolute; inset:0 auto 0 0; border-radius:4px; background:var(--meter-b); }
+  .dr-bar .tr .tk{ position:absolute; top:-2px; bottom:-2px; width:1.5px; background:var(--bright); opacity:.55; }
+  .dr-bar .v{ font-size:11px; font-weight:700; color:var(--bright); text-align:right; font-variant-numeric:tabular-nums; }
+  @media (max-width:640px){
+    #drill{ width:calc(100vw - 16px); max-height:92vh; }
+    .dr-bar{ grid-template-columns:92px 1fr 46px; }
+  }
   .card{
     background:var(--panel); border:1px solid var(--line); border-radius:14px;
     padding:15px 17px 13px; min-width:0;
@@ -527,6 +621,16 @@
   </div><!-- /dash -->
 </div>
 
+<div id="drillScrim"></div>
+<aside id="drill" role="dialog" aria-modal="true" aria-label="KPI drill-down">
+  <div id="drillHead">
+    <span class="t" id="drillTitle"></span>
+    <span class="sc" id="drillScope"></span>
+    <button id="drillClose" aria-label="Close drill-down">&times;</button>
+  </div>
+  <div id="drillBody"></div>
+</aside>
+
 <script>
 (function () {
   "use strict";
@@ -771,7 +875,8 @@
     var t1 = dialPt(CX, CY, R1 - 7, tickA), t2 = dialPt(CX, CY, R1 + 7, tickA);
     var occDelta = occ.occupancy_sqft_pct - OCC_TARGET;
     var occCard =
-      '<div class="card"><div class="lbl">Occupancy</div>' +
+      '<div class="card drill" data-drill="occupancy" role="button" tabindex="0" ' +
+      'aria-label="Open occupancy drill-down"><div class="lbl">Occupancy</div>' +
       '<div class="g-row"><div class="g-dial">' +
       dialSvg(
         '<path class="trk" stroke-width="6" d="' + dialArc(CX, CY, R2, DIAL_A0, DIAL_A0 + DIAL_SWEEP) + '"></path>' +
@@ -791,7 +896,8 @@
 
     /* ---- conversion: single dial, same geometry ---- */
     var convCard =
-      '<div class="card"><div class="lbl">Lead conversion · MTD</div>' +
+      '<div class="card drill" data-drill="conversion" role="button" tabindex="0" ' +
+      'aria-label="Open lead conversion drill-down"><div class="lbl">Lead conversion · MTD</div>' +
       '<div class="g-row"><div class="g-dial">' +
       dialSvg('<path id="gConv" class="arc" stroke="var(--meter-b)" stroke-width="9"></path>') +
       '<div class="g-center"><span class="gv"><span class="num"></span></span><span class="gu">converted</span></div>' +
@@ -809,7 +915,8 @@
     }
     var s0 = dialPt(CX, CY, R1 + 1, DIAL_A0), s1 = dialPt(CX, CY, R1 + 1, DIAL_A0 + DIAL_SWEEP);
     var roasCard =
-      '<div class="card"><div class="lbl" title="Revenue return on ad spend using real move-ins and customer lifetime value from Nectar — not Google\'s self-reported conversion values">True ROAS (Nectar LTV) · month</div>' +
+      '<div class="card drill" data-drill="roas" role="button" tabindex="0" ' +
+      'aria-label="Open ROAS drill-down"><div class="lbl" title="Revenue return on ad spend using real move-ins and customer lifetime value from Nectar — not Google\'s self-reported conversion values">True ROAS (Nectar LTV) · month</div>' +
       '<div class="g-row"><div class="g-dial">' +
       '<svg viewBox="0 0 132 104" aria-hidden="true">' +
         bandArc(0, 3, "var(--neg)") + bandArc(3, 8, "var(--warn)") + bandArc(8, roasMax, "var(--pos)") +
@@ -844,7 +951,8 @@
              esc(c.label) + '<span class="n">' + n + '</span><span class="s">' + fmtPct(share, 0) + "</span></div>";
     });
     var chCard =
-      '<div class="card"><div class="lbl">Leads by channel · MTD</div>' +
+      '<div class="card drill" data-drill="channels" role="button" tabindex="0" ' +
+      'aria-label="Open leads by channel drill-down"><div class="lbl">Leads by channel · MTD</div>' +
       '<div class="g-donut"><svg viewBox="0 0 118 118" role="img" aria-label="Lead share by channel">' + donutSegs + "</svg>" +
       '<div class="g-center"><span class="gv"><span class="num"></span></span><span class="gu">leads</span></div></div>' +
       '<div class="legend">' + lis + "</div>" +
@@ -904,6 +1012,401 @@
         requestAnimationFrame(function () { c.classList.add("in"); });
       });
     }
+
+    Array.prototype.forEach.call(host.querySelectorAll(".card.drill"), function (c) {
+      function go() { openDrill(c.getAttribute("data-drill")); }
+      c.addEventListener("click", go);
+      c.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+      });
+    });
+  }
+
+  /* ================================================================== *
+   *  KPI drill-downs — slide-over panel
+   *  Occupancy is the reference implementation; the other three follow
+   *  once the 13-month history / GA4 / Ads exports land.
+   *  SAMPLE-badged synthetic history until then (deterministic walk
+   *  backward from the real current values — shape demo only).
+   * ================================================================== */
+  var drill = document.getElementById("drill");
+  var drillScrim = document.getElementById("drillScrim");
+  var drillBody = document.getElementById("drillBody");
+  var drillOpenFor = null;
+
+  function closeDrill() {
+    drill.classList.remove("open");
+    drillScrim.classList.remove("open");
+    drillOpenFor = null;
+  }
+  drillScrim.addEventListener("click", closeDrill);
+  document.getElementById("drillClose").addEventListener("click", closeDrill);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && drillOpenFor) closeDrill();
+  });
+
+  /* ---- drill data: three static exports, lazy-loaded once ----
+     hist: 15-mo occupancy/leads (Nectar MSR replay) · roas: 14-mo ROAS
+     (per-point spend-source tags) · ga4: last-30-days website traffic.
+     Any file that fails to load degrades that panel to its SAMPLE or
+     pending state — never fabricated numbers. */
+  var drillData = null;
+  function loadDrillData() {
+    if (drillData) return drillData;
+    function grab(u) {
+      return fetch(u, { cache: "no-store" })
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .catch(function () { return null; });
+    }
+    drillData = Promise.all([
+      grab("drilldown_occupancy_leads.json"),
+      grab("drilldown_roas.json"),
+      grab("facility-ga4-traffic.json")
+    ]).then(function (a) { return { hist: a[0], roas: a[1], ga4: a[2] }; });
+    return drillData;
+  }
+  function scopeSeries(file) {
+    if (!file) return null;
+    var node = scope === "portfolio" ? file.portfolio : (file.by_brand || {})[scope];
+    return node && node.series && node.series.length ? node.series : null;
+  }
+  function histLabels(series) {
+    return series.map(function (pt) {
+      var mm = pt.month.split("-");
+      var lb = new Date(+mm[0], +mm[1] - 1, 1).toLocaleString("en-US", { month: "short" });
+      return pt.partial ? lb + "·MTD" : lb;
+    });
+  }
+
+  /* fallback: deterministic sample walk (only if the history file is missing) */
+  function sampleSeries(current, key, volatility) {
+    var seed = 0;
+    for (var i = 0; i < key.length; i++) seed = (seed * 31 + key.charCodeAt(i)) % 9973;
+    var out = [current], v = current;
+    for (var m = 0; m < 12; m++) {
+      seed = (seed * 137 + 71) % 9973;
+      v = v - ((seed % 100) / 100 - 0.48) * volatility;
+      v = Math.min(97, Math.max(35, v));
+      out.unshift(v);
+    }
+    return out;
+  }
+  function monthLabels() {
+    var out = [], d = new Date(DATA.generated_at);
+    for (var i = 12; i >= 0; i--) {
+      var m = new Date(d.getFullYear(), d.getMonth() - i, 1);
+      out.push(m.toLocaleString("en-US", { month: "short" }));
+    }
+    return out;
+  }
+
+  /* line chart with crosshair + tooltip (up to two series, ONE unit) */
+  function trendChart(series, labels, opts) {
+    opts = opts || {};
+    var unit = opts.unit || "%", dec = opts.dec != null ? opts.dec : 1;
+    var W = 560, H = 170, L = 38, R = 10, T = 12, B = 22;
+    var iw = W - L - R, ih = H - T - B;
+    var all = [];
+    series.forEach(function (sr) { all = all.concat(sr.pts); });
+    if (opts.target) all = all.concat([opts.target]);
+    var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
+    var pad = (hi - lo) * 0.12 || 1;
+    lo = Math.max(0, lo - pad); hi = hi + pad;
+    function X(i) { return L + iw * i / (labels.length - 1); }
+    function Y(v) { return T + ih * (1 - (v - lo) / (hi - lo)); }
+    function fmtAx(v) { return unit === "%" ? Math.round(v) + "%" : v.toFixed(v < 10 ? 1 : 0) + unit; }
+    var g = "";
+    [lo, (lo + hi) / 2, hi].forEach(function (v) {
+      g += '<line class="gline" x1="' + L + '" y1="' + Y(v) + '" x2="' + (W - R) + '" y2="' + Y(v) + '"></line>' +
+           '<text class="axis" x="' + (L - 5) + '" y="' + (Y(v) + 3) + '" text-anchor="end">' + fmtAx(v) + "</text>";
+    });
+    labels.forEach(function (lb, i) {
+      if (i % 2 === 0) g += '<text class="axis" x="' + X(i) + '" y="' + (H - 6) + '" text-anchor="middle">' + lb.replace("·MTD", "") + "</text>";
+    });
+    if (opts.target) {
+      g += '<line class="target" x1="' + L + '" y1="' + Y(opts.target) + '" x2="' + (W - R) + '" y2="' + Y(opts.target) + '"></line>';
+    }
+    series.forEach(function (sr) {
+      var d = sr.pts.map(function (v, i) { return (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1); }).join("");
+      g += '<path d="' + d + '" fill="none" stroke="' + sr.color + '" stroke-width="2.2"' +
+           (sr.dash ? ' stroke-dasharray="5 4"' : "") + ' stroke-linecap="round"></path>';
+    });
+    g += '<line class="dr-crosshair" id="drCross' + (opts.id || "") + '" y1="' + T + '" y2="' + (T + ih) + '"></line>';
+    var html =
+      '<div class="dr-chart"><svg viewBox="0 0 ' + W + " " + H + '" id="drSvg' + (opts.id || "") + '">' + g + "</svg>" +
+      '<div class="drTipBox" id="drTip' + (opts.id || "") + '"></div></div>';
+    return {
+      html: html,
+      bind: function () {
+        var svg = document.getElementById("drSvg" + (opts.id || ""));
+        var tip = document.getElementById("drTip" + (opts.id || ""));
+        var cross = document.getElementById("drCross" + (opts.id || ""));
+        if (!svg) return;
+        svg.addEventListener("pointermove", function (e) {
+          var r = svg.getBoundingClientRect();
+          if (!r.width) return;              // mid-entrance: rect not laid out yet
+          var fx = (e.clientX - r.left) / r.width * W;
+          var i = Math.round((fx - L) / iw * (labels.length - 1));
+          i = Math.max(0, Math.min(labels.length - 1, i));
+          cross.setAttribute("x1", X(i)); cross.setAttribute("x2", X(i));
+          cross.style.opacity = 1;
+          tip.style.display = "block";
+          tip.innerHTML = "<b>" + labels[i] + "</b> · " + series.map(function (sr) {
+            return sr.name + " <b>" + sr.pts[i].toFixed(dec) + unit + "</b>";
+          }).join(" · ");
+          var px = X(i) / W * r.width;
+          tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + "px";
+          tip.style.top = "8px";
+        });
+        svg.addEventListener("pointerleave", function () {
+          tip.style.display = "none"; cross.style.opacity = 0;
+        });
+      }
+    };
+  }
+
+  /* mini column chart (monthly volumes) */
+  function colChart(vals, labels, unitName) {
+    var W = 560, H = 90, L = 38, R = 10, T = 8, B = 20;
+    var iw = W - L - R, ih = H - T - B;
+    var hi = Math.max.apply(null, vals) || 1;
+    var bw = Math.min(22, iw / vals.length - 6);
+    var g = '<line class="gline" x1="' + L + '" y1="' + (T + ih) + '" x2="' + (W - R) + '" y2="' + (T + ih) + '"></line>';
+    vals.forEach(function (v, i) {
+      var x = L + iw * (i + 0.5) / vals.length - bw / 2;
+      var h = ih * v / hi;
+      g += '<rect x="' + x.toFixed(1) + '" y="' + (T + ih - h).toFixed(1) + '" width="' + bw.toFixed(1) +
+           '" height="' + Math.max(1, h).toFixed(1) + '" rx="2.5" fill="var(--meter-b)">' +
+           "<title>" + labels[i] + ": " + v.toLocaleString() + " " + unitName + "</title></rect>";
+      if (i % 2 === 0) g += '<text class="axis" x="' + (x + bw / 2) + '" y="' + (H - 5) + '" text-anchor="middle">' + labels[i].replace("·MTD", "") + "</text>";
+    });
+    return '<div class="dr-chart"><svg viewBox="0 0 ' + W + " " + H + '">' + g + "</svg></div>";
+  }
+
+  /* channel-mix rows (counts + share; categorical channel colors) */
+  function channelRows(ch) {
+    var total = CHANNELS.reduce(function (t, c) { return t + (ch[c.key] || 0); }, 0) || 1;
+    return '<div class="dr-bars">' + CHANNELS.map(function (c) {
+      var n = ch[c.key] || 0, share = 100 * n / total;
+      return '<div class="dr-bar">' +
+        '<span class="nm"><span style="display:inline-block;width:8px;height:8px;border-radius:2.5px;background:' + c.color + ';margin-right:7px"></span>' + esc(c.label) + "</span>" +
+        '<span class="tr"><i style="width:' + share + "%;background:" + c.color + '"></i></span>' +
+        '<span class="v">' + n + " · " + Math.round(share) + "%</span></div>";
+    }).join("") + "</div>";
+  }
+
+  function barRows(rows, target) {
+    return '<div class="dr-bars">' + rows.map(function (r) {
+      return '<div class="dr-bar">' +
+        '<span class="nm">' + (r.code ? "<small>" + esc(r.code) + "</small>" : "") + esc(r.name) + "</span>" +
+        '<span class="tr"><i style="width:' + Math.min(100, r.pct) + '%"></i>' +
+          (target ? '<span class="tk" style="left:' + target + '%"></span>' : "") + "</span>" +
+        '<span class="v">' + r.label + "</span></div>";
+    }).join("") + "</div>";
+  }
+
+  var SPEND_SOURCE_LABELS = {
+    recurring_budget_assumed: "recurring budget assumption",
+    verified_supermetrics_override: "verified Google Ads actuals (Supermetrics)"
+  };
+
+  var DRILLS = {
+    occupancy: function (dd) {
+      var d = scopeData(), occ = d.occupancy;
+      var series = scopeSeries(dd.hist), chart, badge = "";
+      if (series) {
+        chart = trendChart(
+          [{ name: "sq ft", pts: series.map(function (p) { return p.occupancy_sqft_pct; }), color: "var(--meter-b)" },
+           { name: "units", pts: series.map(function (p) { return p.occupancy_units_pct; }), color: "var(--meter-a)", dash: true }],
+          histLabels(series), { target: OCC_TARGET, dec: 2 });
+      } else {
+        badge = '<span class="badge">SAMPLE — history unavailable</span>';
+        chart = trendChart(
+          [{ name: "sq ft", pts: sampleSeries(occ.occupancy_sqft_pct, scopeLabel() + "sq", 1.6), color: "var(--meter-b)" },
+           { name: "units", pts: sampleSeries(occ.occupancy_units_pct, scopeLabel() + "un", 1.6), color: "var(--meter-a)", dash: true }],
+          monthLabels(), { target: OCC_TARGET });
+      }
+      var brandRows = BRANDS.map(function (b) {
+        var v = DATA.brands[b].occupancy.occupancy_sqft_pct;
+        return { name: b, pct: v, label: v.toFixed(1) + "%" };
+      });
+      var facRows = scopeFacs().slice().sort(function (a, b) {
+        return b.occupancy_sqft_pct - a.occupancy_sqft_pct;
+      }).map(function (f) {
+        return { code: f.facility_code, name: f.facility_name.replace(/^(National Self Storage|A Family Storage) - /, ""), pct: f.occupancy_sqft_pct, label: f.occupancy_sqft_pct.toFixed(1) + "%" };
+      });
+      var html =
+        '<div class="dr-sec"><div class="dr-panel dr-hero">' +
+          '<div class="nums"><div class="b">' + fmtPct(occ.occupancy_sqft_pct, 2) + " <small>sq ft</small></div>" +
+          '<div class="l"><b>' + fmtPct(occ.occupancy_units_pct, 2) + "</b> of units · " +
+            occ.units_occupied.toLocaleString() + " / " + occ.units_total.toLocaleString() + " units · target " + OCC_TARGET + "%</div></div>" +
+        "</div></div>" +
+        '<div class="dr-sec"><div class="cap">' + (series ? series.length + "-month trend · Nectar history" : "13-month trend") + badge + "</div>" +
+        '<div class="dr-panel">' + chart.html +
+        '<div class="dr-legend"><span><i></i>sq ft occupancy</span><span><i class="s2"></i>unit occupancy</span>' +
+        '<span style="margin-left:auto">dashed rule = ' + OCC_TARGET + '% target · latest month is MTD</span></div></div></div>' +
+        (scope === "portfolio"
+          ? '<div class="dr-sec"><div class="cap">By brand · current · sq ft</div><div class="dr-panel">' + barRows(brandRows, OCC_TARGET) + "</div></div>"
+          : "") +
+        '<div class="dr-sec"><div class="cap">By facility · current · sq ft</div><div class="dr-panel">' + barRows(facRows, OCC_TARGET) + "</div></div>";
+      return { title: "Occupancy", html: html, bind: chart.bind };
+    },
+
+    conversion: function (dd) {
+      var leads = scopeData().leads_mtd, ch = scopeData().leads_by_channel_mtd;
+      var series = scopeSeries(dd.hist), chart, cols = "", badge = "";
+      if (series) {
+        chart = trendChart(
+          [{ name: "conversion", pts: series.map(function (p) { return p.conversion_pct; }), color: "var(--meter-b)" }],
+          histLabels(series), { id: "b" });
+        cols = colChart(series.map(function (p) { return p.leads_total; }), histLabels(series), "leads");
+      } else {
+        badge = '<span class="badge">SAMPLE — history unavailable</span>';
+        chart = trendChart(
+          [{ name: "conversion", pts: sampleSeries(leads.conversion_pct, scopeLabel() + "cv", 3), color: "var(--meter-b)" }],
+          monthLabels(), { id: "b" });
+      }
+      var html =
+        '<div class="dr-sec"><div class="dr-panel dr-hero">' +
+          '<div class="nums"><div class="b">' + fmtPct(leads.conversion_pct, 1) + " <small>converted · MTD</small></div>" +
+          '<div class="l"><b>' + Math.round(leads.leads_converted) + "</b> of <b>" + Math.round(leads.leads_total) + "</b> leads became move-ins</div></div>" +
+        "</div></div>" +
+        '<div class="dr-sec"><div class="cap">' + (series ? series.length + "-month conversion trend · Nectar history" : "Conversion trend") + badge + "</div>" +
+        '<div class="dr-panel">' + chart.html +
+        '<div class="dr-legend"><span><i></i>whole-scope conversion %</span><span style="margin-left:auto">latest month is MTD</span></div></div></div>' +
+        (series ? '<div class="dr-sec"><div class="cap">Monthly lead volume</div><div class="dr-panel">' + cols + "</div></div>" : "") +
+        '<div class="dr-sec"><div class="cap">Channel mix · current MTD · counts &amp; share only</div>' +
+        '<div class="dr-panel">' + channelRows(ch) +
+        '<div class="foot-note" style="margin-top:10px">Per-channel conversion isn’t trackable at the source — these are lead counts, not per-channel close rates.</div></div></div>';
+      return { title: "Lead conversion", html: html, bind: chart.bind };
+    },
+
+    roas: function (dd) {
+      var d = scopeData(), roas = d.roas, ads = d.ad_spend_month;
+      var series = scopeSeries(dd.roas), chart, badge = "", srcNote = "";
+      if (series) {
+        chart = trendChart(
+          [{ name: "standard", pts: series.map(function (p) { return p.roas_standard; }), color: "var(--meter-b)" },
+           { name: "conservative", pts: series.map(function (p) { return p.roas_conservative; }), color: "var(--meter-a)", dash: true }],
+          series.map(function (p) {
+            var mm = p.month.split("-");
+            return new Date(+mm[0], +mm[1] - 1, 1).toLocaleString("en-US", { month: "short" });
+          }), { unit: "x", dec: 1, id: "c" });
+        var srcs = {};
+        series.forEach(function (p) { (p.spend_sources || [p.spend_source]).forEach(function (x) { if (x) srcs[x] = 1; }); });
+        srcNote = Object.keys(srcs).map(function (k) { return SPEND_SOURCE_LABELS[k] || k; }).join(" · ");
+      } else {
+        badge = '<span class="badge">SAMPLE — history unavailable</span>';
+        chart = trendChart(
+          [{ name: "standard", pts: sampleSeries(roas.roas_standard, scopeLabel() + "rs", 2), color: "var(--meter-b)" }],
+          monthLabels(), { unit: "x", dec: 1, id: "c" });
+      }
+      var html =
+        '<div class="dr-sec"><div class="dr-panel dr-hero">' +
+          '<div class="nums"><div class="b">' + fmtX(roas.roas_standard) + " <small>standard LTV</small></div>" +
+          '<div class="l"><b>' + fmtX(roas.roas_conservative) + "</b> conservative LTV · " +
+            fmtMoneyFull(ads.spend) + " spend · " + ads.stores + " stores advertising</div></div>" +
+        "</div></div>" +
+        '<div class="dr-sec"><div class="cap">' + (series ? series.length + "-month True ROAS trend · Nectar LTV" : "ROAS trend") + badge + "</div>" +
+        '<div class="dr-panel">' + chart.html +
+        '<div class="dr-legend"><span><i></i>standard LTV</span><span><i class="s2"></i>conservative LTV</span></div>' +
+        (srcNote ? '<div class="foot-note" style="margin-top:8px">Spend basis by month: ' + srcNote + ".</div>" : "") +
+        "</div></div>" +
+        '<div class="dr-sec"><div class="cap">Ad platform performance · Google-attributed · kept separate</div>' +
+        '<div class="dr-panel"><div class="foot-note" style="margin-top:0">Google Ads platform metrics (clicks, impressions, CTR, cost-per-click) are a separate,' +
+        " Google-attributed view and are never blended into True ROAS. That export hasn’t been pulled yet — this section will populate when it lands.</div></div></div>";
+      return { title: "True ROAS (Nectar LTV)", html: html, bind: chart.bind };
+    },
+
+    channels: function (dd) {
+      var ch = scopeData().leads_by_channel_mtd;
+      var total = CHANNELS.reduce(function (t, c) { return t + (ch[c.key] || 0); }, 0);
+      var g = dd.ga4, gaHtml = "";
+      if (g) {
+        var rows = [], note = "";
+        function sessRow(code, name, sess, users) {
+          return { code: code, name: name, sess: sess, label: sess.toLocaleString() + " · " + users.toLocaleString() + "u" };
+        }
+        function topSources(entity) {
+          if (!entity.top_source_medium) return "";
+          var t = entity.top_source_medium.slice(0, 5).map(function (r) {
+            return '<div class="dr-bar">' +
+              '<span class="nm">' + esc(r.source_medium) + "</span>" +
+              '<span class="tr"><i style="width:' + (100 * r.sessions / (entity.top_source_medium[0].sessions || 1)) + '%"></i></span>' +
+              '<span class="v">' + r.sessions.toLocaleString() + "</span></div>";
+          }).join("");
+          return '<div style="margin-top:12px"><div class="cap" style="margin-bottom:8px">Top sources · sessions</div><div class="dr-bars">' + t + "</div></div>";
+        }
+        if (scope === "NSS") {
+          Object.keys(g.facilities).forEach(function (k) {
+            var f = g.facilities[k];
+            rows.push(sessRow(k, (f.ga4_account_name || k).replace(/^GA4 - /, ""), f.sessions_total, f.users_total));
+          });
+          note = "Per-facility GA4 properties · " + rows.length + " NSS locations.";
+        } else if (scope === "AFAM") {
+          var a = g.brand_rollups.AFAM;
+          rows.push(sessRow("", "AFAM — all 19 facilities (one property)", a.sessions_total, a.users_total));
+          note = "AFAM has a single brand-wide GA4 property — no per-facility breakdown exists.";
+          gaHtml += topSources(a);
+        } else if (scope === "SL Reno") {
+          var sl = g.brand_rollups.STORELOCAL_ROLLUP;
+          rows.push(sessRow("", "StoreLocal network rollup — scope uncertain", sl.sessions_total, sl.users_total));
+          note = "⚠ This property’s traffic is far too large to be RNO1 alone — likely a StoreLocal-network-wide rollup. Not RNO1-specific.";
+          gaHtml += topSources(sl);
+        } else {
+          var nssSess = 0, nssUsers = 0, nssN = 0;
+          Object.keys(g.facilities).forEach(function (k) {
+            nssSess += g.facilities[k].sessions_total; nssUsers += g.facilities[k].users_total; nssN++;
+          });
+          rows.push(sessRow("", "NSS — " + nssN + " per-facility properties", nssSess, nssUsers));
+          rows.push(sessRow("", "AFAM — all 19 facilities (one property)", g.brand_rollups.AFAM.sessions_total, g.brand_rollups.AFAM.users_total));
+          rows.push(sessRow("", "StoreLocal rollup — scope uncertain", g.brand_rollups.STORELOCAL_ROLLUP.sessions_total, g.brand_rollups.STORELOCAL_ROLLUP.users_total));
+          note = "Property scopes differ by brand — bars are not like-for-like comparisons.";
+        }
+        var mx = Math.max.apply(null, rows.map(function (r) { return r.sess; })) || 1;
+        gaHtml =
+          '<div class="dr-sec"><div class="cap">Website traffic · GA4 · last 30 days · NOT leads</div>' +
+          '<div class="dr-panel">' +
+          '<div class="foot-note" style="margin-top:0;margin-bottom:10px">Traffic sourcing only — GA4 sessions can’t be joined to Nectar leads or move-ins (no gclid/UTM on lead records), so none of this is a conversion funnel.</div>' +
+          barRows(rows.map(function (r) { return { code: r.code, name: r.name, pct: 100 * r.sess / mx, label: r.label }; })) +
+          '<div class="foot-note" style="margin-top:9px">' + note + " Values are sessions · users.</div>" +
+          gaHtml +
+          "</div></div>";
+      } else {
+        gaHtml = '<div class="dr-sec"><div class="cap">Website traffic · GA4</div><div class="dr-panel"><div class="foot-note" style="margin-top:0">GA4 export unavailable.</div></div></div>';
+      }
+      var html =
+        '<div class="dr-sec"><div class="dr-panel dr-hero">' +
+          '<div class="nums"><div class="b">' + total + " <small>leads · MTD</small></div>" +
+          '<div class="l">Real Nectar lead counts by channel — the numbers move-ins are measured against.</div></div>' +
+        "</div></div>" +
+        '<div class="dr-sec"><div class="cap">Lead channel mix · current MTD</div>' +
+        '<div class="dr-panel">' + channelRows(ch) +
+        '<div class="foot-note" style="margin-top:10px">Counts &amp; share only — per-channel conversion isn’t trackable at the source.</div></div></div>' +
+        gaHtml;
+      return { title: "Leads by channel", html: html, bind: null };
+    }
+  };
+
+  function openDrill(topic) {
+    var make = DRILLS[topic];
+    if (!make) return;
+    document.getElementById("drillTitle").textContent = "";
+    document.getElementById("drillScope").textContent = "Loading…";
+    drillBody.innerHTML = "";
+    drill.classList.add("open");
+    drillScrim.classList.add("open");
+    drillOpenFor = topic;
+    loadDrillData().then(function (dd) {
+      if (drillOpenFor !== topic) return;      // closed or switched meanwhile
+      var spec = make(dd);
+      document.getElementById("drillTitle").textContent = spec.title;
+      document.getElementById("drillScope").textContent =
+        scopeLabel() + " · " + scopeFacs().length + (scopeFacs().length === 1 ? " facility" : " facilities");
+      drillBody.innerHTML = spec.html;
+      drillBody.scrollTop = 0;
+      if (spec.bind) spec.bind();
+    });
   }
 
   /* ------------------------------------------------------------------ *

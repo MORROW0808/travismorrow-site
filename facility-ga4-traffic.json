@@ -1,0 +1,76 @@
+{
+  "_meta": {
+    "purpose": "Real GA4 website traffic data for the portfolio dashboard's 'leads by channel' drill-down. Pulled directly via Supermetrics (ds_id GAWA) at the Dispatch layer, since spawned code-task sessions do not have Supermetrics MCP access (confirmed 2026-07-11 — a code task attempting this hit a hard 'not connected in this session' wall).",
+    "pulled_at": "2026-07-11",
+    "date_range": "last_30_days (rolling, as of pull time)",
+    "important_boundary": "This is website traffic data ONLY (sessions, users, source/medium). It cannot be joined to actual Nectar move-ins or leads — the move-in record carries no gclid/UTM/campaign identifier (see attribution-gap-nectar-gclid memory). Present this as 'website traffic (GA4)' alongside, never blended into, business outcome numbers like leads_converted or revenue.",
+    "coverage_notes": "GA4 has individual per-facility properties for all 9 NSS locations (matched below by address against facility-coordinates.json). AFAM has ONE brand-wide rollup property covering all 19 stores together — no per-AFAM-facility GA4 breakdown exists. The 'StoreLocal - Rollup - GA4' property's traffic volume (1,000+ sessions) is far too large to be RNO1 alone, so it is recorded here as a brand-level figure of UNCERTAIN scope, not asserted as RNO1-specific — do not label it as RNO1's own traffic without further verification. One GA4 property ('GA4 - 2600 Evergreen Ave') did not match any of the 29 facility addresses and was not queried — flagged as unmatched, not investigated further."
+  },
+  "facilities": {
+    "ELP5": {"ga4_account_id": "382983580", "ga4_account_name": "GA4 - 490 N Kenazo Ave, Horizon City, TX", "sessions_total": 122, "users_total": 108, "top_source_medium": [
+      {"source_medium": "google / organic", "sessions": 74, "users": 64, "engagement_rate": 0.6622},
+      {"source_medium": "(direct) / (none)", "sessions": 44, "users": 40, "engagement_rate": 0.5455},
+      {"source_medium": "bing / organic", "sessions": 2, "users": 2, "engagement_rate": 0.5}
+    ]},
+    "SIL1": {"ga4_account_id": "382985908", "ga4_account_name": "GA4 - 8611 N. Continental Reserve Loop, Tucson, AZ", "sessions_total": 225, "users_total": 168, "top_source_medium": [
+      {"source_medium": "google / organic", "sessions": 80, "users": 46, "engagement_rate": 0.5125},
+      {"source_medium": "(direct) / (none)", "sessions": 70, "users": 53, "engagement_rate": 0.5143},
+      {"source_medium": "google / cpc", "sessions": 70, "users": 64, "engagement_rate": 0.5}
+    ]},
+    "ELP9": {"ga4_account_id": "382992714", "ga4_account_name": "GA4 - 10560 N Loop Dr, El Paso", "sessions_total": 112, "users_total": 97, "top_source_medium": [
+      {"source_medium": "google / organic", "sessions": 69, "users": 58, "engagement_rate": 0.7681},
+      {"source_medium": "(direct) / (none)", "sessions": 38, "users": 34, "engagement_rate": 0.6579},
+      {"source_medium": "yelp.com / referral", "sessions": 2, "users": 2, "engagement_rate": 1.0}
+    ]},
+    "DEM1": {"ga4_account_id": "382999891", "ga4_account_name": "GA4 - 2821 Laguna Dr, Deming, NM, 88030", "sessions_total": 108, "users_total": 96, "top_source_medium": [
+      {"source_medium": "(direct) / (none)", "sessions": 53, "users": 50, "engagement_rate": 0.2453},
+      {"source_medium": "google / GoogleMaps", "sessions": 38, "users": 30, "engagement_rate": 0.7368},
+      {"source_medium": "google / organic", "sessions": 11, "users": 11, "engagement_rate": 0.6364}
+    ]},
+    "GRN1": {"ga4_account_id": "383000471", "ga4_account_name": "GA4 - 1640 W Duval Commerce Point Pl, Green Valley", "sessions_total": 90, "users_total": 75, "top_source_medium": [
+      {"source_medium": "google / organic", "sessions": 36, "users": 27, "engagement_rate": 0.6389},
+      {"source_medium": "google / cpc", "sessions": 22, "users": 19, "engagement_rate": 0.6364},
+      {"source_medium": "(direct) / (none)", "sessions": 20, "users": 18, "engagement_rate": 0.6}
+    ]},
+    "DOV1": {"ga4_account_id": "383012092", "ga4_account_name": "GA4 - 12071 N Thornydale Rd., Marana, AZ", "sessions_total": 171, "users_total": 143, "top_source_medium": [
+      {"source_medium": "google / GoogleMaps", "sessions": 94, "users": 80, "engagement_rate": 0.5213},
+      {"source_medium": "google / organic", "sessions": 30, "users": 26, "engagement_rate": 0.7333},
+      {"source_medium": "(direct) / (none)", "sessions": 25, "users": 22, "engagement_rate": 0.48}
+    ]},
+    "ELP7": {"ga4_account_id": "383069652", "ga4_account_name": "GA4 - 2900 N Lee Trevino Dr, El Paso, TX", "sessions_total": 80, "users_total": 66, "top_source_medium": [
+      {"source_medium": "google / organic", "sessions": 51, "users": 37, "engagement_rate": 0.6471},
+      {"source_medium": "(direct) / (none)", "sessions": 26, "users": 26, "engagement_rate": 0.5769}
+    ]},
+    "ELP6": {"ga4_account_id": "383087225", "ga4_account_name": "GA4 - 3070 Joe Battle Blvd, El Paso, TX", "sessions_total": 206, "users_total": 185, "top_source_medium": [
+      {"source_medium": "google / organic", "sessions": 61, "users": 47, "engagement_rate": 0.6557},
+      {"source_medium": "google / cpc", "sessions": 53, "users": 50, "engagement_rate": 0.5283},
+      {"source_medium": "(direct) / (none)", "sessions": 47, "users": 44, "engagement_rate": 0.5957},
+      {"source_medium": "google / GoogleMaps", "sessions": 37, "users": 37, "engagement_rate": 0.1351}
+    ]},
+    "ELP8": {"ga4_account_id": "383089245", "ga4_account_name": "GA4 - 7620 N Loop Dr, El Paso, TX", "sessions_total": 109, "users_total": 87, "top_source_medium": [
+      {"source_medium": "(direct) / (none)", "sessions": 52, "users": 43, "engagement_rate": 0.4615},
+      {"source_medium": "google / organic", "sessions": 50, "users": 36, "engagement_rate": 0.64}
+    ]}
+  },
+  "brand_rollups": {
+    "AFAM": {"ga4_account_id": "326433113", "ga4_account_name": "A Family Storage - GA4", "scope": "all 19 AFAM facilities combined — no per-facility GA4 breakdown exists for AFAM", "sessions_total": 7157, "users_total": 5758, "top_source_medium": [
+      {"source_medium": "(direct) / (none)", "sessions": 3947, "users": 3407, "engagement_rate": 0.3413},
+      {"source_medium": "google / cpc", "sessions": 1438, "users": 1144, "engagement_rate": 0.7232},
+      {"source_medium": "google / organic", "sessions": 1432, "users": 971, "engagement_rate": 0.7353},
+      {"source_medium": "bing / organic", "sessions": 167, "users": 106, "engagement_rate": 0.8323}
+    ]},
+    "STORELOCAL_ROLLUP": {"ga4_account_id": "403530053", "ga4_account_name": "StoreLocal - Rollup - GA4", "scope": "UNCERTAIN — traffic volume (900+ sessions) is far too large to be RNO1 alone; likely a StoreLocal-network-wide rollup, not RNO1-specific. Do not present this as RNO1's own traffic without further verification.", "sessions_total": 1368, "users_total": 1231, "top_source_medium": [
+      {"source_medium": "(direct) / (none)", "sessions": 777, "users": 758, "engagement_rate": 0.0901},
+      {"source_medium": "google / organic", "sessions": 420, "users": 351, "engagement_rate": 0.4905},
+      {"source_medium": "hs_email / email", "sessions": 95, "users": 94, "engagement_rate": 0.0421}
+    ]}
+  },
+  "unmatched_ga4_properties": [
+    {"ga4_account_id": "382681553", "ga4_account_name": "GA4 - 2600 Evergreen Ave", "note": "Address does not match any of the 29 facility-coordinates.json addresses. Not queried. Possibly a former/decommissioned location or an address variant not otherwise recorded — flagged, not investigated."}
+  ],
+  "not_pulled": {
+    "RNO1_individual": "No dedicated per-facility GA4 property found for RNO1 specifically — only the ambiguous-scope StoreLocal rollup above.",
+    "AFAM_individual_facilities": "GA4 does not have per-store properties for any of the 19 AFAM facilities — only the single brand-wide rollup.",
+    "google_ads_wider_fields": "Clicks/Impressions/CTR/Avg CPC not pulled in this pass — this file is GA4-only. A separate pull would be needed for those AW fields if wanted."
+  }
+}
