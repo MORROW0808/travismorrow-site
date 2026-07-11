@@ -229,16 +229,19 @@
   :root[data-theme="light"] #drillScrim{ background:rgba(20,22,24,0.28); }
   #drillScrim.open{ opacity:1; pointer-events:auto; }
   #drill{
-    position:fixed; top:0; right:0; bottom:0; z-index:901;
-    width:min(620px, 100vw); background:var(--bg);
-    border-left:1px solid var(--line);
-    box-shadow:-18px 0 50px rgba(0,0,0,0.45);
-    transform:translateX(28px); opacity:0; visibility:hidden;
-    transition:transform .28s cubic-bezier(.2,.7,.3,1), opacity .28s ease, visibility 0s .28s;
-    display:flex; flex-direction:column;
+    position:fixed; left:50%; top:50%; z-index:901;
+    width:min(680px, calc(100vw - 28px)); max-height:min(86vh, 900px);
+    background:var(--bg); border:1px solid var(--line); border-radius:16px;
+    box-shadow:0 24px 70px rgba(0,0,0,0.55);
+    transform:translate(-50%, -50%) scale(.96) translateY(14px);
+    opacity:0; visibility:hidden;
+    transition:transform .26s cubic-bezier(.2,.7,.3,1), opacity .26s ease, visibility 0s .26s;
+    display:flex; flex-direction:column; overflow:hidden;
   }
-  :root[data-theme="light"] #drill{ box-shadow:-18px 0 44px rgba(16,18,20,0.18); }
-  #drill.open{ transform:none; opacity:1; visibility:visible; transition-delay:0s; }
+  :root[data-theme="light"] #drill{ box-shadow:0 20px 60px rgba(16,18,20,0.25); }
+  #drill.open{
+    transform:translate(-50%, -50%); opacity:1; visibility:visible; transition-delay:0s;
+  }
   #drillHead{
     display:flex; align-items:baseline; gap:10px; flex:none;
     padding:18px 22px 14px; border-bottom:1px solid var(--line);
@@ -301,7 +304,7 @@
   .dr-bar .tr .tk{ position:absolute; top:-2px; bottom:-2px; width:1.5px; background:var(--bright); opacity:.55; }
   .dr-bar .v{ font-size:11px; font-weight:700; color:var(--bright); text-align:right; font-variant-numeric:tabular-nums; }
   @media (max-width:640px){
-    #drill{ width:100vw; }
+    #drill{ width:calc(100vw - 16px); max-height:92vh; }
     .dr-bar{ grid-template-columns:92px 1fr 46px; }
   }
   .card{
