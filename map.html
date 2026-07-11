@@ -171,9 +171,9 @@
 
   /* ---------- hover/detail card (memory-map hover-card pattern) ---------- */
   #card{
-    position:absolute; z-index:1200; width:250px; pointer-events:none;
+    position:absolute; z-index:1200; width:262px; pointer-events:none;
     background:var(--panel-bg); border:1px solid var(--panel-border);
-    border-radius:12px; padding:12px 14px;
+    border-radius:12px; padding:0 0 12px; overflow:hidden;
     backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
     box-shadow:0 12px 36px rgba(0,0,0,0.45);
     opacity:0; transform:translateY(4px); visibility:hidden;
@@ -181,6 +181,30 @@
   }
   :root[data-theme="light"] #card{ box-shadow:0 10px 28px rgba(16,18,20,0.16); }
   #card.show{ opacity:1; transform:none; visibility:visible; }
+  #card .c-photo{
+    height:118px; background:var(--track);
+    display:flex; align-items:center; justify-content:center;
+    border-bottom:1px solid var(--panel-border); position:relative;
+  }
+  #card .c-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  #card .c-photo svg{ width:34px; height:34px; color:var(--dim); opacity:.6; }
+  #card .c-body{ padding:11px 14px 0; }
+  #card .c-sample{
+    position:absolute; top:8px; right:8px;
+    font-size:8.5px; font-weight:700; letter-spacing:.08em;
+    color:#ffd88a; border:1px solid rgba(245,165,36,0.5);
+    background:rgba(20,20,20,0.65); border-radius:999px; padding:2px 7px;
+  }
+  :root[data-theme="light"] #card .c-sample{
+    color:#7A5200; border-color:rgba(154,103,0,0.5); background:rgba(255,255,255,0.8);
+  }
+  #card .c-stats{
+    display:grid; grid-template-columns:1fr 1fr; gap:6px 12px;
+    margin-top:9px; padding-top:9px; border-top:1px solid var(--panel-border);
+  }
+  #card .c-stat .k{ font-size:8.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--dim); }
+  #card .c-stat .v{ font-size:14.5px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; margin-top:1px; }
+  #card .c-stat .v.up{ color:var(--pos); } #card .c-stat .v.down{ color:var(--neg); } #card .c-stat .v.zero{ color:var(--flat); }
   #card .c-brand{ display:flex; align-items:center; gap:8px; margin-bottom:7px; }
   #card .c-brand img{ display:block; }
   #card .c-brand img.nss{ height:22px; }
@@ -324,22 +348,67 @@
     });
   }
 
+  /* ---------- facility stats: PLACEHOLDERS until the real export lands.
+     Wire-in points (expected from the data task; names to confirm):
+       f.photo               -> image path, e.g. assets/facilities/<code>.jpg
+       f.occupancy_sqft_pct  -> occupancy (sq ft %)
+       f.units_total         -> total units
+       f.net_move_ins_mtd    -> net move-ins MTD
+       f.net_move_ins_ytd    -> net move-ins YTD
+     Until those exist, dummies are generated deterministically per code and
+     the card is badged SAMPLE so placeholder numbers can't read as real. */
+  function facStats(f) {
+    var real = f.occupancy_sqft_pct != null;
+    var h = 0;
+    for (var i = 0; i < f.facility_code.length; i++)
+      h = (h * 31 + f.facility_code.charCodeAt(i)) % 1000;
+    return {
+      photo: f.photo || null,
+      occ:    real ? f.occupancy_sqft_pct : 68 + (h % 28) + (h % 10) / 10,
+      units:  f.units_total != null ? f.units_total : 380 + (h % 52) * 10,
+      netMtd: f.net_move_ins_mtd != null ? f.net_move_ins_mtd : ((h % 17) - 6),
+      netYtd: f.net_move_ins_ytd != null ? f.net_move_ins_ytd : ((h % 61) - 18),
+      sample: !real
+    };
+  }
+  function signCls(v) { return v > 0 ? "up" : v < 0 ? "down" : "zero"; }
+  function fmtSigned(v) { return (v > 0 ? "+" : "") + v; }
+
+  var PHOTO_GLYPH =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+    'stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M3 21V8l6-4 6 4v13M9 21v-6h4v6M21 21V11l-5-3"/><path d="M1 21h22"/></svg>';
+
   /* ---------- hover/detail card (delay + fade, per the memory map) ---------- */
   var card = document.getElementById("card");
   function showCard(f) {
-    var lg = LOGOS[f.brand], mk = marketOf(f.facility_code);
+    var lg = LOGOS[f.brand], mk = marketOf(f.facility_code), st = facStats(f);
     card.innerHTML =
+      '<div class="c-photo">' +
+        (st.photo
+          ? '<img src="' + esc(st.photo) + '" alt="' + esc(f.facility_code) + ' facility photo" loading="lazy">'
+          : PHOTO_GLYPH) +
+        (st.sample ? '<span class="c-sample">SAMPLE</span>' : "") +
+      "</div>" +
+      '<div class="c-body">' +
       '<div class="c-brand">' +
         '<img class="' + lg.cls + ' for-dark" src="' + lg.dark + '" alt="' + esc(f.brand) + '">' +
         '<img class="' + lg.cls + ' for-light" src="' + lg.light + '" alt="' + esc(f.brand) + '">' +
         '<span class="c-code">' + esc(f.facility_code) + "</span></div>" +
       '<div class="c-name">' + esc(f.address.split(",")[0]) + "</div>" +
       '<div class="c-addr">' + esc(f.address) + "</div>" +
+      '<div class="c-stats">' +
+        '<div class="c-stat"><div class="k">Occupancy · sq ft</div><div class="v">' + st.occ.toFixed(1) + "%</div></div>" +
+        '<div class="c-stat"><div class="k">Total units</div><div class="v">' + st.units.toLocaleString() + "</div></div>" +
+        '<div class="c-stat"><div class="k">Net move-ins · MTD</div><div class="v ' + signCls(st.netMtd) + '">' + fmtSigned(st.netMtd) + "</div></div>" +
+        '<div class="c-stat"><div class="k">Net move-ins · YTD</div><div class="v ' + signCls(st.netYtd) + '">' + fmtSigned(st.netYtd) + "</div></div>" +
+      "</div>" +
       (mk ? '<div class="c-mkt">' + esc(mk.market_name) + " · <b>" + mk.sqft_per_capita.toFixed(1) +
-            "</b> sqft/capita · " + mk.operating_facilities + " competitors</div>" : "");
+            "</b> sqft/capita · " + mk.operating_facilities + " competitors</div>" : "") +
+      "</div>";
     var p = map.latLngToContainerPoint([f.lat, f.lng]);
-    var x = Math.min(Math.max(p.x + 16, 10), innerWidth - 266);
-    var y = Math.min(Math.max(p.y - 20, 60), innerHeight - 180);
+    var x = Math.min(Math.max(p.x + 16, 10), innerWidth - 278);
+    var y = Math.min(Math.max(p.y - 20, 60), innerHeight - 380);
     card.style.left = x + "px"; card.style.top = y + "px";
     card.classList.add("show");
   }
