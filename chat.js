@@ -197,7 +197,7 @@
         'stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>' +
         "</button>" +
       "</div>" +
-      '<div id="tcNote">Design preview — not yet connected to live systems.</div>';
+      '<div id="tcNote">Taylor answers from the live portfolio dataset · replies may take a few seconds.</div>';
     document.body.appendChild(panel);
 
     var msgs = panel.querySelector("#tcMsgs");
