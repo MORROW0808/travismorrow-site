@@ -213,6 +213,97 @@
     display:grid; grid-template-columns:repeat(auto-fit, minmax(272px, 1fr)); gap:14px;
   }
   #kpis .card{ display:flex; flex-direction:column; }
+  /* drillable cards advertise themselves */
+  #kpis .card.drill{ cursor:pointer; }
+  #kpis .card.drill .lbl::after{
+    content:"details \2192"; float:right; font-size:9px; letter-spacing:.08em;
+    color:var(--accent-bright); opacity:0; transition:opacity .15s;
+  }
+  #kpis .card.drill:hover .lbl::after{ opacity:1; }
+
+  /* ---------- drill-down slide-over ---------- */
+  #drillScrim{
+    position:fixed; inset:0; z-index:900; background:rgba(0,0,0,0.45);
+    opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  :root[data-theme="light"] #drillScrim{ background:rgba(20,22,24,0.28); }
+  #drillScrim.open{ opacity:1; pointer-events:auto; }
+  #drill{
+    position:fixed; top:0; right:0; bottom:0; z-index:901;
+    width:min(620px, 100vw); background:var(--bg);
+    border-left:1px solid var(--line);
+    box-shadow:-18px 0 50px rgba(0,0,0,0.45);
+    transform:translateX(28px); opacity:0; visibility:hidden;
+    transition:transform .28s cubic-bezier(.2,.7,.3,1), opacity .28s ease, visibility 0s .28s;
+    display:flex; flex-direction:column;
+  }
+  :root[data-theme="light"] #drill{ box-shadow:-18px 0 44px rgba(16,18,20,0.18); }
+  #drill.open{ transform:none; opacity:1; visibility:visible; transition-delay:0s; }
+  #drillHead{
+    display:flex; align-items:baseline; gap:10px; flex:none;
+    padding:18px 22px 14px; border-bottom:1px solid var(--line);
+  }
+  #drillHead .t{ font-size:15px; font-weight:700; color:var(--bright); letter-spacing:.02em; }
+  #drillHead .sc{ font-size:11.5px; color:var(--dim); }
+  #drillClose{
+    margin-left:auto; width:30px; height:30px; border-radius:8px; cursor:pointer;
+    border:1px solid var(--border); background:var(--chip-bg); color:var(--text);
+    font-size:15px; line-height:1; display:flex; align-items:center; justify-content:center;
+  }
+  #drillClose:hover{ background:var(--chip-bg-hover); border-color:rgba(185,39,50,0.5); }
+  #drillBody{ flex:1; overflow-y:auto; padding:18px 22px 28px; }
+  .dr-sec{ margin-bottom:22px; }
+  .dr-sec > .cap{
+    font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim);
+    margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .dr-sec > .cap .badge{
+    font-size:8.5px; font-weight:700; letter-spacing:.08em; padding:1px 7px;
+    border-radius:999px; color:#ffd88a; border:1px solid rgba(245,165,36,0.5);
+  }
+  :root[data-theme="light"] .dr-sec > .cap .badge{ color:#7A5200; border-color:rgba(154,103,0,0.5); }
+  .dr-panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:14px 16px; box-shadow:var(--shadow-card);
+  }
+  .dr-hero{ display:flex; align-items:center; gap:18px; }
+  .dr-hero .g-dial{ margin:0; }
+  .dr-hero .nums{ flex:1; min-width:0; }
+  .dr-hero .nums .b{ font-size:22px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; }
+  .dr-hero .nums .b small{ font-size:12px; color:var(--dim); font-weight:600; }
+  .dr-hero .nums .l{ font-size:11.5px; color:var(--dim); margin-top:3px; }
+
+  /* trend chart */
+  .dr-chart{ position:relative; }
+  .dr-chart svg{ display:block; width:100%; height:auto; }
+  .dr-chart .axis{ font-size:8.5px; fill:var(--dim); }
+  .dr-chart .gline{ stroke:var(--track); stroke-width:1; }
+  .dr-chart .target{ stroke:var(--dim); stroke-width:1; stroke-dasharray:3 4; opacity:.7; }
+  .dr-legend{ display:flex; gap:16px; margin-top:8px; font-size:10.5px; color:var(--dim); }
+  .dr-legend i{ display:inline-block; width:14px; height:0; border-top:2.5px solid var(--meter-b); border-radius:2px; margin-right:5px; vertical-align:3px; }
+  .dr-legend i.s2{ border-top-style:dashed; border-top-color:var(--meter-a); }
+  #drTip{
+    position:absolute; z-index:5; pointer-events:none; display:none;
+    background:var(--panel2); border:1px solid var(--line); border-radius:8px;
+    padding:7px 10px; font-size:11px; color:var(--text); white-space:nowrap;
+    box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  }
+  #drTip b{ color:var(--bright); font-variant-numeric:tabular-nums; }
+  .dr-crosshair{ stroke:var(--dim); stroke-width:1; opacity:0; }
+
+  /* breakdown bars */
+  .dr-bars{ display:flex; flex-direction:column; gap:7px; }
+  .dr-bar{ display:grid; grid-template-columns:118px 1fr 52px; gap:10px; align-items:center; }
+  .dr-bar .nm{ font-size:11px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dr-bar .nm small{ color:var(--dim); margin-right:5px; font-size:9.5px; }
+  .dr-bar .tr{ position:relative; height:9px; border-radius:4px; background:var(--track); overflow:visible; }
+  .dr-bar .tr i{ position:absolute; inset:0 auto 0 0; border-radius:4px; background:var(--meter-b); }
+  .dr-bar .tr .tk{ position:absolute; top:-2px; bottom:-2px; width:1.5px; background:var(--bright); opacity:.55; }
+  .dr-bar .v{ font-size:11px; font-weight:700; color:var(--bright); text-align:right; font-variant-numeric:tabular-nums; }
+  @media (max-width:640px){
+    #drill{ width:100vw; }
+    .dr-bar{ grid-template-columns:92px 1fr 46px; }
+  }
   .card{
     background:var(--panel); border:1px solid var(--line); border-radius:14px;
     padding:15px 17px 13px; min-width:0;
@@ -527,6 +618,16 @@
   </div><!-- /dash -->
 </div>
 
+<div id="drillScrim"></div>
+<aside id="drill" role="dialog" aria-modal="true" aria-label="KPI drill-down">
+  <div id="drillHead">
+    <span class="t" id="drillTitle"></span>
+    <span class="sc" id="drillScope"></span>
+    <button id="drillClose" aria-label="Close drill-down">&times;</button>
+  </div>
+  <div id="drillBody"></div>
+</aside>
+
 <script>
 (function () {
   "use strict";
@@ -771,7 +872,8 @@
     var t1 = dialPt(CX, CY, R1 - 7, tickA), t2 = dialPt(CX, CY, R1 + 7, tickA);
     var occDelta = occ.occupancy_sqft_pct - OCC_TARGET;
     var occCard =
-      '<div class="card"><div class="lbl">Occupancy</div>' +
+      '<div class="card drill" data-drill="occupancy" role="button" tabindex="0" ' +
+      'aria-label="Open occupancy drill-down"><div class="lbl">Occupancy</div>' +
       '<div class="g-row"><div class="g-dial">' +
       dialSvg(
         '<path class="trk" stroke-width="6" d="' + dialArc(CX, CY, R2, DIAL_A0, DIAL_A0 + DIAL_SWEEP) + '"></path>' +
@@ -904,6 +1006,181 @@
         requestAnimationFrame(function () { c.classList.add("in"); });
       });
     }
+
+    Array.prototype.forEach.call(host.querySelectorAll(".card.drill"), function (c) {
+      function go() { openDrill(c.getAttribute("data-drill")); }
+      c.addEventListener("click", go);
+      c.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+      });
+    });
+  }
+
+  /* ================================================================== *
+   *  KPI drill-downs — slide-over panel
+   *  Occupancy is the reference implementation; the other three follow
+   *  once the 13-month history / GA4 / Ads exports land.
+   *  SAMPLE-badged synthetic history until then (deterministic walk
+   *  backward from the real current values — shape demo only).
+   * ================================================================== */
+  var drill = document.getElementById("drill");
+  var drillScrim = document.getElementById("drillScrim");
+  var drillBody = document.getElementById("drillBody");
+  var drillOpenFor = null;
+
+  function closeDrill() {
+    drill.classList.remove("open");
+    drillScrim.classList.remove("open");
+    drillOpenFor = null;
+  }
+  drillScrim.addEventListener("click", closeDrill);
+  document.getElementById("drillClose").addEventListener("click", closeDrill);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && drillOpenFor) closeDrill();
+  });
+
+  /* deterministic 13-month sample series ending at the real current value.
+     WIRE-IN POINT: replace with the real history file when it lands
+     (expected: per-scope monthly {month, occupancy_sqft_pct, ...}). */
+  function sampleSeries(current, key, volatility) {
+    var seed = 0;
+    for (var i = 0; i < key.length; i++) seed = (seed * 31 + key.charCodeAt(i)) % 9973;
+    var out = [current], v = current;
+    for (var m = 0; m < 12; m++) {
+      seed = (seed * 137 + 71) % 9973;
+      v = v - ((seed % 100) / 100 - 0.48) * volatility;
+      v = Math.min(97, Math.max(35, v));
+      out.unshift(v);
+    }
+    return out;
+  }
+  function monthLabels() {
+    var out = [], d = new Date(DATA.generated_at);
+    for (var i = 12; i >= 0; i--) {
+      var m = new Date(d.getFullYear(), d.getMonth() - i, 1);
+      out.push(m.toLocaleString("en-US", { month: "short" }));
+    }
+    return out;
+  }
+
+  /* line chart with crosshair + tooltip (two series max) */
+  function trendChart(series, labels, opts) {
+    var W = 560, H = 170, L = 34, R = 10, T = 12, B = 22;
+    var iw = W - L - R, ih = H - T - B;
+    var all = [];
+    series.forEach(function (sr) { all = all.concat(sr.pts); });
+    var lo = Math.floor(Math.min.apply(null, all.concat(opts.target ? [opts.target] : [])) - 2);
+    var hi = Math.ceil(Math.max.apply(null, all.concat(opts.target ? [opts.target] : [])) + 2);
+    function X(i) { return L + iw * i / (labels.length - 1); }
+    function Y(v) { return T + ih * (1 - (v - lo) / (hi - lo)); }
+    var g = "";
+    [lo, (lo + hi) / 2, hi].forEach(function (v) {
+      g += '<line class="gline" x1="' + L + '" y1="' + Y(v) + '" x2="' + (W - R) + '" y2="' + Y(v) + '"></line>' +
+           '<text class="axis" x="' + (L - 5) + '" y="' + (Y(v) + 3) + '" text-anchor="end">' + Math.round(v) + "%</text>";
+    });
+    labels.forEach(function (lb, i) {
+      if (i % 2 === 0) g += '<text class="axis" x="' + X(i) + '" y="' + (H - 6) + '" text-anchor="middle">' + lb + "</text>";
+    });
+    if (opts.target) {
+      g += '<line class="target" x1="' + L + '" y1="' + Y(opts.target) + '" x2="' + (W - R) + '" y2="' + Y(opts.target) + '"></line>';
+    }
+    series.forEach(function (sr) {
+      var d = sr.pts.map(function (v, i) { return (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1); }).join("");
+      g += '<path d="' + d + '" fill="none" stroke="' + sr.color + '" stroke-width="2.2"' +
+           (sr.dash ? ' stroke-dasharray="5 4"' : "") + ' stroke-linecap="round"></path>';
+    });
+    g += '<line class="dr-crosshair" id="drCross" y1="' + T + '" y2="' + (T + ih) + '"></line>';
+    var html =
+      '<div class="dr-chart"><svg viewBox="0 0 ' + W + " " + H + '" id="drSvg">' + g + "</svg>" +
+      '<div id="drTip"></div></div>';
+    return {
+      html: html,
+      bind: function () {
+        var svg = document.getElementById("drSvg"), tip = document.getElementById("drTip");
+        var cross = document.getElementById("drCross");
+        svg.addEventListener("pointermove", function (e) {
+          var r = svg.getBoundingClientRect();
+          var fx = (e.clientX - r.left) / r.width * W;
+          var i = Math.round((fx - L) / iw * (labels.length - 1));
+          i = Math.max(0, Math.min(labels.length - 1, i));
+          cross.setAttribute("x1", X(i)); cross.setAttribute("x2", X(i));
+          cross.style.opacity = 1;
+          tip.style.display = "block";
+          tip.innerHTML = "<b>" + labels[i] + "</b> · " + series.map(function (sr) {
+            return sr.name + " <b>" + sr.pts[i].toFixed(1) + "%</b>";
+          }).join(" · ");
+          var px = X(i) / W * r.width;
+          tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + "px";
+          tip.style.top = "8px";
+        });
+        svg.addEventListener("pointerleave", function () {
+          tip.style.display = "none"; cross.style.opacity = 0;
+        });
+      }
+    };
+  }
+
+  function barRows(rows, target) {
+    return '<div class="dr-bars">' + rows.map(function (r) {
+      return '<div class="dr-bar">' +
+        '<span class="nm">' + (r.code ? "<small>" + esc(r.code) + "</small>" : "") + esc(r.name) + "</span>" +
+        '<span class="tr"><i style="width:' + Math.min(100, r.v) + '%"></i>' +
+          (target ? '<span class="tk" style="left:' + target + '%"></span>' : "") + "</span>" +
+        '<span class="v">' + r.v.toFixed(1) + "%</span></div>";
+    }).join("") + "</div>";
+  }
+
+  var DRILLS = {
+    occupancy: function () {
+      var d = scopeData(), occ = d.occupancy;
+      var labels = monthLabels();
+      var sq = sampleSeries(occ.occupancy_sqft_pct, scopeLabel() + "sq", 1.6);
+      var un = sampleSeries(occ.occupancy_units_pct, scopeLabel() + "un", 1.6);
+      var chart = trendChart(
+        [{ name: "sq ft", pts: sq, color: "var(--meter-b)" },
+         { name: "units", pts: un, color: "var(--meter-a)", dash: true }],
+        labels, { target: OCC_TARGET });
+
+      var brandRows = BRANDS.map(function (b) {
+        return { name: b, v: DATA.brands[b].occupancy.occupancy_sqft_pct };
+      });
+      var facRows = scopeFacs().slice().sort(function (a, b) {
+        return b.occupancy_sqft_pct - a.occupancy_sqft_pct;
+      }).map(function (f) {
+        return { code: f.facility_code, name: f.facility_name.replace(/^(National Self Storage|A Family Storage) - /, ""), v: f.occupancy_sqft_pct };
+      });
+
+      var html =
+        '<div class="dr-sec"><div class="dr-panel dr-hero">' +
+          '<div class="nums"><div class="b">' + fmtPct(occ.occupancy_sqft_pct, 2) + " <small>sq ft</small></div>" +
+          '<div class="l"><b>' + fmtPct(occ.occupancy_units_pct, 2) + "</b> of units · " +
+            occ.units_occupied.toLocaleString() + " / " + occ.units_total.toLocaleString() + " units · target " + OCC_TARGET + "%</div></div>" +
+        "</div></div>" +
+        '<div class="dr-sec"><div class="cap">13-month trend <span class="badge">SAMPLE — history export pending</span></div>' +
+        '<div class="dr-panel">' + chart.html +
+        '<div class="dr-legend"><span><i></i>sq ft occupancy</span><span><i class="s2"></i>unit occupancy</span>' +
+        '<span style="margin-left:auto">dashed rule = ' + OCC_TARGET + '% target</span></div></div></div>' +
+        (scope === "portfolio"
+          ? '<div class="dr-sec"><div class="cap">By brand · current</div><div class="dr-panel">' + barRows(brandRows, OCC_TARGET) + "</div></div>"
+          : "") +
+        '<div class="dr-sec"><div class="cap">By facility · current · sq ft</div><div class="dr-panel">' + barRows(facRows, OCC_TARGET) + "</div></div>";
+      return { title: "Occupancy", html: html, bind: chart.bind };
+    }
+  };
+
+  function openDrill(topic) {
+    var make = DRILLS[topic];
+    if (!make) return;
+    var spec = make();
+    document.getElementById("drillTitle").textContent = spec.title;
+    document.getElementById("drillScope").textContent =
+      scopeLabel() + " · " + scopeFacs().length + (scopeFacs().length === 1 ? " facility" : " facilities");
+    drillBody.innerHTML = spec.html;
+    drillBody.scrollTop = 0;
+    drill.classList.add("open");
+    drillScrim.classList.add("open");
+    drillOpenFor = topic;
+    if (spec.bind) spec.bind();
   }
 
   /* ------------------------------------------------------------------ *
