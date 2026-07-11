@@ -116,7 +116,7 @@
     "  background:var(--tc-panel2); border:1px solid var(--tc-border); color:var(--tc-text);",
     "  border-bottom-left-radius:4px;",
     "  animation:tcRise .25s cubic-bezier(.2,.7,.3,1);",
-    "}",
+    "}\n.tc-bubble a.tc-link{ color:var(--accent-bright, #de5964); font-weight:600; text-decoration:underline; text-underline-offset:2px; }",
     ".tc-row.tc-user .tc-bubble{",
     "  background:var(--tc-user); border-color:var(--tc-user-border); color:var(--tc-bright);",
     "  border-bottom-left-radius:13px; border-bottom-right-radius:4px;",
@@ -218,8 +218,16 @@
         var safe = String(text).replace(/[&<>"']/g, function (c) {
           return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
         });
+        /* Links: markdown [text](/path) plus bare /page.html mentions become
+           real anchors. RELATIVE same-origin paths only — an absolute or
+           external URL in a reply never becomes clickable. Runs after
+           escaping, so hrefs can't carry markup. */
         el.innerHTML = safe
           .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+          .replace(/\[([^\]]+)\]\((\/[A-Za-z0-9._\-\/?#=&]*)\)/g,
+                   '<a class="tc-link" href="$2" target="_blank" rel="noopener">$1</a>')
+          .replace(/(^|[\s(>])(\/[a-z0-9._\-]+\.html)/gi,
+                   '$1<a class="tc-link" href="$2" target="_blank" rel="noopener">$2</a>')
           .replace(/\n/g, "<br>");
       }
       msgs.appendChild(row);

@@ -134,7 +134,7 @@
   .node-circle{ cursor:pointer; }
   .node-group{ }
 
-  .edge-line{ pointer-events:none; }
+  .edge-line{ pointer-events:none; stroke-width:var(--edge-w, 1.2px); }
 
   /* ---------- Top bar ---------- */
   #topbar{
@@ -153,14 +153,17 @@
     display:flex; gap:8px; align-items:center; pointer-events:auto;
     flex-wrap:wrap; justify-content:flex-end;
   }
-  button.ctrl-btn{
+  a.ctrl-btn{
+    text-decoration:none; display:inline-flex; align-items:center;
+  }
+  a.ctrl-btn, button.ctrl-btn{
     font-family:inherit; font-size:12px; font-weight:600;
     padding:7px 14px; border-radius:6px; border:1px solid var(--panel-border);
     background:rgba(255,255,255,0.04); color:var(--text-main);
     cursor:pointer; transition:background 0.15s, border-color 0.15s;
     -webkit-tap-highlight-color:transparent;
   }
-  button.ctrl-btn:hover{ background:rgba(255,255,255,0.09); }
+  a.ctrl-btn:hover, button.ctrl-btn:hover{ background:rgba(255,255,255,0.09); }
   button#growBtn{
     background:linear-gradient(180deg, rgba(185,39,50,0.30), rgba(182,32,37,0.14));
     border-color:rgba(185,39,50,0.55); color:#ffd9dc;
@@ -305,7 +308,10 @@
     #title-block .t1{ font-size:12px; }
     #topbar{ padding:10px 8px; align-items:flex-start; }
     #controls{ gap:5px; }
-    button.ctrl-btn{ padding:6px 9px; font-size:11px; white-space:nowrap; }
+    a.ctrl-btn{
+    text-decoration:none; display:inline-flex; align-items:center;
+  }
+  a.ctrl-btn, button.ctrl-btn{ padding:6px 9px; font-size:11px; white-space:nowrap; }
     input#searchBox{ width:56px; padding:6px 8px; }
     input#searchBox:focus{ width:104px; }
     #searchResults{ width:190px; }
@@ -366,8 +372,11 @@
         <input id="searchBox" type="text" placeholder="Search…" autocomplete="off" spellcheck="false">
         <div id="searchResults"></div>
       </div>
+      <a class="ctrl-btn" href="portfolio.html">Dashboard</a>
+      <a class="ctrl-btn" href="map.html">Facility map</a>
       <button class="ctrl-btn" id="growBtn">⟲ Grow</button>
       <button class="ctrl-btn" id="resetBtn">Reset</button>
+      <button class="ctrl-btn" id="lockBtn" title="Lock this session and return to the landing page">Lock</button>
       <button class="ctrl-btn" id="themeBtn" title="Toggle light / dark mode" aria-label="Toggle light or dark mode">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -544,9 +553,16 @@ function screenToWorld(x,y){
   return { x: (x - W/2)/camScale + camX, y: (y - H/2)/camScale + camY };
 }
 
+var lastCS = 1;
 function applyTransform(){
   viewport.setAttribute("transform",
     "translate("+(W/2)+","+(H/2)+") scale("+camScale+") translate("+(-camX)+","+(-camY)+")");
+  var cs = nodeCounterScale();
+  if (Math.abs(cs - lastCS) > 0.002) {
+    lastCS = cs;
+    svg.style.setProperty("--edge-w", (1.2 * cs).toFixed(2) + "px");
+    positionAll();
+  }
 }
 
 /* build DOM elements */
@@ -625,9 +641,18 @@ nodes.forEach(function(n){
   });
 });
 
+/* Semantic zoom: past 1x, node groups (circle + label) counter-scale by
+   camScale^-0.45 while world spacing grows linearly with camScale — so
+   deeper zoom = more separation between labels, not the same crowding
+   magnified. Edges get the same treatment via the --edge-w CSS var. */
+function nodeCounterScale(){
+  return camScale <= 1 ? 1 : Math.pow(camScale, -0.45);
+}
 function positionAll(){
+  var cs = nodeCounterScale();
   nodes.forEach(function(n){
-    n.el.setAttribute("transform","translate("+n.x+","+n.y+")");
+    n.el.setAttribute("transform","translate("+n.x+","+n.y+")" +
+      (cs === 1 ? "" : " scale("+cs.toFixed(4)+")"));
     n.el.style.display = n.visible ? "" : "none";
   });
   if (hoverId) placeHoverCard();
@@ -1325,6 +1350,9 @@ requestAnimationFrame(frame);
 document.getElementById("themeBtn").addEventListener("click", function () {
   TMTheme.toggle();
 });
+document.getElementById("lockBtn").addEventListener("click", function () {
+  TMAuth.logout(); location.href = "index.html";
+});
 (function () {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (!window.matchMedia("(pointer: fine)").matches) return;
@@ -1346,5 +1374,7 @@ document.getElementById("themeBtn").addEventListener("click", function () {
   }, { passive: true });
 })();
 </script>
+<style>:root{ --tc-bottom:64px; } /* launcher clears the version ticker */</style>
+<script src="chat.js"></script>
 </body>
 </html>

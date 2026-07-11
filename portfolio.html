@@ -247,8 +247,8 @@
   .g-dial svg{ display:block; width:100%; height:auto; overflow:visible; }
   .g-dial .trk{ fill:none; stroke:var(--track); }
   .g-dial .arc{ fill:none; stroke-linecap:round; }
-  .g-dial .band{ stroke-opacity:.28; }
-  :root[data-theme="light"] .g-dial .band{ stroke-opacity:.38; }
+  .g-dial .band{ stroke-opacity:.6; }
+  :root[data-theme="light"] .g-dial .band{ stroke-opacity:.7; }
   .g-center{
     position:absolute; inset:0; display:flex; flex-direction:column;
     align-items:center; justify-content:center; padding-top:13px;
@@ -792,7 +792,7 @@
       dialSvg('<path id="gConv" class="arc" stroke="var(--meter-b)" stroke-width="9"></path>') +
       '<div class="g-center"><span class="gv"><span class="num"></span></span><span class="gu">converted</span></div>' +
       '</div><div class="g-stats">' +
-      '<div class="gs-line"><b>' + leads.leads_converted + '</b> of <b>' + leads.leads_total + '</b> leads</div>' +
+      '<div class="gs-line"><b>' + Math.round(leads.leads_converted) + '</b> of <b>' + Math.round(leads.leads_total) + '</b> leads</div>' +
       '<div class="gs-sub">month to date</div>' +
       '</div></div></div>';
 
@@ -940,11 +940,21 @@
     });
   }
 
+  /* default order: alpha store codes first (DEM1, DOV1, ELP5…), then
+     numeric codes ascending (301, 304…) — Travis's requested reading
+     order. Header clicks still override. */
+  function defaultCodeSort(a, b) {
+    var an = /^\d/.test(a.facility_code), bn = /^\d/.test(b.facility_code);
+    if (an !== bn) return an ? 1 : -1;
+    if (an) return parseInt(a.facility_code, 10) - parseInt(b.facility_code, 10);
+    return a.facility_code.localeCompare(b.facility_code);
+  }
   function facRows() {
     var q = document.getElementById("facSearch").value.trim().toLowerCase();
     var rows = scopeFacs().filter(function (f) {
       return !q || (f.facility_name + " " + f.facility_code).toLowerCase().indexOf(q) !== -1;
     });
+    if (!sortKey) rows = rows.slice().sort(defaultCodeSort);
     if (sortKey) {
       var col = COLS.filter(function (c) { return c.key === sortKey; })[0];
       rows = rows.slice().sort(function (a, b) {
@@ -1062,12 +1072,13 @@
       return;
     }
     camps.forEach(function (c, i) {
-      var zero = !c.conversions;
+      var conv = Math.round(c.conversions);   // a conversion happened or it didn't
+      var zero = !conv;
       var tr = document.createElement("tr");
       tr.innerHTML =
         '<td><span class="rank">' + (i + 1) + '</span>' + esc(c.campaign_name) + "</td>" +
         "<td>" + fmtMoneyFull(c.cost) + "</td>" +
-        '<td' + (zero ? ' class="zero"' : "") + ">" + c.conversions + "</td>" +
+        '<td' + (zero ? ' class="zero"' : "") + ">" + conv + "</td>" +
         "<td>" + (c.cost_per_conversion == null ? "—" : fmtMoneyFull(c.cost_per_conversion)) + "</td>" +
         "<td>" + (zero ? "—" : fmtMoneyFull(c.conversion_value)) + "</td>" +
         "<td>" + (c.value_per_cost == null || zero ? "—" : c.value_per_cost.toFixed(1) + "x") + "</td>";
