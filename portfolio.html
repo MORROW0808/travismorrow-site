@@ -16,15 +16,21 @@
 <meta name="robots" content="noindex, nofollow">
 <style>
   :root{
-    --bg:#0d1117;
-    --panel-bg:rgba(13,17,23,0.72);
-    --panel-solid:#11161d;
+    /* NSS / AFAM brand theme (Assets/BRAND-GUIDELINES.md):
+       NSS Red #B92732 · AFAM Red #B62025 · shared charcoal #212121.
+       --accent-bright = lightened brand red for small text on dark.
+       Data-viz colors below (status + channels) are intentionally
+       UNCHANGED — brand chrome and data language stay separate. */
+    --bg:#141414;
+    --panel-bg:rgba(33,33,33,0.72);
+    --panel-solid:#1c1c1c;
     --border:rgba(255,255,255,0.08);
-    --text:#c9d1d9;
-    --dim:#8b98a5;
-    --bright:#e6edf3;
-    --accent:#4da3ff;
-    --accent-2:#22b8cf;
+    --text:#d2d2d2;
+    --dim:#9c9c9c;
+    --bright:#f2f2f2;
+    --accent:#B92732;
+    --accent-2:#B62025;
+    --accent-bright:#de5964;
     --error:#f85149;
 
     /* status semantics (shared with the memory map) */
@@ -34,7 +40,7 @@
     --flat:#8b98a5;      /* zero / no signal        */
 
     /* leads-by-channel categorical hues — validated for CVD + contrast
-       on this surface (dataviz six-checks, dark mode, #0d1117) */
+       on this dark surface (dataviz six-checks; re-validated on the charcoal theme) */
     --ch-web:#2b7de9;
     --ch-phone:#c08a1e;
     --ch-walkin:#00a3bf;
@@ -48,11 +54,16 @@
     -webkit-font-smoothing:antialiased;
     padding-bottom:40px;
   }
-  /* signature soft radial glow */
-  body::before{
-    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
-    background:radial-gradient(ellipse at 50% 0%,
-      rgba(77,163,255,0.10) 0%, rgba(34,184,207,0.05) 30%, rgba(13,17,23,0) 62%);
+  /* signature soft radial glow — split into two fixed layers so they can
+     drift at different rates on scroll (parallax, JS at the bottom) */
+  .plx{ position:fixed; inset:-12% 0; z-index:0; pointer-events:none; will-change:transform; }
+  #plx-a{
+    background:radial-gradient(ellipse 70% 42% at 50% 8%,
+      rgba(185,39,50,0.13) 0%, rgba(182,32,37,0.05) 34%, rgba(20,20,20,0) 62%);
+  }
+  #plx-b{
+    background:radial-gradient(ellipse 36% 24% at 86% 30%,
+      rgba(182,32,37,0.07) 0%, rgba(20,20,20,0) 70%);
   }
   .wrap{ position:relative; z-index:1; max-width:1240px; margin:0 auto; padding:0 20px; }
 
@@ -93,11 +104,11 @@
     box-shadow:0 4px 18px rgba(0,0,0,0.25);
     transition:border-color .15s, box-shadow .15s, transform .12s, background .15s;
   }
-  .tile:hover{ border-color:rgba(77,163,255,0.45); transform:translateY(-1px); }
+  .tile:hover{ border-color:rgba(185,39,50,0.55); transform:translateY(-1px); }
   .tile[aria-pressed="true"]{
-    border-color:rgba(77,163,255,0.75);
-    background:linear-gradient(180deg, rgba(77,163,255,0.10), rgba(13,17,23,0.72));
-    box-shadow:0 6px 26px rgba(77,163,255,0.22);
+    border-color:rgba(185,39,50,0.80);
+    background:linear-gradient(180deg, rgba(185,39,50,0.10), rgba(33,33,33,0.72));
+    box-shadow:0 6px 26px rgba(185,39,50,0.26);
   }
   .tile .brand{
     display:flex; align-items:baseline; gap:8px; margin-bottom:10px;
@@ -135,8 +146,10 @@
 
   /* occupancy bullet vs target */
   .bullet{ position:relative; height:8px; border-radius:4px; background:rgba(255,255,255,0.06); margin-top:10px; overflow:visible; }
+  /* progress fills stay NEUTRAL (not brand red): on a magnitude bar,
+     red reads as "problem", so occupancy progress uses quiet greys */
   .bullet .fill{ position:absolute; inset:0 auto 0 0; border-radius:4px;
-    background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+    background:linear-gradient(90deg, rgba(255,255,255,0.30), rgba(255,255,255,0.72)); }
   .bullet .target{ position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--bright); opacity:.75; border-radius:1px; }
   .bullet-cap{ display:flex; justify-content:space-between; font-size:10px; color:var(--dim); margin-top:5px; }
 
@@ -161,7 +174,7 @@
     border:1px solid var(--border); background:rgba(255,255,255,0.04);
     color:var(--text); width:190px; outline:none;
   }
-  input#facSearch:focus{ border-color:rgba(77,163,255,0.6); }
+  input#facSearch:focus{ border-color:rgba(222,89,100,0.6); }
 
   .tbl-wrap{
     border:1px solid var(--border); border-radius:14px; overflow-x:auto;
@@ -190,8 +203,8 @@
   }
   tbody td:first-child{ text-align:left; }
   tbody tr.fac{ cursor:pointer; transition:background .12s; }
-  tbody tr.fac:hover{ background:rgba(77,163,255,0.06); }
-  tbody tr.fac[aria-expanded="true"]{ background:rgba(77,163,255,0.09); }
+  tbody tr.fac:hover{ background:rgba(185,39,50,0.07); }
+  tbody tr.fac[aria-expanded="true"]{ background:rgba(185,39,50,0.11); }
   tbody tr:last-child td{ border-bottom:0; }
   td .code{ color:var(--dim); font-size:10.5px; margin-right:7px; }
   td .btag{
@@ -206,7 +219,7 @@
   tr[aria-expanded="true"] .caret{ transform:rotate(90deg); color:var(--accent); }
 
   /* expanded facility detail row */
-  tr.detail > td{ background:rgba(13,17,23,0.9); padding:14px 16px 16px; white-space:normal; cursor:default; }
+  tr.detail > td{ background:rgba(24,24,24,0.9); padding:14px 16px 16px; white-space:normal; cursor:default; }
   .mini-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
   .mini{
     background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px;
@@ -217,7 +230,7 @@
   .mini .s{ font-size:10.5px; color:var(--dim); margin-top:3px; }
   .mini .bar{ height:5px; border-radius:3px; background:rgba(255,255,255,0.07); margin-top:7px; position:relative; overflow:hidden; }
   .mini .bar i{ position:absolute; inset:0 auto 0 0; border-radius:3px;
-    background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+    background:linear-gradient(90deg, rgba(255,255,255,0.30), rgba(255,255,255,0.72)); }
 
   /* campaigns */
   #campTbl{ min-width:760px; }
@@ -228,6 +241,17 @@
     margin-top:36px; padding-top:18px; border-top:1px solid var(--border);
     font-size:11.5px; color:var(--dim); line-height:1.6;
   }
+  footer .brand-row{
+    display:flex; align-items:center; gap:30px; flex-wrap:wrap; margin-bottom:14px;
+  }
+  footer .brand-row img{ display:block; }
+  /* the NSS badge is designed for white backgrounds (brand addendum:
+     "as-is on white"), so it sits on a white chip on this dark page */
+  footer .brand-row .chip{
+    background:#fff; border-radius:8px; padding:6px 10px; display:inline-flex;
+  }
+  footer .brand-row img.nss{ height:30px; width:auto; }
+  footer .brand-row img.afam{ height:22px; width:auto; opacity:.92; }
 
   /* loading / error */
   #status{ padding:60px 0; text-align:center; color:var(--dim); font-size:13px; }
@@ -246,6 +270,9 @@
 </style>
 </head>
 <body>
+<!-- parallax glow layers — drift on scroll at different rates (JS at bottom) -->
+<div class="plx" id="plx-a" data-speed="0.30"></div>
+<div class="plx" id="plx-b" data-speed="0.55"></div>
 <div class="wrap">
 
   <header>
@@ -318,6 +345,10 @@
     </section>
 
     <footer>
+      <div class="brand-row">
+        <span class="chip"><img class="nss" src="assets/nss-logo.png" alt="National Self Storage"></span>
+        <img class="afam" src="assets/afam-logo.png" alt="A Family Storage">
+      </div>
       <div id="footFresh"></div>
       <div>ROAS is shown as an ×-multiple under both the standard and the more conservative LTV assumption.
            Per-channel lead conversion is not trackable at the source, so channel cards show counts and share only.</div>
@@ -414,6 +445,9 @@
 
     var host = document.getElementById("hero");
     host.innerHTML = "";
+    /* tiles keep typographic brand labels — the real logo artwork is too
+       small to read at tile scale (tried it), so it lives in the footer
+       brand row and on the landing page instead */
     var entries = BRANDS.map(function (b) {
       return { key:b, label:b, count:counts[b] || 0, d:DATA.brands[b] };
     }).concat([{ key:"portfolio", label:"Portfolio", count:DATA.facilities.length, d:DATA.portfolio }]);
@@ -696,6 +730,27 @@
   }
 
   document.getElementById("facSearch").addEventListener("input", renderFacBody);
+
+  /* scroll parallax on the fixed glow layers — background only, so the
+     table's sticky headers are unaffected; off under reduced-motion */
+  (function () {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var els = Array.prototype.slice.call(document.querySelectorAll(".plx[data-speed]"));
+    // rAF loop with change detection (not a scroll listener — event
+    // delivery proved unreliable across embedded/headless contexts)
+    var last = null;
+    (function loop() {
+      var y = window.scrollY || 0;
+      if (y !== last) {
+        last = y;
+        els.forEach(function (el) {
+          var v = -y * parseFloat(el.getAttribute("data-speed"));
+          el.style.transform = "translate3d(0," + v.toFixed(1) + "px,0)";
+        });
+      }
+      requestAnimationFrame(loop);
+    })();
+  })();
 
   fetch("portfolio-data.json", { cache: "no-store" })
     .then(function (r) {

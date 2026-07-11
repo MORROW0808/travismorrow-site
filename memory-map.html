@@ -15,12 +15,12 @@
 <title>TAYLOR — memory map</title>
 <style>
   :root{
-    --bg:#0d1117;
-    --panel-bg:rgba(13,17,23,0.92);
+    --bg:#141414; /* NSS/AFAM charcoal theme — brand chrome only, node palette unchanged */
+    --panel-bg:rgba(33,33,33,0.92);
     --panel-border:rgba(255,255,255,0.08);
-    --text-main:#c9d1d9;
-    --text-dim:#8b98a5;
-    --text-bright:#e6edf3;
+    --text-main:#d2d2d2;
+    --text-dim:#9c9c9c;
+    --text-bright:#f2f2f2;
 
     --hub-base:#0b2a4a;   --hub-fill:#123a63;   --hub-glow:#4da3ff;
     --teal-base:#0e7490;  --teal-fill:#22b8cf;
@@ -51,10 +51,18 @@
   }
   #app{ position:relative; width:100vw; height:100vh; }
 
+  /* pointer-depth brand glow (see markup note) */
+  #depthGlow{
+    position:absolute; inset:-12%; pointer-events:none; z-index:0;
+    background:radial-gradient(ellipse 46% 38% at 50% 34%,
+      rgba(185,39,50,0.10) 0%, rgba(182,32,37,0.04) 45%, rgba(20,20,20,0) 70%);
+    will-change:transform;
+  }
+
   /* radial vignette */
   #vignette{
     position:absolute; inset:0; pointer-events:none; z-index:1;
-    background: radial-gradient(ellipse at 50% 45%, rgba(30,40,55,0.35) 0%, rgba(13,17,23,0) 55%),
+    background: radial-gradient(ellipse at 50% 45%, rgba(48,40,40,0.35) 0%, rgba(20,20,20,0) 55%),
                 radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%);
   }
 
@@ -100,10 +108,10 @@
   }
   button.ctrl-btn:hover{ background:rgba(255,255,255,0.09); }
   button#growBtn{
-    background:linear-gradient(180deg, rgba(77,163,255,0.25), rgba(77,163,255,0.12));
-    border-color:rgba(77,163,255,0.5); color:#dbeaff;
+    background:linear-gradient(180deg, rgba(185,39,50,0.30), rgba(182,32,37,0.14));
+    border-color:rgba(185,39,50,0.55); color:#ffd9dc;
   }
-  button#growBtn:hover{ background:linear-gradient(180deg, rgba(77,163,255,0.38), rgba(77,163,255,0.20)); }
+  button#growBtn:hover{ background:linear-gradient(180deg, rgba(185,39,50,0.44), rgba(182,32,37,0.22)); }
   #searchWrap{ position:relative; }
   input#searchBox{
     font-family:inherit; font-size:12px;
@@ -111,7 +119,7 @@
     background:rgba(255,255,255,0.04); color:var(--text-main);
     width:130px; outline:none;
   }
-  input#searchBox:focus{ border-color:rgba(77,163,255,0.6); width:170px; }
+  input#searchBox:focus{ border-color:rgba(222,89,100,0.6); width:170px; }
   #searchResults{
     position:absolute; top:32px; right:0; width:220px;
     background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:8px;
@@ -123,7 +131,7 @@
     border-bottom:1px solid rgba(255,255,255,0.04);
   }
   #searchResults div:last-child{ border-bottom:none; }
-  #searchResults div:hover{ background:rgba(77,163,255,0.15); }
+  #searchResults div:hover{ background:rgba(185,39,50,0.18); }
   #searchResults div .sr-group{ color:var(--text-dim); font-size:10px; }
 
   /* ---------- Legend ---------- */
@@ -156,11 +164,11 @@
     z-index:11; text-align:center; pointer-events:none;
     opacity:0; transition:opacity 0.4s ease;
     padding:6px 18px; border-radius:10px;
-    background:radial-gradient(ellipse at center, rgba(13,17,23,0.55) 0%, rgba(13,17,23,0) 75%);
+    background:radial-gradient(ellipse at center, rgba(20,20,20,0.55) 0%, rgba(20,20,20,0) 75%);
   }
   #stageLabel.show{ opacity:1; }
-  #stageLabel .sl-ver{ font-size:26px; font-weight:800; color:rgba(201,209,217,0.5); letter-spacing:1px; }
-  #stageLabel .sl-txt{ font-size:13px; color:rgba(139,152,165,0.85); margin-top:2px; }
+  #stageLabel .sl-ver{ font-size:26px; font-weight:800; color:rgba(210,210,210,0.5); letter-spacing:1px; }
+  #stageLabel .sl-txt{ font-size:13px; color:rgba(156,156,156,0.85); margin-top:2px; }
 
   /* ---------- Side panel ---------- */
   #panel{
@@ -194,7 +202,7 @@
     border-radius:5px; background:rgba(255,255,255,0.03);
     display:flex; align-items:center; gap:7px;
   }
-  #panel .p-conn-item:hover{ background:rgba(77,163,255,0.14); color:var(--text-bright); }
+  #panel .p-conn-item:hover{ background:rgba(185,39,50,0.17); color:var(--text-bright); }
   #panel .p-conn-dot{ width:7px; height:7px; border-radius:50%; flex:0 0 auto; }
 
   /* overlay for closing panel by tapping background on mobile */
@@ -229,6 +237,11 @@
 </head>
 <body>
 <div id="app">
+  <!-- pointer-depth brand glow: the map is a full-viewport pan/zoom canvas
+       (no page scroll), so instead of scroll parallax it gets a subtle
+       pointer-tracked depth layer. Sits behind the vignette + graph,
+       pointer-events:none, disabled under prefers-reduced-motion. -->
+  <div id="depthGlow"></div>
   <div id="vignette"></div>
   <svg id="graph" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -1099,6 +1112,31 @@ positionAll();
 updateEdgeHighlight();
 requestAnimationFrame(frame);
 
+})();
+</script>
+<script>
+/* Pointer-depth on the brand glow layer — a light parallax touch suited to
+   a full-viewport canvas (no page scroll here). Lerped, tiny amplitude, and
+   skipped entirely under prefers-reduced-motion or without a fine pointer. */
+(function () {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!window.matchMedia("(pointer: fine)").matches) return;
+  var el = document.getElementById("depthGlow");
+  if (!el) return;
+  var tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+  var AMP = 18; // max px drift — depth cue, not a distraction
+  function tick() {
+    cx += (tx - cx) * 0.06;
+    cy += (ty - cy) * 0.06;
+    el.style.transform = "translate3d(" + cx.toFixed(2) + "px," + cy.toFixed(2) + "px,0)";
+    if (Math.abs(tx - cx) + Math.abs(ty - cy) > 0.1) { raf = requestAnimationFrame(tick); }
+    else { raf = null; }
+  }
+  window.addEventListener("pointermove", function (e) {
+    tx = (e.clientX / window.innerWidth - 0.5) * -2 * AMP;
+    ty = (e.clientY / window.innerHeight - 0.5) * -2 * AMP;
+    if (!raf) raf = requestAnimationFrame(tick);
+  }, { passive: true });
 })();
 </script>
 </body>
