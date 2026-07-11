@@ -229,19 +229,50 @@
   .card .sub{ font-size:11.5px; color:var(--dim); margin-top:4px; }
   .card .sub b{ color:var(--text); font-weight:600; }
 
-  /* occupancy bullet vs target */
-  .bullet{ position:relative; height:8px; border-radius:4px; background:var(--track); margin-top:10px; overflow:visible; }
-  /* progress fills stay NEUTRAL (not brand red): on a magnitude bar,
-     red reads as "problem", so occupancy progress uses quiet greys */
-  .bullet .fill{ position:absolute; inset:0 auto 0 0; border-radius:4px;
-    background:linear-gradient(90deg, var(--meter-a), var(--meter-b)); }
-  .bullet .target{ position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--bright); opacity:.75; border-radius:1px; }
-  .bullet-cap{ display:flex; justify-content:space-between; font-size:10px; color:var(--dim); margin-top:5px; }
+  /* ---------- KPI gauges ----------
+     One shared visual language: 240-degree dials on the panel track.
+     Arc fills stay NEUTRAL ink for plain magnitudes (occupancy,
+     conversion — on a magnitude arc, red reads as "problem");
+     status-colored judgment bands appear only on ROAS, categorical
+     channel hues only on the composition donut. Same separation of
+     brand chrome vs data language as everywhere else. Numbers stay
+     as text; gauges are additive, not a replacement. */
+  .g-row{ display:flex; align-items:center; gap:14px; margin-top:4px; }
+  .g-dial{ position:relative; flex:none; width:132px; }
+  .g-dial svg{ display:block; width:100%; height:auto; overflow:visible; }
+  .g-dial .trk{ fill:none; stroke:var(--track); }
+  .g-dial .arc{ fill:none; stroke-linecap:round; }
+  .g-dial .band{ stroke-opacity:.28; }
+  :root[data-theme="light"] .g-dial .band{ stroke-opacity:.38; }
+  .g-center{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; padding-top:10px;
+    pointer-events:none; text-align:center;
+  }
+  .g-center .gv{ font-size:17.5px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; line-height:1.05; }
+  .g-center .gu{ font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-top:2px; }
+  .g-scale{ font-size:8.5px; fill:var(--dim); }
+  .g-stats{ flex:1; min-width:0; }
+  .g-stats .gs-line{ font-size:12px; color:var(--text); margin-bottom:3px; white-space:nowrap; }
+  .g-stats .gs-line b{ color:var(--bright); font-variant-numeric:tabular-nums; }
+  .g-stats .gs-sub{ font-size:11px; color:var(--dim); margin-top:2px; }
+  .g-stats .gs-big{ font-size:18px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .g-stats .gs-big small{ font-size:10.5px; font-weight:600; color:var(--dim); }
+  .zone{
+    display:inline-block; font-size:9.5px; font-weight:700; letter-spacing:.07em;
+    text-transform:uppercase; padding:2px 8px; border-radius:999px;
+    border:1px solid currentColor; margin-top:6px;
+  }
+  .g-key{ display:flex; gap:12px; margin-top:7px; font-size:10px; color:var(--dim); align-items:center; flex-wrap:wrap; }
+  .g-key i{ display:inline-block; width:12px; height:0; border-top:3px solid var(--meter-b); border-radius:2px; margin-right:5px; vertical-align:2px; }
+  .g-key i.k2{ border-top-color:var(--meter-a); }
+  .g-key i.needle{ border-top-width:2px; border-top-color:var(--bright); }
+  .g-key i.needle2{ border-top-style:dashed; border-top-color:var(--dim); }
 
-  /* channel stacked bar */
-  .stack{ display:flex; height:14px; border-radius:5px; overflow:hidden; margin-top:8px; background:var(--bg); }
-  .stack .seg{ min-width:3px; }
-  .stack .seg + .seg{ border-left:2px solid var(--bg); }  /* 2px surface gap between fills */
+  /* channel donut */
+  .g-donut{ position:relative; width:118px; margin:8px auto 4px; }
+  .g-donut svg{ display:block; width:100%; height:auto; }
+  .g-donut .g-center{ padding-top:0; }
   .legend{ margin-top:9px; display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; }
   .legend .li{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--text); white-space:nowrap; }
   .legend .dot{ width:9px; height:9px; border-radius:3px; flex:none; }
@@ -527,6 +558,55 @@
     requestAnimationFrame(step);
   }
 
+  /* ---- gauge geometry: angles run clockwise from 12 o'clock; the dial
+     sweeps -120 to +120 (240 degrees, open at the bottom) ---- */
+  var DIAL_A0 = -120, DIAL_SWEEP = 240;
+  function dialPt(cx, cy, r, deg) {
+    var rad = deg * Math.PI / 180;
+    return [cx + r * Math.sin(rad), cy - r * Math.cos(rad)];
+  }
+  function dialArc(cx, cy, r, a0, a1) {
+    if (a1 - a0 < 0.05) return "M0 0";        // empty-but-valid path
+    var p0 = dialPt(cx, cy, r, a0), p1 = dialPt(cx, cy, r, a1);
+    return "M" + p0[0].toFixed(2) + " " + p0[1].toFixed(2) +
+           " A" + r + " " + r + " 0 " + ((a1 - a0) > 180 ? 1 : 0) + " 1 " +
+           p1[0].toFixed(2) + " " + p1[1].toFixed(2);
+  }
+  function fracAngle(f) { return DIAL_A0 + DIAL_SWEEP * Math.min(1, Math.max(0, f)); }
+
+  /* one tween drives every gauge in the card row so arcs, needles and
+     donut segments land together; scope changes morph from the previous
+     scope's values instead of restarting at zero */
+  var prevK = null;
+  function tweenGauges(paint) {
+    if (!MOTION) { paint(1); return; }
+    var t0 = performance.now(), dur = 750;
+    paint(0);
+    function step(now) {
+      var p = Math.min(1, Math.max(0, (now - t0) / dur));
+      paint(1 - Math.pow(1 - p, 3));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  /* ROAS dial scale & judgment bands. 0-30x covers this portfolio's real
+     range (monthly group ROAS runs ~10-27x standard, ~6-17x conservative
+     in the actual reports); the bound self-extends in 5x steps if a scope
+     ever exceeds it, so the needle can never pin. Bands follow the
+     report's own language (it labels 10x "Excellent"): <3x poor — spend
+     not covering lifetime value; 3-8x acceptable; 8x+ excellent. */
+  var ROAS_BANDS = [
+    { to: 3,        cls: "down", word: "Poor" },
+    { to: 8,        cls: "warm", word: "OK" },
+    { to: Infinity, cls: "up",   word: "Excellent" }
+  ];
+  function roasZone(v) {
+    for (var i = 0; i < ROAS_BANDS.length; i++) if (v < ROAS_BANDS[i].to) return ROAS_BANDS[i];
+    return ROAS_BANDS[ROAS_BANDS.length - 1];
+  }
+
   var CHANNELS = [
     { key:"web_leads",     label:"Web",     color:"var(--ch-web)"    },
     { key:"phone_leads",   label:"Phone",   color:"var(--ch-phone)"  },
@@ -669,55 +749,144 @@
     document.getElementById("scopeTitle").textContent =
       scopeLabel() + " — " + scopeFacs().length + " " + (scopeFacs().length === 1 ? "facility" : "facilities");
 
-    /* occupancy bullet vs 85% target */
-    var pct = occ.occupancy_sqft_pct;
+    /* shared dial scaffold: 132x104 viewBox, cx 66 / cy 60 */
+    var CX = 66, CY = 60, R1 = 46, R2 = 34;
+    function dialSvg(inner) {
+      return '<svg viewBox="0 0 132 104" aria-hidden="true">' +
+        '<path class="trk" stroke-width="9" d="' + dialArc(CX, CY, R1, DIAL_A0, DIAL_A0 + DIAL_SWEEP) + '"></path>' +
+        inner + "</svg>";
+    }
+
+    /* ---- occupancy: twin dial (sq ft outer, units inner) + 85% tick ---- */
+    var tickA = fracAngle(OCC_TARGET / 100);
+    var t1 = dialPt(CX, CY, R1 - 7, tickA), t2 = dialPt(CX, CY, R1 + 7, tickA);
+    var occDelta = occ.occupancy_sqft_pct - OCC_TARGET;
     var occCard =
       '<div class="card"><div class="lbl">Occupancy</div>' +
-      '<div class="big"><span class="num"></span> <small>sq ft</small></div>' +
-      '<div class="sub"><b>' + fmtPct(occ.occupancy_units_pct, 2) + '</b> of units · ' +
-        occ.units_occupied.toLocaleString() + ' / ' + occ.units_total.toLocaleString() + ' units</div>' +
-      '<div class="bullet"><div class="fill" style="width:' + Math.min(100, pct) + '%"></div>' +
-        '<div class="target" style="left:' + OCC_TARGET + '%" title="' + OCC_TARGET + '% target"></div></div>' +
-      '<div class="bullet-cap"><span>0%</span><span>' + OCC_TARGET + '% target</span><span>100%</span></div></div>';
+      '<div class="g-row"><div class="g-dial">' +
+      dialSvg(
+        '<path class="trk" stroke-width="6" d="' + dialArc(CX, CY, R2, DIAL_A0, DIAL_A0 + DIAL_SWEEP) + '"></path>' +
+        '<path id="gOccSq" class="arc" stroke="var(--meter-b)" stroke-width="9"></path>' +
+        '<path id="gOccUn" class="arc" stroke="var(--meter-a)" stroke-width="6"></path>' +
+        '<line x1="' + t1[0].toFixed(1) + '" y1="' + t1[1].toFixed(1) + '" x2="' + t2[0].toFixed(1) + '" y2="' + t2[1].toFixed(1) +
+          '" stroke="var(--bright)" stroke-width="2" opacity=".8"><title>' + OCC_TARGET + '% target</title></line>'
+      ) +
+      '<div class="g-center"><span class="gv"><span class="num"></span></span><span class="gu">sq ft</span></div>' +
+      '</div><div class="g-stats">' +
+      '<div class="gs-line"><b>' + fmtPct(occ.occupancy_units_pct, 2) + '</b> of units</div>' +
+      '<div class="gs-sub">' + occ.units_occupied.toLocaleString() + ' / ' + occ.units_total.toLocaleString() + ' units</div>' +
+      '<div class="gs-sub"><span class="' + signClass(occDelta) + '">' +
+        (occDelta > 0 ? "+" : "") + occDelta.toFixed(1) + ' pts</span> vs ' + OCC_TARGET + '% target</div>' +
+      '<div class="g-key"><span><i></i>sq ft</span><span><i class="k2"></i>units</span></div>' +
+      '</div></div></div>';
 
+    /* ---- conversion: single dial, same geometry ---- */
     var convCard =
       '<div class="card"><div class="lbl">Lead conversion · MTD</div>' +
-      '<div class="big"><span class="num"></span></div>' +
-      '<div class="sub"><b>' + leads.leads_converted + '</b> converted of <b>' + leads.leads_total + '</b> leads</div></div>';
+      '<div class="g-row"><div class="g-dial">' +
+      dialSvg('<path id="gConv" class="arc" stroke="var(--meter-b)" stroke-width="9"></path>') +
+      '<div class="g-center"><span class="gv"><span class="num"></span></span><span class="gu">converted</span></div>' +
+      '</div><div class="g-stats">' +
+      '<div class="gs-line"><b>' + leads.leads_converted + '</b> of <b>' + leads.leads_total + '</b> leads</div>' +
+      '<div class="gs-sub">month to date</div>' +
+      '</div></div></div>';
 
+    /* ---- ROAS: judgment-band dial, two needles, 0-30x self-extending ---- */
+    var roasMax = Math.max(30, Math.ceil((roas.roas_standard * 1.15) / 5) * 5);
+    var zone = roasZone(roas.roas_standard);
+    function bandArc(from, to, color) {
+      return '<path class="arc band" stroke="' + color + '" stroke-width="9" stroke-linecap="butt" d="' +
+        dialArc(CX, CY, R1, fracAngle(from / roasMax), fracAngle(to / roasMax)) + '"></path>';
+    }
+    var s0 = dialPt(CX, CY, R1 + 1, DIAL_A0), s1 = dialPt(CX, CY, R1 + 1, DIAL_A0 + DIAL_SWEEP);
     var roasCard =
       '<div class="card"><div class="lbl">Ad spend &amp; ROAS · month</div>' +
-      '<div class="big"><span class="num"></span> <small>standard LTV</small></div>' +
-      '<div class="sub"><b>' + fmtX(roas.roas_conservative) + '</b> conservative LTV</div>' +
-      '<div class="sub">' + fmtMoneyFull(ads.spend) + ' spend · ' + ads.stores +
-        (ads.stores === 1 ? " store" : " stores") + ' advertising</div></div>';
+      '<div class="g-row"><div class="g-dial">' +
+      '<svg viewBox="0 0 132 104" aria-hidden="true">' +
+        bandArc(0, 3, "var(--neg)") + bandArc(3, 8, "var(--warn)") + bandArc(8, roasMax, "var(--pos)") +
+        '<line id="gRoasC" x1="' + CX + '" y1="' + (CY - 14) + '" x2="' + CX + '" y2="' + (CY - R1 + 12) +
+          '" stroke="var(--dim)" stroke-width="2" stroke-dasharray="3 3" stroke-linecap="round"></line>' +
+        '<line id="gRoasS" x1="' + CX + '" y1="' + (CY - 10) + '" x2="' + CX + '" y2="' + (CY - R1 - 2) +
+          '" stroke="var(--bright)" stroke-width="2.5" stroke-linecap="round"></line>' +
+        '<circle cx="' + CX + '" cy="' + CY + '" r="3" fill="var(--dim)"></circle>' +
+        '<text class="g-scale" x="' + s0[0].toFixed(1) + '" y="' + (s0[1] + 11).toFixed(1) + '" text-anchor="middle">0x</text>' +
+        '<text class="g-scale" x="' + s1[0].toFixed(1) + '" y="' + (s1[1] + 11).toFixed(1) + '" text-anchor="middle">' + roasMax + 'x</text>' +
+      '</svg>' +
+      '</div><div class="g-stats">' +
+      '<div class="gs-big"><span class="num"></span> <small>standard LTV</small></div>' +
+      '<div class="gs-line"><b>' + fmtX(roas.roas_conservative) + '</b> <span class="gs-sub" style="margin:0">conservative LTV</span></div>' +
+      '<span class="zone ' + zone.cls + '">' + zone.word + '</span>' +
+      '<div class="gs-sub">' + fmtMoneyFull(ads.spend) + ' spend · ' + ads.stores +
+        (ads.stores === 1 ? " store" : " stores") + ' advertising</div>' +
+      '<div class="g-key"><span><i class="needle"></i>standard</span><span><i class="needle2"></i>conservative</span></div>' +
+      '</div></div></div>';
 
-    /* channels — counts & share only (per-channel conversion is not tracked) */
-    var total = CHANNELS.reduce(function (s, c) { return s + (ch[c.key] || 0); }, 0) || 1;
-    var segs = "", lis = "";
-    CHANNELS.forEach(function (c) {
+    /* ---- channels: composition donut — counts & share only, no
+       fabricated per-channel conversion (not trackable at source) ---- */
+    var total = CHANNELS.reduce(function (sum, c) { return sum + (ch[c.key] || 0); }, 0) || 1;
+    var donutSegs = "", lis = "";
+    CHANNELS.forEach(function (c, i) {
       var n = ch[c.key] || 0;
       var share = ch.channel_share_pct && ch.channel_share_pct[c.key] != null
         ? ch.channel_share_pct[c.key] : (100 * n / total);
-      segs += '<div class="seg" style="flex:' + Math.max(n, 0.001) + ';background:' + c.color + '" ' +
-              'title="' + esc(c.label) + ': ' + n + ' leads (' + fmtPct(share, 1) + ')"></div>';
-      lis  += '<div class="li"><span class="dot" style="background:' + c.color + '"></span>' +
-              esc(c.label) + '<span class="n">' + n + '</span><span class="s">' + fmtPct(share, 0) + '</span></div>';
+      donutSegs += '<path id="gCh' + i + '" fill="none" stroke="' + c.color + '" stroke-width="13" stroke-linecap="butt">' +
+        '<title>' + esc(c.label) + ": " + n + " leads (" + fmtPct(share, 1) + ")</title></path>";
+      lis += '<div class="li"><span class="dot" style="background:' + c.color + '"></span>' +
+             esc(c.label) + '<span class="n">' + n + '</span><span class="s">' + fmtPct(share, 0) + "</span></div>";
     });
     var chCard =
       '<div class="card"><div class="lbl">Leads by channel · MTD</div>' +
-      '<div class="big"><span class="num"></span> <small>leads</small></div>' +
-      '<div class="stack" role="img" aria-label="Lead share by channel">' + segs + '</div>' +
-      '<div class="legend">' + lis + '</div>' +
-      '<div class="foot-note">Counts &amp; share only — per-channel conversion isn’t trackable at the source.</div></div>';
+      '<div class="g-donut"><svg viewBox="0 0 118 118" role="img" aria-label="Lead share by channel">' + donutSegs + "</svg>" +
+      '<div class="g-center"><span class="gv"><span class="num"></span></span><span class="gu">leads</span></div></div>' +
+      '<div class="legend">' + lis + "</div>" +
+      '<div class="foot-note">Counts &amp; share only — per-channel conversion isn\u2019t trackable at the source.</div></div>';
 
     host.innerHTML = occCard + convCard + roasCard + chCard;
 
-    var nums = host.querySelectorAll(".big .num");
-    animNum(nums[0], pct, function (v) { return fmtPct(v, 2); });
+    var nums = host.querySelectorAll(".gv .num, .gs-big .num");
+    animNum(nums[0], occ.occupancy_sqft_pct, function (v) { return fmtPct(v, 2); });
     animNum(nums[1], leads.conversion_pct, function (v) { return fmtPct(v, 1); });
     animNum(nums[2], roas.roas_standard, fmtX);
     animNum(nums[3], total, function (v) { return String(Math.round(v)); });
+
+    /* ---- animate arcs/needles/donut from the previous scope's values ---- */
+    var gOccSq = document.getElementById("gOccSq"), gOccUn = document.getElementById("gOccUn");
+    var gConv = document.getElementById("gConv");
+    var gRoasS = document.getElementById("gRoasS"), gRoasC = document.getElementById("gRoasC");
+    var chFracs = CHANNELS.map(function (c) { return (ch[c.key] || 0) / total; });
+    var from = prevK || { occSq:0, occUn:0, conv:0, roasS:0, roasC:0, ch:[0,0,0,0] };
+    var to = {
+      occSq: occ.occupancy_sqft_pct / 100, occUn: occ.occupancy_units_pct / 100,
+      conv: leads.conversion_pct / 100,
+      roasS: roas.roas_standard / roasMax, roasC: roas.roas_conservative / roasMax,
+      ch: chFracs
+    };
+    var firstLoad = !prevK;
+    var GAP_DEG = 4;                      // surface gap between donut segments
+
+    tweenGauges(function (t) {
+      gOccSq.setAttribute("d", dialArc(CX, CY, R1, DIAL_A0, fracAngle(lerp(from.occSq, to.occSq, t))));
+      gOccUn.setAttribute("d", dialArc(CX, CY, R2, DIAL_A0, fracAngle(lerp(from.occUn, to.occUn, t))));
+      gConv.setAttribute("d", dialArc(CX, CY, R1, DIAL_A0, fracAngle(lerp(from.conv, to.conv, t))));
+      gRoasS.setAttribute("transform", "rotate(" + fracAngle(lerp(from.roasS, to.roasS, t)) + " " + CX + " " + CY + ")");
+      gRoasC.setAttribute("transform", "rotate(" + fracAngle(lerp(from.roasC, to.roasC, t)) + " " + CX + " " + CY + ")");
+      /* donut: first load sweeps segments in sequence; scope changes
+         morph each segment's share instead */
+      var acc = 0;
+      for (var i = 0; i < 4; i++) {
+        var f = firstLoad
+          ? to.ch[i] * Math.min(1, Math.max(0, (t - i * 0.13) / 0.6))
+          : lerp(from.ch[i], to.ch[i], t);
+        var a0 = 360 * acc, a1 = 360 * (acc + f);   // 0 = 12 o'clock
+        var el = document.getElementById("gCh" + i);
+        if (a1 - a0 <= GAP_DEG + 0.2) { el.setAttribute("d", "M0 0"); }
+        else {
+          el.setAttribute("d", dialArc(59, 59, 46, a0 + GAP_DEG / 2, a1 - GAP_DEG / 2));
+        }
+        acc += f;
+      }
+    });
+    prevK = to;
 
     if (MOTION) {
       Array.prototype.forEach.call(host.children, function (c, i) {
