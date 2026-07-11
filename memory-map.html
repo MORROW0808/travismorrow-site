@@ -24,7 +24,10 @@
     --text-dim:#9c9c9c;
     --text-bright:#f2f2f2;
 
-    --hub-base:#0b2a4a;   --hub-fill:#123a63;   --hub-glow:#4da3ff;
+    /* hub = Taylor: wears the reticle mark (gunmetal plate, cyan lamp) */
+    --hub-base:#3a434d;   --hub-fill:#1a1f24;   --hub-glow:#5AC8FA;
+    --mk-ring:#3a434d; --mk-tick:#59636e; --mk-tick2:#454f5a;
+    --mk-arc:#8b96a1;  --mk-ink:#eef2f6;  --mk-lamp:#5AC8FA; --mk-core:#9FD8FF;
     --teal-base:#0e7490;  --teal-fill:#22b8cf;
     --amber-base:#b45309; --amber-fill:#f5a524;
     --grey-base:#6b7280;  --grey-fill:#8b98a5;
@@ -57,6 +60,9 @@
     --status-planned:#6e7681;
     --edge-route:#848e98;
     --edge-workaround:#c08a1e;
+    --hub-base:#8a9096;   --hub-fill:#ffffff;   --hub-glow:#0B7FA8;
+    --mk-ring:#b9bec4; --mk-tick:#8a9096; --mk-tick2:#b9bec4;
+    --mk-arc:#5c646c;  --mk-ink:#14181c;  --mk-lamp:#0B7FA8; --mk-core:#0B7FA8;
   }
   :root[data-theme="light"] #vignette{
     background: radial-gradient(ellipse at 50% 45%, rgba(255,255,255,0.5) 0%, rgba(239,239,236,0) 55%),
@@ -385,7 +391,7 @@
     <span class="lg-toggle" id="legendToggle">−</span>
     <div class="lg-title">Legend</div>
     <div class="lg-body">
-      <div class="lg-row"><span class="lg-dot" style="background:var(--hub-fill)"></span>Hub</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--hub-glow)"></span>Hub</div>
       <div class="lg-row"><span class="lg-dot" style="background:var(--teal-fill)"></span>Sources / access</div>
       <div class="lg-row"><span class="lg-dot" style="background:var(--amber-fill)"></span>Workarounds / memory</div>
       <div class="lg-row"><span class="lg-dot" style="background:var(--grey-fill)"></span>Routing / delivery / surfaces</div>
@@ -556,6 +562,32 @@ edges.forEach(function(e, idx){
   edgeEls[idx]=line;
 });
 
+function buildReticle(r){
+  var NS = "http://www.w3.org/2000/svg";
+  var sc = r / 52;                        // mark ring r=52 in its 120-box
+  var g = document.createElementNS(NS, "g");
+  g.setAttribute("transform", "scale(" + sc.toFixed(4) + ") translate(-60,-60)");
+  g.setAttribute("pointer-events", "none");
+  function el(tag, attrs){
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    g.appendChild(e); return e;
+  }
+  el("circle", { cx:60, cy:60, r:52, fill:"none", stroke:"var(--mk-ring)", "stroke-width":1.6 });
+  el("path", { d:"M60 4 V12 M60 108 V116 M4 60 H12 M108 60 H116",
+               stroke:"var(--mk-tick)", "stroke-width":2, fill:"none" });
+  el("path", { d:"M88.3 11 L84.3 17.9 M109 31.7 L102.1 35.7 M109 88.3 L102.1 84.3 M88.3 109 L84.3 102.1 " +
+                 "M31.7 109 L35.7 102.1 M11 88.3 L17.9 84.3 M11 31.7 L17.9 35.7 M31.7 11 L35.7 17.9",
+               stroke:"var(--mk-tick2)", "stroke-width":1.4, fill:"none" });
+  el("path", { d:"M60 18 A42 42 0 0 1 96.4 39 M96.4 81 A42 42 0 0 1 23.6 81 M23.6 39 A42 42 0 0 1 42 22.4",
+               stroke:"var(--mk-arc)", "stroke-width":1.8, fill:"none" });
+  el("path", { d:"M34 42 H86 M60 42 V92",
+               stroke:"var(--mk-ink)", "stroke-width":4, "stroke-linecap":"square", fill:"none" });
+  el("circle", { cx:60, cy:42, r:6.5, fill:"var(--mk-lamp)", opacity:".35" });
+  el("circle", { cx:60, cy:42, r:3, fill:"var(--mk-core)" });
+  return g;
+}
+
 var nodeEls = {};
 nodes.forEach(function(n){
   var g = document.createElementNS("http://www.w3.org/2000/svg","g");
@@ -577,6 +609,7 @@ nodes.forEach(function(n){
   label.textContent = n.label;
 
   g.appendChild(circle);
+  if (n.group === "hub") g.appendChild(buildReticle(n.r));
   g.appendChild(label);
   nodeLayer.appendChild(g);
 
