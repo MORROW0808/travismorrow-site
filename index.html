@@ -6,42 +6,85 @@
 <title>Travis Morrow</title>
 <meta name="description" content="Travis Morrow — personal site.">
 <meta name="robots" content="noindex, nofollow">
+<script src="theme.js"></script>
+<script>TMTheme.init();</script>
 <style>
   :root{
-    --bg:#0d1117;
-    --panel:rgba(255,255,255,0.03);
+    /* NSS / AFAM brand theme (see Assets/BRAND-GUIDELINES.md):
+       NSS Red #B92732 · AFAM Red #B62025 · shared charcoal #212121.
+       --accent-bright is a lightened brand red for SMALL text on dark
+       (the true brand reds sit ~3:1 on this bg — fine for fills and
+       large numerals, too low for small type). */
+    --bg:#141414;
+    --panel:rgba(33,33,33,0.55);
     --border:rgba(255,255,255,0.08);
-    --text:#c9d1d9;
-    --dim:#8b98a5;
-    --bright:#e6edf3;
-    --accent:#4da3ff;
-    --accent-2:#22b8cf;
+    --text:#d2d2d2;
+    --dim:#9c9c9c;
+    --bright:#f2f2f2;
+    --accent:#B92732;
+    --accent-2:#B62025;
+    --accent-bright:#de5964;
+    --chip-bg:rgba(255,255,255,0.04);
+    --chip-bg-hover:rgba(255,255,255,0.08);
+  }
+  :root[data-theme="light"]{
+    --bg:#F2F2F0;
+    --panel:#FFFFFF;
+    --border:#D9DBDE;
+    --text:#33363B;
+    --dim:#6B6E73;
+    --bright:#111318;
+    --accent-bright:#B92732;  /* brand red is AA on white — no lightening needed */
+    --chip-bg:rgba(0,0,0,0.035);
+    --chip-bg-hover:rgba(0,0,0,0.07);
+  }
+  :root[data-theme="light"] #plx-a{ opacity:.35; }
+  :root[data-theme="light"] #plx-b{ opacity:.3; }
+  :root[data-theme="light"] a.tool{ box-shadow:0 1px 3px rgba(16,18,20,0.07), 0 6px 18px rgba(16,18,20,0.06); }
+  :root[data-theme="light"] a.tool:hover{ box-shadow:0 4px 10px rgba(16,18,20,0.09), 0 12px 26px rgba(16,18,20,0.09), 0 4px 16px rgba(185,39,50,0.08); }
+  /* (logo chips removed — NSS badge matches the PDF's chipless treatment) */
+  html.theme-anim body, html.theme-anim body *{
+    transition:background-color .35s ease, color .35s ease,
+               border-color .35s ease, box-shadow .35s ease !important;
   }
   *{box-sizing:border-box;}
-  html,body{height:100%;}
+  html{ scroll-behavior:smooth; }
+  html,body{ min-height:100%; }
   body{
     margin:0;
     background:var(--bg);
     color:var(--text);
     font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
-    display:flex; flex-direction:column; min-height:100%;
+    overflow-x:hidden;
   }
-  /* soft radial glow behind the hero */
-  body::before{
-    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
-    background:radial-gradient(ellipse at 50% 32%,
-      rgba(77,163,255,0.10) 0%, rgba(34,184,207,0.05) 30%, rgba(13,17,23,0) 62%);
+
+  /* ---------- parallax background layers (scroll-driven, JS sets transform) ---------- */
+  .plx{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    will-change:transform;
   }
-  main{
-    position:relative; z-index:1;
-    flex:1 1 auto;
+  #plx-a{
+    background:radial-gradient(ellipse 70% 46% at 50% 26%,
+      rgba(185,39,50,0.16) 0%, rgba(182,32,37,0.07) 42%, rgba(20,20,20,0) 68%);
+  }
+  #plx-b{
+    background:
+      radial-gradient(ellipse 34% 26% at 82% 66%, rgba(182,32,37,0.10) 0%, rgba(20,20,20,0) 70%),
+      radial-gradient(ellipse 30% 22% at 12% 88%, rgba(185,39,50,0.07) 0%, rgba(20,20,20,0) 72%);
+  }
+
+  main{ position:relative; z-index:1; }
+
+  /* ---------- hero ---------- */
+  #hero{
+    min-height:100svh;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:48px 24px;
+    text-align:center; padding:48px 24px 72px;
   }
   .eyebrow{
     text-transform:uppercase; letter-spacing:.22em; font-size:12px;
-    color:var(--accent-2); margin:0 0 20px;
+    color:var(--accent-bright); margin:0 0 20px;
   }
   h1{
     margin:0; font-weight:600; line-height:1.05; color:var(--bright);
@@ -55,52 +98,241 @@
     display:inline-flex; align-items:center; gap:.6em;
     margin-top:40px; padding:14px 26px;
     border-radius:12px; text-decoration:none; font-weight:600; font-size:16px;
-    color:#04121f; background:linear-gradient(135deg,var(--accent),var(--accent-2));
-    box-shadow:0 8px 30px rgba(77,163,255,0.28);
+    color:#fff; background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 8px 30px rgba(185,39,50,0.30);
     transition:transform .15s ease, box-shadow .15s ease, filter .15s ease;
   }
-  .cta:hover{ transform:translateY(-2px); box-shadow:0 12px 38px rgba(77,163,255,0.38); filter:brightness(1.05); }
+  .cta:hover{ transform:translateY(-2px); box-shadow:0 12px 38px rgba(185,39,50,0.40); filter:brightness(1.08); }
   .cta:active{ transform:translateY(0); }
   .cta svg{ width:18px; height:18px; }
+  .cta.secondary{
+    margin-top:14px; color:var(--text); background:var(--chip-bg);
+    border:1px solid var(--border); box-shadow:none;
+  }
+  .cta.secondary:hover{ background:var(--chip-bg-hover); border-color:rgba(185,39,50,0.55); box-shadow:none; }
   .lock-note{
     margin-top:18px; font-size:12.5px; color:var(--dim);
     display:inline-flex; align-items:center; gap:6px;
   }
   .lock-note svg{ width:13px; height:13px; opacity:.8; }
+  .scroll-cue{
+    margin-top:52px; color:var(--dim); font-size:11px; letter-spacing:.18em;
+    text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:8px;
+    opacity:.7;
+  }
+  .scroll-cue svg{ width:16px; height:16px; animation:bob 2.2s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
+
+  /* ---------- below the fold: tools ---------- */
+  section.tools{
+    max-width:900px; margin:0 auto; padding:40px 24px 30px;
+  }
+  .sec-eyebrow{
+    text-transform:uppercase; letter-spacing:.2em; font-size:11px;
+    color:var(--accent-bright); margin:0 0 10px; text-align:center;
+  }
+  section.tools h2{
+    margin:0 0 30px; text-align:center; color:var(--bright);
+    font-size:clamp(22px,4vw,30px); font-weight:600; letter-spacing:-0.01em;
+  }
+  .cards{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  a.tool{
+    display:block; text-decoration:none; color:var(--text);
+    background:var(--panel); border:1px solid var(--border); border-radius:16px;
+    padding:26px 26px 22px;
+    box-shadow:0 6px 24px rgba(0,0,0,0.30);
+    transition:border-color .15s, transform .15s, box-shadow .15s;
+    will-change:transform;
+  }
+  a.tool:hover{
+    border-color:rgba(185,39,50,0.55); transform:translateY(-3px);
+    box-shadow:0 12px 34px rgba(0,0,0,0.4), 0 4px 22px rgba(185,39,50,0.18);
+  }
+  .tool .t-ic{
+    width:42px; height:42px; border-radius:11px; margin-bottom:16px;
+    display:flex; align-items:center; justify-content:center; color:#fff;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 4px 16px rgba(185,39,50,0.28);
+  }
+  .tool .t-ic svg{ width:21px; height:21px; }
+  .tool h3{ margin:0 0 7px; color:var(--bright); font-size:17px; font-weight:600; }
+  .tool p{ margin:0; font-size:13.5px; color:var(--dim); line-height:1.55; }
+  .tool .go{
+    display:inline-flex; align-items:center; gap:6px; margin-top:16px;
+    font-size:13px; font-weight:600; color:var(--accent-bright);
+  }
+  .tool .go svg{ width:14px; height:14px; transition:transform .15s; }
+  a.tool:hover .go svg{ transform:translateX(3px); }
+
+  /* ---------- brand strip ---------- */
+  section.brands{
+    max-width:900px; margin:0 auto; padding:34px 24px 70px; text-align:center;
+  }
+  section.brands .cap{
+    font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--dim); margin-bottom:26px;
+  }
+  .logo-row{
+    display:flex; align-items:center; justify-content:center; gap:44px; flex-wrap:wrap;
+  }
+  .logo-row img{ display:block; }
+  /* NSS badge sits chipless, exactly as the Portfolio Snapshot PDF renders
+     it (transparent badge body on dark; self-contained black badge on light) */
+  .logo-row img.nss{ height:50px; width:auto; }
+  .logo-row img.afam{ height:32px; width:auto; opacity:.92; }
+  .logo-row img.sls{ height:21px; width:auto; opacity:.92; }
+
   footer{
     position:relative; z-index:1;
     padding:22px; text-align:center; color:var(--dim);
     font-size:12px; border-top:1px solid var(--border);
   }
-  a.quiet{ color:var(--dim); text-decoration:none; border-bottom:1px solid transparent; }
-  a.quiet:hover{ color:var(--text); border-bottom-color:var(--border); }
+  #themeBtn{
+    position:fixed; top:16px; right:16px; z-index:5;
+    width:38px; height:38px; border-radius:50%; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text); background:var(--chip-bg);
+    border:1px solid var(--border);
+    transition:background .15s, border-color .15s;
+  }
+  #themeBtn:hover{ background:var(--chip-bg-hover); border-color:rgba(185,39,50,0.5); }
+  #themeBtn:focus-visible{ outline:2px solid var(--accent-bright); outline-offset:2px; }
+  #themeBtn svg{ width:16px; height:16px; }
+  :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
+  :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
+  /* AFAM logo swaps to its charcoal-'STORAGE' variant on light pages */
+  :root[data-theme="light"] img.for-dark{ display:none; }
+  :root[data-theme="dark"] img.for-light{ display:none; }
+
+  @media (max-width:640px){
+    .cards{ grid-template-columns:1fr; }
+    .logo-row{ gap:30px; }
+    .logo-row img.nss{ height:44px; }
+    .logo-row img.afam{ height:26px; }
+    .logo-row img.sls{ height:17px; }
+  }
+  /* entrance reveals (containers only — the parallax cards own their transform) */
+  .reveal{ opacity:0; }
+  .reveal.in{ opacity:1; animation:riseIn .6s cubic-bezier(.2,.7,.3,1) backwards; }
+  @keyframes riseIn{ from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:none; } }
+  .cta:focus-visible, a.tool:focus-visible{ outline:2px solid var(--accent-bright); outline-offset:3px; }
+  @media (prefers-reduced-motion: reduce){
+    .scroll-cue svg{ animation:none; }
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; }
+    .reveal.in{ animation:none; }
+  }
 </style>
 </head>
 <body>
+  <button id="themeBtn" title="Toggle light / dark mode" aria-label="Toggle light or dark mode">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.5"/>
+      <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/>
+    </svg>
+  </button>
+
+  <!-- parallax layers: translated on scroll at different rates (JS below) -->
+  <div class="plx" id="plx-a" data-speed="0.25"></div>
+  <div class="plx" id="plx-b" data-speed="0.5"></div>
+
   <main>
-    <p class="eyebrow">travismorrow.com</p>
-    <h1>Travis&nbsp;Morrow</h1>
-    <p class="tagline">
-      A working record of what we've built — an interactive map of the systems,
-      workflows, and automations behind the operation.
-    </p>
+    <section id="hero">
+      <p class="eyebrow">travismorrow.com</p>
+      <h1>Travis&nbsp;Morrow</h1>
+      <p class="tagline">
+        A working record of what we've built — the systems, workflows,
+        and automations behind the storage operation.
+      </p>
 
-    <a class="cta" href="memory-map.html">
-      Enter the memory map
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M5 12h14M13 6l6 6-6 6"/>
-      </svg>
-    </a>
+      <a class="cta" href="memory-map.html">
+        Enter the memory map
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6"/>
+        </svg>
+      </a>
 
-    <p class="lock-note">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <rect x="4" y="10" width="16" height="10" rx="2"/>
-        <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
-      </svg>
-      Password required
-    </p>
+      <br>
+      <a class="cta secondary" href="portfolio.html">
+        Portfolio dashboard
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
+        </svg>
+      </a>
+
+      <p class="lock-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="4" y="10" width="16" height="10" rx="2"/>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+        </svg>
+        Password required
+      </p>
+
+      <div class="scroll-cue" aria-hidden="true">
+        <span>What's inside</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+      </div>
+    </section>
+
+    <section class="tools reveal">
+      <p class="sec-eyebrow">Two live tools</p>
+      <h2>What's inside</h2>
+      <div class="cards">
+        <a class="tool" href="memory-map.html" data-speed="-0.06">
+          <div class="t-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="2.5"/><circle cx="5" cy="6" r="2"/>
+              <circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/>
+              <path d="M6.7 7.2 10.2 10.6M17.3 7.2 13.8 10.6M6.7 16.8 10.2 13.4M17.3 16.8 13.8 13.4"/>
+            </svg>
+          </div>
+          <h3>The memory map</h3>
+          <p>An interactive node graph of every system, workflow, and automation
+             in the operation — what's live, what's limited, and how it all connects.</p>
+          <span class="go">Open the map
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                 stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </a>
+        <a class="tool" href="portfolio.html" data-speed="0.06">
+          <div class="t-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
+            </svg>
+          </div>
+          <h3>Portfolio snapshot</h3>
+          <p>The monthly report, alive — 29 facilities across three brands with
+             drill-down KPIs, refreshed twice a day from the portfolio datastore.</p>
+          <span class="go">Open the dashboard
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                 stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <section class="brands reveal">
+      <p class="cap">Built around the operation</p>
+      <div class="logo-row">
+        <img class="nss for-dark" src="assets/nss-logo-report.png" alt="National Self Storage">
+        <img class="nss for-light" src="assets/nss-logo.png" alt="National Self Storage">
+        <img class="afam for-dark" src="assets/afam-logo.png" alt="A Family Storage">
+        <img class="afam for-light" src="assets/afam-logo-light.png" alt="A Family Storage">
+        <img class="sls for-dark" src="assets/sls-logo.png" alt="Storelocal Storage">
+        <img class="sls for-light" src="assets/sls-logo-light.png" alt="Storelocal Storage">
+      </div>
+    </section>
   </main>
 
   <footer>
@@ -110,6 +342,47 @@
   <script>
     // Keep the year fresh without a build step.
     document.getElementById("yr").textContent = new Date().getFullYear();
+    document.getElementById("themeBtn").addEventListener("click", function () {
+      TMTheme.toggle();
+    });
+
+    // Scroll parallax: background glow layers drift slower than the page;
+    // the two tool cards get a gentle counter-drift. Disabled for
+    // prefers-reduced-motion.
+    (function () {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var els = Array.prototype.slice.call(document.querySelectorAll("[data-speed]"));
+      // rAF loop with change detection (not a scroll listener — event
+      // delivery proved unreliable across embedded/headless contexts)
+      var last = null;
+      (function loop() {
+        var y = window.scrollY || 0;
+        if (y !== last) {
+          last = y;
+          els.forEach(function (el) {
+            var v = -y * parseFloat(el.getAttribute("data-speed"));
+            el.style.transform = "translate3d(0," + v.toFixed(1) + "px,0)";
+          });
+        }
+        requestAnimationFrame(loop);
+      })();
+    })();
+
+    // Reveal-on-scroll for the below-fold sections.
+    (function () {
+      var els = document.querySelectorAll(".reveal");
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+          !("IntersectionObserver" in window)) {
+        Array.prototype.forEach.call(els, function (el) { el.classList.add("in"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+        });
+      }, { threshold: 0.1 });
+      Array.prototype.forEach.call(els, function (el) { io.observe(el); });
+    })();
   </script>
 </body>
 </html>

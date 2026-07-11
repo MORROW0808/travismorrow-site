@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- ===== travismorrow.com access guard — must run before anything renders ===== -->
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script>
+  /* Bounce to login.html if this browser session has not unlocked.
+     Client-side only, demo-grade — see README. */
+  TMAuth.guard();
+</script>
+<script src="theme.js"></script>
+<script>TMTheme.init();</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio Snapshot — living dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    /* NSS / AFAM brand theme (Assets/BRAND-GUIDELINES.md):
+       NSS Red #B92732 · AFAM Red #B62025 · shared charcoal #212121.
+       --accent-bright = lightened brand red for small text on dark.
+       Data-viz colors below (status + channels) are intentionally
+       UNCHANGED — brand chrome and data language stay separate. */
+    --bg:#15171A;            /* report sheet background */
+    --panel:#1F2226;         /* report PANEL — solid, not translucent */
+    --panel2:#262A30;        /* report PANEL2 — inner boxes, headers */
+    --line:#313640;          /* report hairline */
+    --border:#313640;
+    --text:#d2d2d2;
+    --dim:#9c9c9c;
+    --bright:#f2f2f2;
+    --accent:#B92732;
+    --accent-2:#B62025;
+    --accent-bright:#de5964;
+    --error:#f85149;
+
+    /* status semantics (shared with the memory map) */
+    --pos:#3fb950;       /* good / positive delta   */
+    --warn:#f5a524;      /* caution                 */
+    --neg:#f85149;       /* bad / negative delta    */
+    --flat:#8b98a5;      /* zero / no signal        */
+
+    /* leads-by-channel categorical hues — validated for CVD + contrast
+       on this dark surface (dataviz six-checks; re-validated on the charcoal theme) */
+    --ch-web:#2b7de9;
+    --ch-phone:#c08a1e;
+    --ch-walkin:#00a3bf;
+    --ch-other:#9a6ee0;
+
+    /* surfaces/effects that need a per-theme value */
+    --panel-deep:#191C20;
+    --row-line:rgba(49,54,64,0.55);
+    --track:rgba(255,255,255,0.06);
+    --meter-a:rgba(255,255,255,0.30);
+    --meter-b:rgba(255,255,255,0.72);
+    --chip-bg:rgba(255,255,255,0.04);
+    --chip-bg-hover:rgba(255,255,255,0.09);
+    --shadow-card:inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 22px rgba(0,0,0,0.35);
+    --shadow-hover:inset 0 1px 0 rgba(255,255,255,0.05), 0 14px 30px rgba(0,0,0,0.45), 0 4px 18px rgba(185,39,50,0.14);
+  }
+
+  /* ---------- light mode — the report printed on white stock ----------
+     Brand reds are kept verbatim (#B92732 is 6.2:1 on white — AA, so the
+     small-text accent needs no lightened variant here). Status semantics
+     get light-safe steps (the dark set fails contrast on white: green
+     2.5:1, amber 1.7:1). Channel palette is UNCHANGED — it passes the
+     dataviz six-checks on white as-is. */
+  :root[data-theme="light"]{
+    --bg:#F2F2F0;
+    --panel:#FFFFFF;
+    --panel2:#F3F4F6;
+    --line:#D9DBDE;
+    --border:#D9DBDE;
+    --text:#33363B;
+    --dim:#6B6E73;
+    --bright:#111318;
+    --accent-bright:#B92732;
+    --pos:#1A7F37;
+    --warn:#9A6700;
+    --neg:#CF222E;
+    --flat:#57606A;
+    --panel-deep:#E9EAEC;
+    --row-line:rgba(0,0,0,0.08);
+    --track:rgba(0,0,0,0.08);
+    --meter-a:rgba(0,0,0,0.20);
+    --meter-b:rgba(0,0,0,0.55);
+    --chip-bg:rgba(0,0,0,0.035);
+    --chip-bg-hover:rgba(0,0,0,0.07);
+    --shadow-card:0 1px 3px rgba(16,18,20,0.07), 0 6px 18px rgba(16,18,20,0.06);
+    --shadow-hover:0 4px 10px rgba(16,18,20,0.09), 0 12px 26px rgba(16,18,20,0.09), 0 4px 16px rgba(185,39,50,0.08);
+  }
+  /* glows tuned for dark read as pink smears on white — fade them */
+  :root[data-theme="light"] #plx-a{ opacity:.35; }
+  :root[data-theme="light"] #plx-b{ opacity:.3; }
+  :root[data-theme="light"] .pill.mock{
+    color:#7A5200; border-color:rgba(154,103,0,0.45); background:rgba(154,103,0,0.08);
+  }
+  /* brief color cross-fade when the toggle flips the theme */
+  html.theme-anim body, html.theme-anim body *{
+    transition:background-color .35s ease, color .35s ease,
+               border-color .35s ease, box-shadow .35s ease !important;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0; min-height:100%;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  /* signature soft radial glow — split into two fixed layers so they can
+     drift at different rates on scroll (parallax, JS at the bottom) */
+  .plx{ position:fixed; inset:-12% 0; z-index:0; pointer-events:none; will-change:transform; }
+  #plx-a{
+    background:radial-gradient(ellipse 70% 42% at 50% 8%,
+      rgba(185,39,50,0.13) 0%, rgba(182,32,37,0.05) 34%, rgba(20,20,20,0) 62%);
+  }
+  #plx-b{
+    background:radial-gradient(ellipse 36% 24% at 86% 30%,
+      rgba(182,32,37,0.07) 0%, rgba(20,20,20,0) 70%);
+  }
+  .wrap{ position:relative; z-index:1; max-width:1240px; margin:0 auto; padding:0 20px; }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+    justify-content:space-between; padding:20px 0 6px;
+  }
+  .h-title .t1{ font-size:19px; font-weight:700; letter-spacing:.4px; color:var(--bright); }
+  .h-title .t2{ font-size:12px; color:var(--dim); margin-top:3px; }
+  .h-right{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .pill{
+    font-size:11.5px; color:var(--dim); padding:6px 12px; border-radius:999px;
+    border:1px solid var(--border); background:var(--chip-bg);
+    white-space:nowrap;
+  }
+  .pill b{ color:var(--text); font-weight:600; }
+  .pill.mock{
+    color:#ffd88a; border-color:rgba(245,165,36,0.45); background:rgba(245,165,36,0.08);
+    font-weight:600; letter-spacing:.06em;
+  }
+  a.hdr-btn, button.hdr-btn{
+    font-family:inherit; font-size:12px; font-weight:600; text-decoration:none;
+    padding:7px 14px; border-radius:8px; border:1px solid var(--border);
+    background:var(--chip-bg); color:var(--text); cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  a.hdr-btn:hover, button.hdr-btn:hover{ background:var(--chip-bg-hover); }
+  #themeBtn svg{ width:14px; height:14px; display:block; }
+  :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
+  :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
+
+  /* ---------- hero tiles ---------- */
+  #hero{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:16px;
+  }
+  .tile{
+    font-family:inherit; text-align:left; color:var(--text);
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:16px 18px 14px; cursor:pointer; position:relative;
+    box-shadow:var(--shadow-card);
+    transition:border-color .18s, box-shadow .18s, transform .18s, background .18s;
+  }
+  .tile:hover{
+    border-color:rgba(185,39,50,0.55); transform:translateY(-2px);
+    box-shadow:var(--shadow-hover);
+  }
+  .tile[aria-pressed="true"]{
+    border-color:rgba(185,39,50,0.85);
+    background:linear-gradient(180deg, rgba(185,39,50,0.10), var(--panel) 55%);
+    box-shadow:var(--shadow-card), 0 6px 24px rgba(185,39,50,0.22);
+  }
+  .tile .brand{
+    display:flex; align-items:center; gap:9px; margin-bottom:12px;
+    padding-bottom:9px; border-bottom:1px solid var(--line); min-height:36px;
+  }
+  .tile .brand img{ display:block; width:auto; }
+  .tile .brand img.b-nss{ height:26px; }
+  .tile .brand img.b-afam{ height:17px; }
+  .tile .brand img.b-sls{ height:13px; }
+  .tile .brand .ct{ margin-left:auto; }
+  .tile .brand .nm{ font-size:13px; font-weight:700; letter-spacing:.08em; color:var(--bright); text-transform:uppercase; }
+  .tile .brand .ct{ font-size:11px; color:var(--dim); }
+  .tile .halves{ display:flex; align-items:stretch; }
+  .tile .half{ flex:1 1 50%; min-width:0; }
+  .tile .divider{ width:1px; background:var(--border); margin:2px 14px; }
+  .tile .lbl{ font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-bottom:4px; }
+  .tile .big{ font-size:24px; font-weight:800; letter-spacing:-0.02em; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .tile .sub{ font-size:11px; color:var(--dim); margin-top:4px; white-space:nowrap; }
+  .up{ color:var(--pos); } .down{ color:var(--neg); } .zero{ color:var(--flat); }
+  .warm{ color:var(--warn); }
+
+  /* ---------- scope KPI row ---------- */
+  #scopebar{
+    display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+    margin:26px 0 10px;
+  }
+  #scopebar h2, .sec-head h2{
+    display:flex; align-items:center; gap:9px;
+    margin:0; font-size:12.5px; font-weight:800; color:var(--bright);
+    letter-spacing:.13em; text-transform:uppercase;
+  }
+  #scopebar h2::before, .sec-head h2::before{
+    content:""; width:4px; height:13px; border-radius:2px; flex:none;
+    background:linear-gradient(180deg,var(--accent),var(--accent-2));
+  }
+  #scopebar .hint{ font-size:11.5px; color:var(--dim); }
+  #kpis{
+    /* auto-fit instead of a hard 4-col: below ~1150px the cards wrap to
+       3-up / 2-up rather than squeezing the gauges into overflow */
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(272px, 1fr)); gap:14px;
+  }
+  #kpis .card{ display:flex; flex-direction:column; }
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:15px 17px 13px; min-width:0;
+    box-shadow:var(--shadow-card);
+    transition:border-color .18s, transform .18s, box-shadow .18s;
+  }
+  .card:hover{
+    border-color:var(--dim); transform:translateY(-2px);
+    box-shadow:var(--shadow-hover);
+  }
+  .card .lbl{
+    font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim);
+    margin-bottom:9px; padding-bottom:7px; border-bottom:1px solid var(--line);
+  }
+  .card .big{ font-size:23px; font-weight:800; letter-spacing:-0.02em; color:var(--bright); font-variant-numeric:tabular-nums; }
+  .card .big small{ font-size:13px; font-weight:600; color:var(--dim); }
+  .card .sub{ font-size:11.5px; color:var(--dim); margin-top:4px; }
+  .card .sub b{ color:var(--text); font-weight:600; }
+
+  /* ---------- KPI gauges ----------
+     One shared visual language: 240-degree dials on the panel track.
+     Arc fills stay NEUTRAL ink for plain magnitudes (occupancy,
+     conversion — on a magnitude arc, red reads as "problem");
+     status-colored judgment bands appear only on ROAS, categorical
+     channel hues only on the composition donut. Same separation of
+     brand chrome vs data language as everywhere else. Numbers stay
+     as text; gauges are additive, not a replacement. */
+  /* gauge dominates the card (like the channel donut): dial centered in
+     the free space, text block pinned below */
+  .g-row{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:4px; flex:1; }
+  .g-dial{ position:relative; flex:none; width:170px; margin:auto; }
+  .g-dial svg{ display:block; width:100%; height:auto; overflow:visible; }
+  .g-dial .trk{ fill:none; stroke:var(--track); }
+  .g-dial .arc{ fill:none; stroke-linecap:round; }
+  .g-dial .band{ stroke-opacity:.28; }
+  :root[data-theme="light"] .g-dial .band{ stroke-opacity:.38; }
+  .g-center{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; padding-top:13px;
+    pointer-events:none; text-align:center;
+  }
+  .g-center .gv{ font-size:19px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; line-height:1.05; }
+  .g-center .gu{ font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-top:2px; }
+  .g-scale{ font-size:8.5px; fill:var(--dim); }
+  .g-stats{ width:100%; min-width:0; }
+  .g-stats .gs-line{ font-size:12px; color:var(--text); margin-bottom:3px; }
+  .g-stats .gs-line b{ color:var(--bright); font-variant-numeric:tabular-nums; }
+  .g-stats .gs-sub{ font-size:11px; color:var(--dim); margin-top:2px; }
+  .g-stats .gs-big{ font-size:18px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .g-stats .gs-big small{ font-size:10.5px; font-weight:600; color:var(--dim); }
+  .zone{
+    display:inline-block; font-size:9.5px; font-weight:700; letter-spacing:.07em;
+    text-transform:uppercase; padding:2px 8px; border-radius:999px;
+    border:1px solid currentColor; margin-top:6px;
+  }
+  .g-key{ display:flex; gap:12px; margin-top:7px; font-size:10px; color:var(--dim); align-items:center; flex-wrap:wrap; }
+  .g-key i{ display:inline-block; width:12px; height:0; border-top:3px solid var(--meter-b); border-radius:2px; margin-right:5px; vertical-align:2px; }
+  .g-key i.k2{ border-top-color:var(--meter-a); }
+  .g-key i.needle{ border-top-width:2px; border-top-color:var(--bright); }
+  .g-key i.needle2{ border-top-style:dashed; border-top-color:var(--dim); }
+
+  /* channel donut */
+  .g-donut{ position:relative; width:118px; margin:8px auto 4px; }
+  .g-donut svg{ display:block; width:100%; height:auto; }
+  .g-donut .g-center{ padding-top:0; }
+  .legend{ margin-top:9px; display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; }
+  .legend .li{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--text); white-space:nowrap; }
+  .legend .dot{ width:9px; height:9px; border-radius:3px; flex:none; }
+  .legend .n{ margin-left:auto; font-variant-numeric:tabular-nums; color:var(--bright); font-weight:600; }
+  .legend .s{ color:var(--dim); font-variant-numeric:tabular-nums; }
+  .foot-note{ font-size:10.5px; color:var(--dim); margin-top:8px; line-height:1.45; }
+
+  /* ---------- sections ---------- */
+  section.block{ margin-top:30px; }
+  .sec-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+  .sec-head .hint{ font-size:11.5px; color:var(--dim); }
+  input#facSearch{
+    font-family:inherit; font-size:12px; padding:7px 11px; border-radius:8px;
+    border:1px solid var(--border); background:var(--chip-bg);
+    color:var(--text); width:190px; outline:none;
+  }
+  input#facSearch:focus{ border-color:rgba(222,89,100,0.6); }
+
+  .tbl-wrap{
+    border:1px solid var(--line); border-radius:14px; overflow-x:auto;
+    background:var(--panel);
+    box-shadow:var(--shadow-card);
+  }
+  table{ border-collapse:collapse; width:100%; min-width:980px; font-size:12.5px; }
+  thead th{
+    position:sticky; top:0; z-index:2;
+    background:var(--panel2); color:var(--dim);
+    font-size:10px; letter-spacing:.08em; text-transform:uppercase; font-weight:600;
+    text-align:right; padding:0; border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+  thead th:first-child{ text-align:left; }
+  thead th button{
+    font:inherit; color:inherit; letter-spacing:inherit; text-transform:inherit;
+    background:none; border:0; cursor:pointer; width:100%; text-align:inherit;
+    padding:10px 12px; display:inline-flex; justify-content:flex-end; gap:4px;
+  }
+  thead th:first-child button{ justify-content:flex-start; }
+  thead th button:hover{ color:var(--text); }
+  thead th .arrow{ opacity:.9; color:var(--accent); }
+  tbody td{
+    padding:8px 12px; text-align:right; border-bottom:1px solid var(--row-line);
+    font-variant-numeric:tabular-nums; white-space:nowrap;
+  }
+  tbody td:first-child{ text-align:left; }
+  tbody tr.fac{ cursor:pointer; transition:background .12s; }
+  tbody tr.fac:hover{ background:rgba(185,39,50,0.07); }
+  tbody tr.fac[aria-expanded="true"]{ background:rgba(185,39,50,0.11); }
+  tbody tr:last-child td{ border-bottom:0; }
+  td .code{ color:var(--dim); font-size:10.5px; margin-right:7px; }
+  td .btag{
+    display:inline-block; font-size:9.5px; letter-spacing:.06em; color:var(--dim);
+    border:1px solid var(--border); border-radius:5px; padding:1px 5px; margin-left:7px;
+    vertical-align:1px;
+  }
+  tr.total td{ font-weight:800; color:var(--bright); background:var(--panel2);
+    border-top:1px solid var(--line); }
+  .caret{ display:inline-block; margin-right:7px; color:var(--dim); font-size:9px;
+    transition:transform .15s; }
+  tr[aria-expanded="true"] .caret{ transform:rotate(90deg); color:var(--accent); }
+
+  /* expanded facility detail row */
+  tr.detail > td{ background:var(--panel-deep); padding:14px 16px 16px; white-space:normal; cursor:default; }
+  .mini-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .mini{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:10px 12px; text-align:left;
+    box-shadow:var(--shadow-card);
+  }
+  .mini .lbl{ font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--dim); margin-bottom:5px; }
+  .mini .v{ font-size:17px; font-weight:800; letter-spacing:-0.02em; color:var(--bright); font-variant-numeric:tabular-nums; }
+  .mini .s{ font-size:10.5px; color:var(--dim); margin-top:3px; }
+  .titan-strip{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .titan-strip img{ height:22px; width:auto; display:block; }
+  .titan-strip span{ font-size:11px; color:var(--dim); }
+  /* addendum: on light stock the white Titan wordmark rides a navy chip */
+  :root[data-theme="light"] .titan-strip img{
+    background:#17365D; height:34px; padding:6px 11px; border-radius:6px;
+  }
+  .mini .bar{ height:5px; border-radius:3px; background:var(--track); margin-top:7px; position:relative; overflow:hidden; }
+  .mini .bar i{ position:absolute; inset:0 auto 0 0; border-radius:3px;
+    background:linear-gradient(90deg, var(--meter-a), var(--meter-b)); }
+
+  /* campaigns */
+  #campTbl{ min-width:760px; }
+  #campTbl td:first-child{ white-space:normal; }
+  .rank{ color:var(--dim); font-size:10.5px; margin-right:8px; }
+
+  footer{
+    margin-top:36px; padding-top:18px; border-top:1px solid var(--border);
+    font-size:11.5px; color:var(--dim); line-height:1.6;
+  }
+  footer .brand-row{
+    display:flex; align-items:center; gap:30px; flex-wrap:wrap; margin-bottom:14px;
+  }
+  footer .brand-row img{ display:block; }
+  /* NSS badge sits directly on the panel with no framing — same treatment
+     as the actual Portfolio Snapshot PDF (its vendored logo has a
+     transparent badge body); light mode uses the black-body badge, which
+     is self-contained on white */
+  footer .brand-row img.nss{ height:34px; width:auto; }
+  footer .brand-row img.afam{ height:22px; width:auto; opacity:.92; }
+  footer .brand-row img.sls{ height:15px; width:auto; opacity:.92; }
+  :root[data-theme="light"] img.for-dark{ display:none; }
+  :root[data-theme="dark"] img.for-light{ display:none; }
+
+  /* ---------- motion: entrances, scope swaps, focus ---------- */
+  .reveal{ opacity:0; }
+  .reveal.in{ opacity:1; animation:riseIn .55s cubic-bezier(.2,.7,.3,1) backwards; }
+  @keyframes riseIn{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+  #scopebar, #kpis, #facSection, #campSection{
+    transition:opacity .17s ease, transform .17s ease;
+  }
+  .swap-out{ opacity:0 !important; transform:translateY(8px); }
+  .mini-grid{ animation:riseIn .35s cubic-bezier(.2,.7,.3,1) backwards; }
+  .tile:focus-visible, a.hdr-btn:focus-visible, button.hdr-btn:focus-visible,
+  thead th button:focus-visible, tbody tr.fac:focus-visible, input#facSearch:focus-visible{
+    outline:2px solid var(--accent-bright); outline-offset:2px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; }
+    .reveal.in, .mini-grid{ animation:none; }
+    #scopebar, #kpis, #facSection, #campSection, .tile, .card{ transition:none; }
+  }
+
+  /* loading / error */
+  #status{ padding:60px 0; text-align:center; color:var(--dim); font-size:13px; }
+  #status .err{ color:var(--error); font-weight:600; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:980px){
+    #hero{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width:480px){
+    #hero{ grid-template-columns:1fr; }
+    #kpis{ grid-template-columns:1fr; }
+    .tile .big{ font-size:21px; }
+  }
+</style>
+</head>
+<body>
+<!-- parallax glow layers — drift on scroll at different rates (JS at bottom) -->
+<div class="plx" id="plx-a" data-speed="0.30"></div>
+<div class="plx" id="plx-b" data-speed="0.55"></div>
+<div class="wrap">
+
+  <header>
+    <div class="h-title">
+      <div class="t1">PORTFOLIO SNAPSHOT</div>
+      <div class="t2" id="subTitle">29 facilities · NSS · AFAM · SL Reno</div>
+    </div>
+    <div class="h-right">
+      <span class="pill mock" id="mockBadge" hidden
+            title="This page is rendering the sample portfolio-data.json committed with the dashboard. The badge disappears automatically once the real twice-daily export replaces that file.">SAMPLE&nbsp;DATA</span>
+      <span class="pill" id="freshness">Loading…</span>
+      <button class="hdr-btn" id="themeBtn" title="Toggle light / dark mode" aria-label="Toggle light or dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5"/>
+          <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/>
+        </svg>
+      </button>
+      <a class="hdr-btn" href="memory-map.html">Memory map</a>
+      <button class="hdr-btn" id="lockBtn" title="Lock this session and return to the landing page">Lock</button>
+    </div>
+  </header>
+
+  <div id="status">Loading portfolio data…</div>
+
+  <div id="dash" hidden>
+
+    <!-- ===== hero: the MTD KPI strip, now clickable scope selectors ===== -->
+    <div id="hero" role="group" aria-label="Brand scope selector"></div>
+
+    <!-- ===== supporting KPIs for the selected scope ===== -->
+    <div id="scopebar">
+      <h2 id="scopeTitle"></h2>
+      <span class="hint">click a tile above to drill into a brand · Portfolio resets</span>
+    </div>
+    <div id="kpis"></div>
+
+    <!-- ===== per-facility drill-down table ===== -->
+    <section class="block reveal" id="facSection">
+      <div class="sec-head">
+        <h2 id="facTitle">Facilities</h2>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span class="hint">click a row for its full KPI set · click headers to sort</span>
+          <input id="facSearch" type="search" placeholder="Filter facilities…" aria-label="Filter facilities">
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table id="facTbl" aria-label="Per-facility detail">
+          <thead><tr id="facHead"></tr></thead>
+          <tbody id="facBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== campaign efficiency ===== -->
+    <section class="block reveal" id="campSection">
+      <div class="sec-head">
+        <h2 id="campTitle">Campaign efficiency</h2>
+        <span class="hint">this month · ranked cheapest cost-per-conversion first</span>
+      </div>
+      <div class="tbl-wrap">
+        <table id="campTbl" aria-label="Campaign efficiency">
+          <thead>
+            <tr>
+              <th style="text-align:left"><button type="button" disabled style="cursor:default">Campaign</button></th>
+              <th><button type="button" disabled style="cursor:default">Cost</button></th>
+              <th><button type="button" disabled style="cursor:default">Conversions</button></th>
+              <th><button type="button" disabled style="cursor:default">Cost / conv</button></th>
+              <th><button type="button" disabled style="cursor:default">Conv. value</button></th>
+              <th><button type="button" disabled style="cursor:default">Value / cost</button></th>
+            </tr>
+          </thead>
+          <tbody id="campBody"></tbody>
+        </table>
+      </div>
+      <p class="foot-note">Campaigns with zero conversions show “—” for cost per conversion — no number is fabricated for them.</p>
+    </section>
+
+    <footer class="reveal">
+      <div class="brand-row">
+        <img class="nss for-dark" src="assets/nss-logo-report.png" alt="National Self Storage">
+        <img class="nss for-light" src="assets/nss-logo.png" alt="National Self Storage">
+        <img class="afam for-dark" src="assets/afam-logo.png" alt="A Family Storage">
+        <img class="afam for-light" src="assets/afam-logo-light.png" alt="A Family Storage">
+        <img class="sls for-dark" src="assets/sls-logo.png" alt="Storelocal Storage">
+        <img class="sls for-light" src="assets/sls-logo-light.png" alt="Storelocal Storage">
+      </div>
+      <div id="footFresh"></div>
+      <div>ROAS is shown as an ×-multiple under both the standard and the more conservative LTV assumption.
+           Per-channel lead conversion is not trackable at the source, so channel cards show counts and share only.</div>
+      <div>Data via Hummingbird / Nectar API · National Self Storage / StoreLocal · Private demo</div>
+    </footer>
+
+  </div><!-- /dash -->
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  document.getElementById("lockBtn").addEventListener("click", function () {
+    TMAuth.logout(); location.href = "index.html";
+  });
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    TMTheme.toggle();
+  });
+
+  /* ------------------------------------------------------------------ *
+   *  state & constants
+   * ------------------------------------------------------------------ */
+  var DATA = null;
+  var scope = "portfolio";              // "portfolio" | "NSS" | "AFAM" | "SL Reno"
+  var BRANDS = ["NSS", "AFAM", "SL Reno"];
+  var sortKey = null, sortDir = -1;     // facility table sort state
+  var expanded = null;                  // facility_code of the expanded row
+
+  var MOTION = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* count-up tween for KPI numerals — formats each frame so signs,
+     separators and units stay correct throughout */
+  function animNum(el, target, fmt) {
+    if (!el) return;
+    if (!MOTION || !target) { el.textContent = fmt(target); return; }
+    el.textContent = fmt(0);   // paint immediately — rAF may be throttled in background tabs
+    var t0 = performance.now(), dur = 700;
+    function step(now) {
+      // clamp BOTH ends: rAF timestamps are vsync-start and can precede
+      // the performance.now() captured above, sending p negative
+      var p = Math.min(1, Math.max(0, (now - t0) / dur));
+      var e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(target * e);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ---- gauge geometry: angles run clockwise from 12 o'clock; the dial
+     sweeps -120 to +120 (240 degrees, open at the bottom) ---- */
+  var DIAL_A0 = -120, DIAL_SWEEP = 240;
+  function dialPt(cx, cy, r, deg) {
+    var rad = deg * Math.PI / 180;
+    return [cx + r * Math.sin(rad), cy - r * Math.cos(rad)];
+  }
+  function dialArc(cx, cy, r, a0, a1) {
+    if (a1 - a0 < 0.05) return "M0 0";        // empty-but-valid path
+    var p0 = dialPt(cx, cy, r, a0), p1 = dialPt(cx, cy, r, a1);
+    return "M" + p0[0].toFixed(2) + " " + p0[1].toFixed(2) +
+           " A" + r + " " + r + " 0 " + ((a1 - a0) > 180 ? 1 : 0) + " 1 " +
+           p1[0].toFixed(2) + " " + p1[1].toFixed(2);
+  }
+  function fracAngle(f) { return DIAL_A0 + DIAL_SWEEP * Math.min(1, Math.max(0, f)); }
+
+  /* one tween drives every gauge in the card row so arcs, needles and
+     donut segments land together; scope changes morph from the previous
+     scope's values instead of restarting at zero */
+  var prevK = null;
+  function tweenGauges(paint) {
+    if (!MOTION) { paint(1); return; }
+    var t0 = performance.now(), dur = 750;
+    paint(0);
+    function step(now) {
+      var p = Math.min(1, Math.max(0, (now - t0) / dur));
+      paint(1 - Math.pow(1 - p, 3));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  /* ROAS dial scale & judgment bands. 0-30x covers this portfolio's real
+     range (monthly group ROAS runs ~10-27x standard, ~6-17x conservative
+     in the actual reports); the bound self-extends in 5x steps if a scope
+     ever exceeds it, so the needle can never pin. Bands follow the
+     report's own language (it labels 10x "Excellent"): <3x poor — spend
+     not covering lifetime value; 3-8x acceptable; 8x+ excellent. */
+  var ROAS_BANDS = [
+    { to: 3,        cls: "down", word: "Poor" },
+    { to: 8,        cls: "warm", word: "OK" },
+    { to: Infinity, cls: "up",   word: "Excellent" }
+  ];
+  function roasZone(v) {
+    for (var i = 0; i < ROAS_BANDS.length; i++) if (v < ROAS_BANDS[i].to) return ROAS_BANDS[i];
+    return ROAS_BANDS[ROAS_BANDS.length - 1];
+  }
+
+  var CHANNELS = [
+    { key:"web_leads",     label:"Web",     color:"var(--ch-web)"    },
+    { key:"phone_leads",   label:"Phone",   color:"var(--ch-phone)"  },
+    { key:"walk_in_leads", label:"Walk-in", color:"var(--ch-walkin)" },
+    { key:"other_leads",   label:"Other",   color:"var(--ch-other)"  }
+  ];
+
+  var OCC_TARGET = 85;   // portfolio occupancy target from the monthly report
+
+  /* ------------------------------------------------------------------ *
+   *  formatting helpers
+   * ------------------------------------------------------------------ */
+  function fmtMoney(v) {                       // compact: $1.98M / $673K / $845
+    if (v == null) return "—";
+    var a = Math.abs(v);
+    if (a >= 1e6) return "$" + (v / 1e6).toFixed(2) + "M";
+    if (a >= 1e4) return "$" + Math.round(v / 1e3) + "K";
+    if (a >= 1e3) return "$" + (v / 1e3).toFixed(1) + "K";
+    return "$" + Math.round(v);
+  }
+  function fmtMoneyFull(v) {
+    if (v == null) return "—";
+    return "$" + Math.round(v).toLocaleString("en-US");
+  }
+  function fmtSignedMoney(v) {
+    if (v == null) return "—";
+    return (v > 0 ? "+" : v < 0 ? "−" : "") + fmtMoney(Math.abs(v));
+  }
+  function fmtSigned(v) {
+    if (v == null) return "—";
+    return (v > 0 ? "+" : "") + v;
+  }
+  function fmtPct(v, dp) {
+    if (v == null) return "—";
+    return v.toFixed(dp == null ? 1 : dp) + "%";
+  }
+  function fmtX(v) { return v == null ? "—" : v.toFixed(1) + "x"; }
+  function signClass(v) { return v > 0 ? "up" : v < 0 ? "down" : "zero"; }
+  function delinqClass(v) { return v == null ? "" : v > 8 ? "down" : v >= 5 ? "warm" : "up"; }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
+  function azTime(iso, opts) {
+    try {
+      return new Date(iso).toLocaleString("en-US", Object.assign({
+        timeZone: "America/Phoenix", month: "short", day: "numeric",
+        hour: "numeric", minute: "2-digit"
+      }, opts || {}));
+    } catch (e) { return iso; }
+  }
+
+  function scopeData()  { return scope === "portfolio" ? DATA.portfolio : DATA.brands[scope]; }
+  function scopeLabel() { return scope === "portfolio" ? "Portfolio" : scope; }
+  function scopeFacs()  {
+    return DATA.facilities.filter(function (f) {
+      return scope === "portfolio" || f.brand === scope;
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  hero tiles — NSS / AFAM / SL Reno / Portfolio
+   * ------------------------------------------------------------------ */
+  function renderHero() {
+    var counts = {};
+    DATA.facilities.forEach(function (f) { counts[f.brand] = (counts[f.brand] || 0) + 1; });
+
+    var host = document.getElementById("hero");
+    host.innerHTML = "";
+    /* brand tiles carry the real logo artwork (theme-swapped); the
+       Portfolio tile stays typographic — it has no logo of its own */
+    var LOGOS = {
+      "NSS":     { cls:"b-nss",  dark:"assets/nss-logo-report.png", light:"assets/nss-logo.png" },
+      "AFAM":    { cls:"b-afam", dark:"assets/afam-logo.png",       light:"assets/afam-logo-light.png" },
+      "SL Reno": { cls:"b-sls",  dark:"assets/sls-logo.png",        light:"assets/sls-logo-light.png" }
+    };
+    var entries = BRANDS.map(function (b) {
+      return { key:b, label:b, count:counts[b] || 0, d:DATA.brands[b], logo:LOGOS[b] };
+    }).concat([{ key:"portfolio", label:"Portfolio", count:DATA.facilities.length, d:DATA.portfolio }]);
+
+    entries.forEach(function (e, idx) {
+      var mv  = e.d.move_activity_mtd;
+      var yoy = e.d.revenue_yoy;
+      var priorYr = new Date(DATA.generated_at).getFullYear() - 1;
+      var yoyWord = yoy.delta > 0 ? "ahead of" : yoy.delta < 0 ? "behind" : "flat vs";
+
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "tile";
+      btn.setAttribute("aria-pressed", String(scope === e.key));
+      var brandHead = e.logo
+        ? '<img class="' + e.logo.cls + ' for-dark" src="' + e.logo.dark + '" alt="' + esc(e.label) + '">' +
+          '<img class="' + e.logo.cls + ' for-light" src="' + e.logo.light + '" alt="' + esc(e.label) + '">'
+        : '<span class="nm">' + esc(e.label) + '</span>';
+      btn.innerHTML =
+        '<div class="brand">' + brandHead +
+        '<span class="ct">' + e.count + (e.count === 1 ? " store" : " stores") + '</span></div>' +
+        '<div class="halves">' +
+          '<div class="half"><div class="lbl">Net move-ins · MTD</div>' +
+            '<div class="big ' + signClass(mv.net_move_ins) + '">' + fmtSigned(mv.net_move_ins) + '</div>' +
+            '<div class="sub">' + mv.move_ins + ' in / ' + mv.move_outs + ' out</div></div>' +
+          '<div class="divider"></div>' +
+          '<div class="half"><div class="lbl">Revenue vs LY · MTD</div>' +
+            '<div class="big ' + signClass(yoy.delta) + '">' + fmtSignedMoney(yoy.delta) + '</div>' +
+            '<div class="sub">' + yoyWord + ' ' + priorYr + ' · ' + fmtMoney(yoy.current) + '</div></div>' +
+        '</div>';
+      btn.addEventListener("click", function () { setScope(e.key); });
+      btn.setAttribute("data-scope", e.key);
+      if (MOTION) {
+        btn.classList.add("reveal");
+        btn.style.animationDelay = (idx * 70) + "ms";
+        requestAnimationFrame(function () { btn.classList.add("in"); });
+      }
+      host.appendChild(btn);
+
+      var bigs = btn.querySelectorAll(".big");
+      animNum(bigs[0], mv.net_move_ins, function (v) { return fmtSigned(Math.round(v)); });
+      animNum(bigs[1], yoy.delta, fmtSignedMoney);
+    });
+  }
+
+  /* scope change repaints tiles' pressed state only — no rebuild, so the
+     entrance animation never replays and keyboard focus is preserved */
+  function paintHeroPressed() {
+    Array.prototype.forEach.call(document.querySelectorAll("#hero .tile"), function (t) {
+      t.setAttribute("aria-pressed", String(t.getAttribute("data-scope") === scope));
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  scope KPI cards
+   * ------------------------------------------------------------------ */
+  function renderKpis() {
+    var d = scopeData();
+    var host = document.getElementById("kpis");
+    var occ = d.occupancy, leads = d.leads_mtd, ads = d.ad_spend_month, roas = d.roas;
+    var ch = d.leads_by_channel_mtd;
+
+    document.getElementById("scopeTitle").textContent =
+      scopeLabel() + " — " + scopeFacs().length + " " + (scopeFacs().length === 1 ? "facility" : "facilities");
+
+    /* shared dial scaffold: 132x104 viewBox, cx 66 / cy 60 */
+    var CX = 66, CY = 60, R1 = 46, R2 = 34;
+    function dialSvg(inner) {
+      return '<svg viewBox="0 0 132 104" aria-hidden="true">' +
+        '<path class="trk" stroke-width="9" d="' + dialArc(CX, CY, R1, DIAL_A0, DIAL_A0 + DIAL_SWEEP) + '"></path>' +
+        inner + "</svg>";
+    }
+
+    /* ---- occupancy: twin dial (sq ft outer, units inner) + 85% tick ---- */
+    var tickA = fracAngle(OCC_TARGET / 100);
+    var t1 = dialPt(CX, CY, R1 - 7, tickA), t2 = dialPt(CX, CY, R1 + 7, tickA);
+    var occDelta = occ.occupancy_sqft_pct - OCC_TARGET;
+    var occCard =
+      '<div class="card"><div class="lbl">Occupancy</div>' +
+      '<div class="g-row"><div class="g-dial">' +
+      dialSvg(
+        '<path class="trk" stroke-width="6" d="' + dialArc(CX, CY, R2, DIAL_A0, DIAL_A0 + DIAL_SWEEP) + '"></path>' +
+        '<path id="gOccSq" class="arc" stroke="var(--meter-b)" stroke-width="9"></path>' +
+        '<path id="gOccUn" class="arc" stroke="var(--meter-a)" stroke-width="6"></path>' +
+        '<line x1="' + t1[0].toFixed(1) + '" y1="' + t1[1].toFixed(1) + '" x2="' + t2[0].toFixed(1) + '" y2="' + t2[1].toFixed(1) +
+          '" stroke="var(--bright)" stroke-width="2" opacity=".8"><title>' + OCC_TARGET + '% target</title></line>'
+      ) +
+      '<div class="g-center"><span class="gv"><span class="num"></span></span><span class="gu">sq ft</span></div>' +
+      '</div><div class="g-stats">' +
+      '<div class="gs-line"><b>' + fmtPct(occ.occupancy_units_pct, 2) + '</b> of units</div>' +
+      '<div class="gs-sub">' + occ.units_occupied.toLocaleString() + ' / ' + occ.units_total.toLocaleString() + ' units</div>' +
+      '<div class="gs-sub"><span class="' + signClass(occDelta) + '">' +
+        (occDelta > 0 ? "+" : "") + occDelta.toFixed(1) + ' pts</span> vs ' + OCC_TARGET + '% target</div>' +
+      '<div class="g-key"><span><i></i>sq ft</span><span><i class="k2"></i>units</span></div>' +
+      '</div></div></div>';
+
+    /* ---- conversion: single dial, same geometry ---- */
+    var convCard =
+      '<div class="card"><div class="lbl">Lead conversion · MTD</div>' +
+      '<div class="g-row"><div class="g-dial">' +
+      dialSvg('<path id="gConv" class="arc" stroke="var(--meter-b)" stroke-width="9"></path>') +
+      '<div class="g-center"><span class="gv"><span class="num"></span></span><span class="gu">converted</span></div>' +
+      '</div><div class="g-stats">' +
+      '<div class="gs-line"><b>' + leads.leads_converted + '</b> of <b>' + leads.leads_total + '</b> leads</div>' +
+      '<div class="gs-sub">month to date</div>' +
+      '</div></div></div>';
+
+    /* ---- ROAS: judgment-band dial, two needles, 0-30x self-extending ---- */
+    var roasMax = Math.max(30, Math.ceil((roas.roas_standard * 1.15) / 5) * 5);
+    var zone = roasZone(roas.roas_standard);
+    function bandArc(from, to, color) {
+      return '<path class="arc band" stroke="' + color + '" stroke-width="9" stroke-linecap="butt" d="' +
+        dialArc(CX, CY, R1, fracAngle(from / roasMax), fracAngle(to / roasMax)) + '"></path>';
+    }
+    var s0 = dialPt(CX, CY, R1 + 1, DIAL_A0), s1 = dialPt(CX, CY, R1 + 1, DIAL_A0 + DIAL_SWEEP);
+    var roasCard =
+      '<div class="card"><div class="lbl">Ad spend &amp; ROAS · month</div>' +
+      '<div class="g-row"><div class="g-dial">' +
+      '<svg viewBox="0 0 132 104" aria-hidden="true">' +
+        bandArc(0, 3, "var(--neg)") + bandArc(3, 8, "var(--warn)") + bandArc(8, roasMax, "var(--pos)") +
+        '<line id="gRoasC" x1="' + CX + '" y1="' + (CY - 14) + '" x2="' + CX + '" y2="' + (CY - R1 + 12) +
+          '" stroke="var(--dim)" stroke-width="2" stroke-dasharray="3 3" stroke-linecap="round"></line>' +
+        '<line id="gRoasS" x1="' + CX + '" y1="' + (CY - 10) + '" x2="' + CX + '" y2="' + (CY - R1 - 2) +
+          '" stroke="var(--bright)" stroke-width="2.5" stroke-linecap="round"></line>' +
+        '<circle cx="' + CX + '" cy="' + CY + '" r="3" fill="var(--dim)"></circle>' +
+        '<text class="g-scale" x="' + s0[0].toFixed(1) + '" y="' + (s0[1] + 11).toFixed(1) + '" text-anchor="middle">0x</text>' +
+        '<text class="g-scale" x="' + s1[0].toFixed(1) + '" y="' + (s1[1] + 11).toFixed(1) + '" text-anchor="middle">' + roasMax + 'x</text>' +
+      '</svg>' +
+      '</div><div class="g-stats">' +
+      '<div class="gs-big"><span class="num"></span> <small>standard LTV</small></div>' +
+      '<div class="gs-line"><b>' + fmtX(roas.roas_conservative) + '</b> <span class="gs-sub" style="margin:0">conservative LTV</span></div>' +
+      '<span class="zone ' + zone.cls + '">' + zone.word + '</span>' +
+      '<div class="gs-sub">' + fmtMoneyFull(ads.spend) + ' spend · ' + ads.stores +
+        (ads.stores === 1 ? " store" : " stores") + ' advertising</div>' +
+      '<div class="g-key"><span><i class="needle"></i>standard</span><span><i class="needle2"></i>conservative</span></div>' +
+      '</div></div></div>';
+
+    /* ---- channels: composition donut — counts & share only, no
+       fabricated per-channel conversion (not trackable at source) ---- */
+    var total = CHANNELS.reduce(function (sum, c) { return sum + (ch[c.key] || 0); }, 0) || 1;
+    var donutSegs = "", lis = "";
+    CHANNELS.forEach(function (c, i) {
+      var n = ch[c.key] || 0;
+      var share = ch.channel_share_pct && ch.channel_share_pct[c.key] != null
+        ? ch.channel_share_pct[c.key] : (100 * n / total);
+      donutSegs += '<path id="gCh' + i + '" fill="none" stroke="' + c.color + '" stroke-width="13" stroke-linecap="butt">' +
+        '<title>' + esc(c.label) + ": " + n + " leads (" + fmtPct(share, 1) + ")</title></path>";
+      lis += '<div class="li"><span class="dot" style="background:' + c.color + '"></span>' +
+             esc(c.label) + '<span class="n">' + n + '</span><span class="s">' + fmtPct(share, 0) + "</span></div>";
+    });
+    var chCard =
+      '<div class="card"><div class="lbl">Leads by channel · MTD</div>' +
+      '<div class="g-donut"><svg viewBox="0 0 118 118" role="img" aria-label="Lead share by channel">' + donutSegs + "</svg>" +
+      '<div class="g-center"><span class="gv"><span class="num"></span></span><span class="gu">leads</span></div></div>' +
+      '<div class="legend">' + lis + "</div>" +
+      '<div class="foot-note">Counts &amp; share only — per-channel conversion isn\u2019t trackable at the source.</div></div>';
+
+    host.innerHTML = occCard + convCard + roasCard + chCard;
+
+    var nums = host.querySelectorAll(".gv .num, .gs-big .num");
+    animNum(nums[0], occ.occupancy_sqft_pct, function (v) { return fmtPct(v, 2); });
+    animNum(nums[1], leads.conversion_pct, function (v) { return fmtPct(v, 1); });
+    animNum(nums[2], roas.roas_standard, fmtX);
+    animNum(nums[3], total, function (v) { return String(Math.round(v)); });
+
+    /* ---- animate arcs/needles/donut from the previous scope's values ---- */
+    var gOccSq = document.getElementById("gOccSq"), gOccUn = document.getElementById("gOccUn");
+    var gConv = document.getElementById("gConv");
+    var gRoasS = document.getElementById("gRoasS"), gRoasC = document.getElementById("gRoasC");
+    var chFracs = CHANNELS.map(function (c) { return (ch[c.key] || 0) / total; });
+    var from = prevK || { occSq:0, occUn:0, conv:0, roasS:0, roasC:0, ch:[0,0,0,0] };
+    var to = {
+      occSq: occ.occupancy_sqft_pct / 100, occUn: occ.occupancy_units_pct / 100,
+      conv: leads.conversion_pct / 100,
+      roasS: roas.roas_standard / roasMax, roasC: roas.roas_conservative / roasMax,
+      ch: chFracs
+    };
+    var firstLoad = !prevK;
+    var GAP_DEG = 4;                      // surface gap between donut segments
+
+    tweenGauges(function (t) {
+      gOccSq.setAttribute("d", dialArc(CX, CY, R1, DIAL_A0, fracAngle(lerp(from.occSq, to.occSq, t))));
+      gOccUn.setAttribute("d", dialArc(CX, CY, R2, DIAL_A0, fracAngle(lerp(from.occUn, to.occUn, t))));
+      gConv.setAttribute("d", dialArc(CX, CY, R1, DIAL_A0, fracAngle(lerp(from.conv, to.conv, t))));
+      gRoasS.setAttribute("transform", "rotate(" + fracAngle(lerp(from.roasS, to.roasS, t)) + " " + CX + " " + CY + ")");
+      gRoasC.setAttribute("transform", "rotate(" + fracAngle(lerp(from.roasC, to.roasC, t)) + " " + CX + " " + CY + ")");
+      /* donut: first load sweeps segments in sequence; scope changes
+         morph each segment's share instead */
+      var acc = 0;
+      for (var i = 0; i < 4; i++) {
+        var f = firstLoad
+          ? to.ch[i] * Math.min(1, Math.max(0, (t - i * 0.13) / 0.6))
+          : lerp(from.ch[i], to.ch[i], t);
+        var a0 = 360 * acc, a1 = 360 * (acc + f);   // 0 = 12 o'clock
+        var el = document.getElementById("gCh" + i);
+        if (a1 - a0 <= GAP_DEG + 0.2) { el.setAttribute("d", "M0 0"); }
+        else {
+          el.setAttribute("d", dialArc(59, 59, 46, a0 + GAP_DEG / 2, a1 - GAP_DEG / 2));
+        }
+        acc += f;
+      }
+    });
+    prevK = to;
+
+    if (MOTION) {
+      Array.prototype.forEach.call(host.children, function (c, i) {
+        c.classList.add("reveal");
+        c.style.animationDelay = (i * 60) + "ms";
+        requestAnimationFrame(function () { c.classList.add("in"); });
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  facility table
+   * ------------------------------------------------------------------ */
+  var COLS = [
+    { key:"facility_name",       label:"Facility",     num:false },
+    { key:"occupancy_sqft_pct",  label:"Sq Ft Occ",    num:true, fmt:function(v){ return fmtPct(v,2); } },
+    { key:"occupancy_units_pct", label:"Space Occ",    num:true, fmt:function(v){ return fmtPct(v,2); } },
+    { key:"rent_per_sqft",       label:"Rent/SF",      num:true, fmt:function(v){ return "$" + v.toFixed(2); } },
+    { key:"leads_mtd",           label:"Leads",        num:true, fmt:String },
+    { key:"conversion_pct",      label:"Conv",         num:true, fmt:function(v){ return fmtPct(v,1); } },
+    { key:"move_ins_mtd",        label:"Ins",          num:true, fmt:String },
+    { key:"move_outs_mtd",       label:"Outs",         num:true, fmt:String },
+    { key:"net_move_ins_mtd",    label:"Net",          num:true, fmt:fmtSigned, cls:signClass },
+    { key:"delinquency_pct",     label:"Delinq",       num:true, fmt:function(v){ return fmtPct(v,1); }, cls:delinqClass },
+    { key:"revenue_net_mtd",     label:"Net Rev MTD",  num:true, fmt:fmtMoneyFull },
+    { key:"roas_standard",       label:"ROAS",         num:true, fmt:fmtX }
+  ];
+
+  function renderFacHead() {
+    var tr = document.getElementById("facHead");
+    tr.innerHTML = "";
+    COLS.forEach(function (c) {
+      var th = document.createElement("th");
+      if (sortKey === c.key) th.setAttribute("aria-sort", sortDir === 1 ? "ascending" : "descending");
+      var b = document.createElement("button");
+      b.type = "button";
+      b.innerHTML = esc(c.label) +
+        (sortKey === c.key ? ' <span class="arrow">' + (sortDir === 1 ? "▲" : "▼") + "</span>" : "");
+      b.addEventListener("click", function () {
+        if (sortKey === c.key) { sortDir = -sortDir; }
+        else { sortKey = c.key; sortDir = c.num ? -1 : 1; }
+        renderFacHead(); renderFacBody();
+      });
+      th.appendChild(b);
+      tr.appendChild(th);
+    });
+  }
+
+  function facRows() {
+    var q = document.getElementById("facSearch").value.trim().toLowerCase();
+    var rows = scopeFacs().filter(function (f) {
+      return !q || (f.facility_name + " " + f.facility_code).toLowerCase().indexOf(q) !== -1;
+    });
+    if (sortKey) {
+      var col = COLS.filter(function (c) { return c.key === sortKey; })[0];
+      rows = rows.slice().sort(function (a, b) {
+        var x = a[sortKey], y = b[sortKey];
+        if (x == null && y == null) return 0;
+        if (x == null) return 1;                    // nulls (no ROAS) always sink
+        if (y == null) return -1;
+        if (!col.num) return sortDir * String(x).localeCompare(String(y));
+        return sortDir * (x - y);
+      });
+    }
+    return rows;
+  }
+
+  function detailHTML(f) {
+    function bar(pct) {
+      return '<div class="bar"><i style="width:' + Math.min(100, Math.max(0, pct)) + '%"></i></div>';
+    }
+    var titan = f.facility_code === "GRN1"
+      ? '<div class="titan-strip"><img src="assets/titan-logo.png" alt="Titan Self Storage Center">' +
+        '<span>GRN1 operates locally as Titan Self Storage Center</span></div>'
+      : "";
+    return titan + '<div class="mini-grid">' +
+      '<div class="mini"><div class="lbl">Sq ft occupancy</div><div class="v">' + fmtPct(f.occupancy_sqft_pct, 2) + '</div>' + bar(f.occupancy_sqft_pct) + '</div>' +
+      '<div class="mini"><div class="lbl">Space occupancy</div><div class="v">' + fmtPct(f.occupancy_units_pct, 2) + '</div>' + bar(f.occupancy_units_pct) + '</div>' +
+      '<div class="mini"><div class="lbl">Net move-ins · MTD</div><div class="v ' + signClass(f.net_move_ins_mtd) + '">' + fmtSigned(f.net_move_ins_mtd) + '</div>' +
+        '<div class="s">' + f.move_ins_mtd + ' in / ' + f.move_outs_mtd + ' out</div></div>' +
+      '<div class="mini"><div class="lbl">Leads &amp; conversion</div><div class="v">' + f.leads_mtd + ' <small style="font-size:11px;color:var(--dim)">leads</small></div>' +
+        '<div class="s">' + fmtPct(f.conversion_pct, 1) + ' converted MTD</div></div>' +
+      '<div class="mini"><div class="lbl">Delinquency</div><div class="v ' + delinqClass(f.delinquency_pct) + '">' + fmtPct(f.delinquency_pct, 1) + '</div>' +
+        '<div class="s">of units delinquent</div></div>' +
+      '<div class="mini"><div class="lbl">Net revenue · MTD</div><div class="v">' + fmtMoneyFull(f.revenue_net_mtd) + '</div>' +
+        '<div class="s">' + (f.rent_per_sqft == null ? "—" : "$" + f.rent_per_sqft.toFixed(2) + " / sq ft") + '</div></div>' +
+      '<div class="mini"><div class="lbl">ROAS · standard LTV</div><div class="v">' + fmtX(f.roas_standard) + '</div>' +
+        '<div class="s">' + (f.roas_standard == null ? "no paid campaigns attributed" : "this month") + '</div></div>' +
+      '</div>';
+  }
+
+  function renderFacBody() {
+    var rows = facRows();
+    var body = document.getElementById("facBody");
+    body.innerHTML = "";
+
+    document.getElementById("facTitle").textContent =
+      "Facilities — " + scopeLabel() + " (" + rows.length + ")";
+
+    rows.forEach(function (f) {
+      var tr = document.createElement("tr");
+      tr.className = "fac";
+      tr.setAttribute("aria-expanded", String(expanded === f.facility_code));
+      tr.tabIndex = 0;
+
+      var cells = COLS.map(function (c, i) {
+        var v = f[c.key];
+        if (i === 0) {
+          return '<td><span class="caret">▶</span><span class="code">' + esc(f.facility_code) + '</span>' +
+                 esc(f.facility_name) +
+                 (scope === "portfolio" ? '<span class="btag">' + esc(f.brand) + "</span>" : "") + "</td>";
+        }
+        var cls = c.cls ? c.cls(v) : "";
+        return "<td" + (cls ? ' class="' + cls + '"' : "") + ">" + (v == null ? "—" : c.fmt(v)) + "</td>";
+      });
+      tr.innerHTML = cells.join("");
+
+      function toggle() {
+        expanded = (expanded === f.facility_code) ? null : f.facility_code;
+        renderFacBody();
+      }
+      tr.addEventListener("click", toggle);
+      tr.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggle(); }
+      });
+      body.appendChild(tr);
+
+      if (expanded === f.facility_code) {
+        var dtr = document.createElement("tr");
+        dtr.className = "detail";
+        dtr.innerHTML = '<td colspan="' + COLS.length + '">' + detailHTML(f) + "</td>";
+        body.appendChild(dtr);
+      }
+    });
+
+    /* totals row = the currently selected scope's real rollup */
+    var d = scopeData(), mv = d.move_activity_mtd;
+    var trTot = document.createElement("tr");
+    trTot.className = "total";
+    trTot.innerHTML =
+      "<td>TOTAL · " + esc(scopeLabel()) + " (" + rows.length + ")</td>" +
+      "<td>" + fmtPct(d.occupancy.occupancy_sqft_pct, 2) + "</td>" +
+      "<td>" + fmtPct(d.occupancy.occupancy_units_pct, 2) + "</td>" +
+      "<td>—</td>" +
+      "<td>" + d.leads_mtd.leads_total + "</td>" +
+      "<td>" + fmtPct(d.leads_mtd.conversion_pct, 1) + "</td>" +
+      "<td>" + mv.move_ins + "</td>" +
+      "<td>" + mv.move_outs + "</td>" +
+      '<td class="' + signClass(mv.net_move_ins) + '">' + fmtSigned(mv.net_move_ins) + "</td>" +
+      "<td>—</td>" +
+      "<td>" + fmtMoneyFull(d.revenue_mtd.revenue_authoritative) + "</td>" +
+      "<td>" + fmtX(d.roas.roas_standard) + "</td>";
+    body.appendChild(trTot);
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  campaign efficiency
+   * ------------------------------------------------------------------ */
+  function renderCampaigns() {
+    var camps = scopeData().campaign_efficiency_month || [];
+    var body = document.getElementById("campBody");
+    document.getElementById("campTitle").textContent =
+      "Campaign efficiency — " + scopeLabel() + " (" + camps.length + ")";
+    body.innerHTML = "";
+
+    if (!camps.length) {
+      body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">No campaigns for this scope this month.</td></tr>';
+      return;
+    }
+    camps.forEach(function (c, i) {
+      var zero = !c.conversions;
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td><span class="rank">' + (i + 1) + '</span>' + esc(c.campaign_name) + "</td>" +
+        "<td>" + fmtMoneyFull(c.cost) + "</td>" +
+        '<td' + (zero ? ' class="zero"' : "") + ">" + c.conversions + "</td>" +
+        "<td>" + (c.cost_per_conversion == null ? "—" : fmtMoneyFull(c.cost_per_conversion)) + "</td>" +
+        "<td>" + (zero ? "—" : fmtMoneyFull(c.conversion_value)) + "</td>" +
+        "<td>" + (c.value_per_cost == null || zero ? "—" : c.value_per_cost.toFixed(1) + "x") + "</td>";
+      body.appendChild(tr);
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  scope switching & boot
+   * ------------------------------------------------------------------ */
+  function setScope(s) {
+    if (scope === s) return;
+    scope = s; expanded = null;
+    paintHeroPressed();
+    var parts = ["scopebar", "kpis", "facSection", "campSection"].map(function (id) {
+      return document.getElementById(id);
+    });
+    if (!MOTION) { renderKpis(); renderFacBody(); renderCampaigns(); return; }
+    parts.forEach(function (el) { el.classList.add("swap-out"); });
+    setTimeout(function () {
+      renderKpis(); renderFacBody(); renderCampaigns();
+      // timeout, not rAF — rAF can stall in throttled/background tabs and
+      // would leave the sections faded out
+      setTimeout(function () {
+        parts.forEach(function (el) { el.classList.remove("swap-out"); });
+      }, 30);
+    }, 180);
+  }
+
+  function renderAll() {
+    var fresh = "Data as of " + azTime(DATA.generated_at) + " AZ";
+    document.getElementById("freshness").innerHTML =
+      "<b>" + esc(fresh) + "</b> · refreshed twice daily";
+    document.getElementById("footFresh").textContent =
+      fresh + " · refreshed twice daily (12pm & 7pm Arizona) from the portfolio datastore.";
+    document.getElementById("mockBadge").hidden = !DATA.mock_data;
+    document.getElementById("subTitle").textContent =
+      DATA.facilities.length + " facilities · NSS · AFAM · SL Reno · month-to-date";
+
+    renderHero(); renderKpis(); renderFacHead(); renderFacBody(); renderCampaigns();
+    document.getElementById("status").hidden = true;
+    document.getElementById("dash").hidden = false;
+
+    /* staggered entrance for below-fold sections as they scroll into view */
+    var toReveal = document.querySelectorAll("section.reveal, footer.reveal");
+    if (MOTION && "IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+        });
+      }, { threshold: 0.08 });
+      Array.prototype.forEach.call(toReveal, function (el) { io.observe(el); });
+    } else {
+      Array.prototype.forEach.call(toReveal, function (el) { el.classList.add("in"); });
+    }
+  }
+
+  document.getElementById("facSearch").addEventListener("input", renderFacBody);
+
+  /* scroll parallax on the fixed glow layers — background only, so the
+     table's sticky headers are unaffected; off under reduced-motion */
+  (function () {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var els = Array.prototype.slice.call(document.querySelectorAll(".plx[data-speed]"));
+    // rAF loop with change detection (not a scroll listener — event
+    // delivery proved unreliable across embedded/headless contexts)
+    var last = null;
+    (function loop() {
+      var y = window.scrollY || 0;
+      if (y !== last) {
+        last = y;
+        els.forEach(function (el) {
+          var v = -y * parseFloat(el.getAttribute("data-speed"));
+          el.style.transform = "translate3d(0," + v.toFixed(1) + "px,0)";
+        });
+      }
+      requestAnimationFrame(loop);
+    })();
+  })();
+
+  fetch("portfolio-data.json", { cache: "no-store" })
+    .then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(function (json) { DATA = json; renderAll(); })
+    .catch(function (err) {
+      document.getElementById("status").innerHTML =
+        '<div class="err">Couldn’t load portfolio-data.json</div>' +
+        '<div style="margin-top:8px">' + esc(err.message) +
+        " — if you’re viewing this from the filesystem, serve it over HTTP (e.g. <code>python3 -m http.server</code>).</div>";
+    });
+})();
+</script>
+</body>
+</html>

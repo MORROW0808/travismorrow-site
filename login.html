@@ -5,12 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Enter password — Travis Morrow</title>
 <meta name="robots" content="noindex, nofollow">
+<script src="theme.js"></script>
+<script>TMTheme.init();</script>
 <style>
   :root{
-    --bg:#0d1117; --border:rgba(255,255,255,0.08);
-    --text:#c9d1d9; --dim:#8b98a5; --bright:#e6edf3;
-    --accent:#4da3ff; --accent-2:#22b8cf; --error:#f85149;
+    /* NSS / AFAM brand theme — NSS Red #B92732, AFAM Red #B62025,
+       charcoal #212121 (Assets/BRAND-GUIDELINES.md). --accent-bright is a
+       lightened brand red for small text on dark. */
+    --bg:#141414; --border:rgba(255,255,255,0.08);
+    --text:#d2d2d2; --dim:#9c9c9c; --bright:#f2f2f2;
+    --accent:#B92732; --accent-2:#B62025; --accent-bright:#de5964;
+    --error:#f85149; --ok:#3fb950;
+    --chip-bg:rgba(255,255,255,0.04);
   }
+  /* honors the site-wide stored theme; no toggle here — it's a
+     pass-through page and the chrome should stay minimal */
+  :root[data-theme="light"]{
+    --bg:#F2F2F0; --border:#D9DBDE;
+    --text:#33363B; --dim:#6B6E73; --bright:#111318;
+    --accent-bright:#B92732; --error:#CF222E; --ok:#1A7F37;
+    --chip-bg:rgba(0,0,0,0.035);
+  }
+  :root[data-theme="light"] body::before{ opacity:.4; }
+  :root[data-theme="light"] .card{ background:#FFFFFF; box-shadow:0 8px 30px rgba(16,18,20,0.10); }
   *{box-sizing:border-box;}
   html,body{height:100%;}
   body{
@@ -22,12 +39,12 @@
   body::before{
     content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
     background:radial-gradient(ellipse at 50% 38%,
-      rgba(77,163,255,0.10) 0%, rgba(34,184,207,0.05) 32%, rgba(13,17,23,0) 64%);
+      rgba(185,39,50,0.12) 0%, rgba(182,32,37,0.05) 32%, rgba(20,20,20,0) 64%);
   }
   .card{
     position:relative; z-index:1;
     width:100%; max-width:380px;
-    background:rgba(13,17,23,0.6); border:1px solid var(--border);
+    background:rgba(33,33,33,0.6); border:1px solid var(--border);
     border-radius:16px; padding:34px 30px 30px;
     box-shadow:0 20px 60px rgba(0,0,0,0.45);
     text-align:center;
@@ -35,8 +52,9 @@
   .lock{
     width:46px; height:46px; margin:0 auto 18px;
     display:flex; align-items:center; justify-content:center;
-    border-radius:12px; color:#04121f;
+    border-radius:12px; color:#fff;
     background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 4px 16px rgba(185,39,50,0.28);
   }
   .lock svg{ width:22px; height:22px; }
   h1{ margin:0 0 6px; font-size:19px; font-weight:600; color:var(--bright); }
@@ -44,26 +62,27 @@
   form{ display:flex; flex-direction:column; gap:12px; }
   input[type=password]{
     width:100%; padding:13px 14px; font-size:15px;
-    color:var(--bright); background:rgba(255,255,255,0.04);
+    color:var(--bright); background:var(--chip-bg);
     border:1px solid var(--border); border-radius:10px; outline:none;
     transition:border-color .15s ease, box-shadow .15s ease;
   }
   input[type=password]:focus{
-    border-color:var(--accent);
-    box-shadow:0 0 0 3px rgba(77,163,255,0.18);
+    border-color:var(--accent-bright);
+    box-shadow:0 0 0 3px rgba(185,39,50,0.20);
   }
   button{
     padding:13px 14px; font-size:15px; font-weight:600; cursor:pointer;
-    color:#04121f; border:none; border-radius:10px;
+    color:#fff; border:none; border-radius:10px;
     background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 6px 20px rgba(185,39,50,0.25);
     transition:transform .12s ease, filter .12s ease;
   }
-  button:hover{ filter:brightness(1.06); }
+  button:hover{ filter:brightness(1.1); }
   button:active{ transform:translateY(1px); }
   button:disabled{ opacity:.6; cursor:default; }
   .msg{ min-height:18px; margin-top:12px; font-size:13px; }
   .msg.error{ color:var(--error); }
-  .msg.ok{ color:var(--accent-2); }
+  .msg.ok{ color:var(--ok); } /* success stays green — brand red would read as an error */
   .hint{ margin-top:18px; font-size:11.5px; color:var(--dim); opacity:.75; }
   .shake{ animation:shake .4s; }
   @keyframes shake{
