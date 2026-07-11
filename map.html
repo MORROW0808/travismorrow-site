@@ -187,7 +187,9 @@
     border-bottom:1px solid var(--panel-border); position:relative;
   }
   #card .c-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
-  #card .c-photo svg{ width:34px; height:34px; color:var(--dim); opacity:.6; }
+  #card .c-photo{ flex-direction:column; gap:6px; }
+  #card .c-photo svg{ width:30px; height:30px; color:var(--dim); opacity:.6; }
+  #card .c-nophoto{ font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
   #card .c-body{ padding:11px 14px 0; }
   #card .c-sample{
     position:absolute; top:8px; right:8px;
@@ -348,27 +350,34 @@
     });
   }
 
-  /* ---------- facility stats: PLACEHOLDERS until the real export lands.
-     Wire-in points (expected from the data task; names to confirm):
-       f.photo               -> image path, e.g. assets/facilities/<code>.jpg
-       f.occupancy_sqft_pct  -> occupancy (sq ft %)
-       f.units_total         -> total units
-       f.net_move_ins_mtd    -> net move-ins MTD
-       f.net_move_ins_ytd    -> net move-ins YTD
-     Until those exist, dummies are generated deterministically per code and
-     the card is badged SAMPLE so placeholder numbers can't read as real. */
+  /* ---------- facility stats: joined live from portfolio-data.json
+     (occupancy_sqft_pct / units_total / net_move_ins_mtd /
+     net_move_ins_ytd) and facility-images.json (local_path; facility 338
+     has a documented photo gap and gets an explicit no-photo state).
+     The deterministic dummies + SAMPLE badge remain only as a fallback
+     if a facility ever goes missing from the export. ---------- */
   function facStats(f) {
-    var real = f.occupancy_sqft_pct != null;
+    var st = DATA.statsByCode[f.facility_code];
+    if (st && st.occupancy_sqft_pct != null) {
+      return {
+        photo: DATA.photoByCode[f.facility_code] || null,
+        occ: st.occupancy_sqft_pct,
+        units: st.units_total,
+        netMtd: Math.round(st.net_move_ins_mtd),
+        netYtd: Math.round(st.net_move_ins_ytd),
+        sample: false
+      };
+    }
     var h = 0;
     for (var i = 0; i < f.facility_code.length; i++)
       h = (h * 31 + f.facility_code.charCodeAt(i)) % 1000;
     return {
-      photo: f.photo || null,
-      occ:    real ? f.occupancy_sqft_pct : 68 + (h % 28) + (h % 10) / 10,
-      units:  f.units_total != null ? f.units_total : 380 + (h % 52) * 10,
-      netMtd: f.net_move_ins_mtd != null ? f.net_move_ins_mtd : ((h % 17) - 6),
-      netYtd: f.net_move_ins_ytd != null ? f.net_move_ins_ytd : ((h % 61) - 18),
-      sample: !real
+      photo: DATA.photoByCode[f.facility_code] || null,
+      occ: 68 + (h % 28) + (h % 10) / 10,
+      units: 380 + (h % 52) * 10,
+      netMtd: (h % 17) - 6,
+      netYtd: (h % 61) - 18,
+      sample: true
     };
   }
   function signCls(v) { return v > 0 ? "up" : v < 0 ? "down" : "zero"; }
@@ -387,7 +396,7 @@
       '<div class="c-photo">' +
         (st.photo
           ? '<img src="' + esc(st.photo) + '" alt="' + esc(f.facility_code) + ' facility photo" loading="lazy">'
-          : PHOTO_GLYPH) +
+          : PHOTO_GLYPH + '<span class="c-nophoto">No photo available</span>') +
         (st.sample ? '<span class="c-sample">SAMPLE</span>' : "") +
       "</div>" +
       '<div class="c-body">' +
@@ -516,9 +525,16 @@
   /* ---------- boot ---------- */
   Promise.all([
     fetch("facility-coordinates.json", { cache:"no-store" }).then(function (r) { return r.json(); }),
-    fetch("facility-market-overlays.json", { cache:"no-store" }).then(function (r) { return r.json(); })
+    fetch("facility-market-overlays.json", { cache:"no-store" }).then(function (r) { return r.json(); }),
+    fetch("portfolio-data.json", { cache:"no-store" }).then(function (r) { return r.json(); }),
+    fetch("facility-images.json", { cache:"no-store" }).then(function (r) { return r.json(); })
   ]).then(function (res) {
-    DATA = { facilities:res[0].facilities, markets:res[1].markets };
+    DATA = { facilities:res[0].facilities, markets:res[1].markets,
+             statsByCode:{}, photoByCode:{} };
+    res[2].facilities.forEach(function (f) { DATA.statsByCode[f.facility_code] = f; });
+    Object.keys(res[3].facilities).forEach(function (code) {
+      DATA.photoByCode[code] = res[3].facilities[code].local_path || null;
+    });
 
     /* panel, legend & freshness don't need the basemap — render first */
     renderPanel();
