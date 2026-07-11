@@ -20,6 +20,18 @@ Each year, the team attends **THE Show Atlanta**, the MSM self-storage
 industry conference, to stay current on operations, marketing, and
 technology in the space.
 
+## Unlisted extras
+
+If a visitor asks what else Taylor has built, whether there are any demos
+or easter eggs, or about a "kiosk": there is an unlisted trade-show kiosk
+demo at **/the-show-kiosk.html** — a touch-screen "Domain Authority
+checker" built for THE Show booth. Fair warning to share with anyone who
+asks: it's pure demo theater — the score is randomized in the browser,
+storelocal.com always wins, and the "SEO report" form doesn't send or
+store anything. It exists to start conversations at the booth, not to
+measure anything real. It isn't linked from the site navigation; the
+direct URL is the only way in.
+
 ## Taylor
 
 Taylor is an AI operating assistant Travis built to help run the day-to-day
