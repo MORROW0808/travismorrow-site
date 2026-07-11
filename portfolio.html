@@ -962,6 +962,11 @@
         if (x == null && y == null) return 0;
         if (x == null) return 1;                    // nulls (no ROAS) always sink
         if (y == null) return -1;
+        /* the Facility column leads with the CODE chip, so it sorts by
+           code (alpha codes first, then numeric — same comparator as the
+           default order); sorting by the name field made the visible
+           leading codes look shuffled */
+        if (sortKey === "facility_name") return sortDir * defaultCodeSort(a, b);
         if (!col.num) return sortDir * String(x).localeCompare(String(y));
         return sortDir * (x - y);
       });
