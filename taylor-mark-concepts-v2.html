@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taylor DeMoreaux — mark concepts, round 2</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  /* Round 2 — brief: Jarvis (Iron Man) x Taylor (the ex-military security
+     chief): military-grade, modern, sleek. Language: HUD/instrument
+     precision, stealth-panel geometry, tailored restraint. Palette:
+     matte gunmetal + steel monochrome with ONE luminous ice-cyan accent
+     (#5AC8FA / #9FD8FF) — Jarvis's HUD glow, used sparingly like an
+     indicator lamp, never as a fill. No facility red, no friendly blue. */
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  section{ padding:44px 48px 54px; }
+  section.dark{ background:#101418; color:#c3ccd5; }
+  section.light{ background:#EDEDEA; color:#33363B; border-top:1px solid #D5D7DA; }
+  .sheet-cap{
+    font-size:11px; letter-spacing:.26em; text-transform:uppercase; margin:0 0 8px;
+  }
+  section.dark .sheet-cap{ color:#5AC8FA; }
+  section.light .sheet-cap{ color:#0B7FA8; }
+  .sheet-sub{ font-size:12px; margin:0 0 34px; max-width:70ch; line-height:1.6; }
+  section.dark .sheet-sub{ color:#7d8894; }
+  section.light .sheet-sub{ color:#6B6E73; }
+  .row{
+    display:grid; grid-template-columns:170px 1fr 350px; gap:38px; align-items:center;
+    padding:30px 0; border-bottom:1px solid rgba(128,136,144,0.16);
+  }
+  .row:last-child{ border-bottom:0; }
+  .mk{ display:flex; align-items:center; justify-content:center; }
+  .mk svg{ width:132px; height:132px; display:block; }
+  .lockup{ display:flex; align-items:center; gap:20px; }
+  .lockup svg{ width:54px; height:54px; flex:none; }
+  .nm{ line-height:1.1; }
+  .nm .n1{
+    font-size:20px; font-weight:350; letter-spacing:.34em; text-transform:uppercase;
+  }
+  section.dark .nm .n1{ color:#eef2f6; }
+  section.light .nm .n1{ color:#14181c; }
+  .nm .n1 b{ font-weight:650; letter-spacing:inherit; }
+  .nm .n2{
+    font-size:9px; letter-spacing:.46em; text-transform:uppercase; margin-top:7px;
+  }
+  section.dark .nm .n2{ color:#5AC8FA; }
+  section.light .nm .n2{ color:#0B7FA8; }
+  .meta h3{ margin:0 0 6px; font-size:15px; font-weight:650; }
+  section.dark .meta h3{ color:#eef2f6; }
+  section.light .meta h3{ color:#14181c; }
+  .meta p{ margin:0; font-size:12.5px; line-height:1.6; }
+  section.dark .meta p{ color:#8b96a1; }
+  section.light .meta p{ color:#6B6E73; }
+  .smallrow{ display:flex; gap:16px; align-items:center; margin-top:14px; }
+  .smallrow svg{ display:block; }
+  .s32 svg{ width:32px; height:32px; }
+  .s20 svg{ width:20px; height:20px; }
+  .smallrow em{ font-style:normal; font-size:10.5px; opacity:.6; }
+
+  /* concept 3 wordplate is typeset in HTML for precise tracking */
+  .plate{
+    display:inline-block; text-align:left; padding:18px 26px 16px; position:relative;
+  }
+  .plate .rule-top{ display:block; height:1px; width:100%; margin-bottom:14px; }
+  .plate .rule-bot{ display:block; height:1px; width:62%; margin-top:13px; position:relative; }
+  section.dark .plate .rule-top, section.dark .plate .rule-bot{ background:#3a434d; }
+  section.light .plate .rule-top, section.light .plate .rule-bot{ background:#b9bec4; }
+  .plate .rule-bot::after{
+    content:""; position:absolute; right:-38%; top:-1px; width:22px; height:3px;
+  }
+  section.dark .plate .rule-bot::after{ background:#5AC8FA; box-shadow:0 0 8px rgba(90,200,250,.55); }
+  section.light .plate .rule-bot::after{ background:#0B7FA8; box-shadow:none; }
+  .plate .t1{
+    display:block; font-size:30px; font-weight:300; letter-spacing:.44em;
+    text-transform:uppercase; white-space:nowrap;
+  }
+  section.dark .plate .t1{ color:#eef2f6; }
+  section.light .plate .t1{ color:#14181c; }
+  .plate .t1 b{ font-weight:680; }
+  .plate .t2{
+    display:block; font-size:10px; font-weight:500; letter-spacing:.6em;
+    text-transform:uppercase; margin-top:9px;
+  }
+  section.dark .plate .t2{ color:#7d8894; }
+  section.light .plate .t2{ color:#6B6E73; }
+</style>
+</head>
+<body>
+
+<!-- ============================ DARK ============================ -->
+<section class="dark">
+  <p class="sheet-cap">Taylor DeMoreaux · mark concepts · round 2 · on dark</p>
+  <p class="sheet-sub">Brief: Jarvis × Taylor — military-grade, modern, sleek. Gunmetal
+     monochrome; one ice-cyan indicator, used like a status lamp, never a fill.</p>
+
+  <!-- ---- Concept 4: RETICLE ---- -->
+  <div class="row">
+    <div class="mk">
+      <svg viewBox="0 0 120 120" aria-label="Concept 4, reticle monogram">
+        <defs>
+          <filter id="gl4" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="2.6"/>
+          </filter>
+        </defs>
+        <!-- calibration ring -->
+        <g stroke="#3a434d" stroke-width="1">
+          <circle cx="60" cy="60" r="52" fill="none"/>
+        </g>
+        <!-- tick marks: cardinals long, minors short -->
+        <g stroke="#59636e" stroke-width="1.4">
+          <path d="M60 4 V12 M60 108 V116 M4 60 H12 M108 60 H116"/>
+        </g>
+        <g stroke="#3a434d" stroke-width="1">
+          <path d="M88.3 11.0 L84.3 17.9 M109 31.7 L102.1 35.7 M109 88.3 L102.1 84.3 M88.3 109 L84.3 102.1
+                   M31.7 109 L35.7 102.1 M11.0 88.3 L17.9 84.3 M11.0 31.7 L17.9 35.7 M31.7 11.0 L35.7 17.9"/>
+        </g>
+        <!-- broken instrument arcs -->
+        <g stroke="#8b96a1" stroke-width="1.6" fill="none">
+          <path d="M60 18 A42 42 0 0 1 96.4 39"/>
+          <path d="M96.4 81 A42 42 0 0 1 23.6 81"/>
+          <path d="M23.6 39 A42 42 0 0 1 42 22.4"/>
+        </g>
+        <!-- the T as crosshair -->
+        <g stroke="#eef2f6" stroke-width="3.4" stroke-linecap="square">
+          <path d="M34 42 H86"/>
+          <path d="M60 42 V92"/>
+        </g>
+        <!-- indicator core -->
+        <circle cx="60" cy="42" r="6.5" fill="#5AC8FA" opacity=".38" filter="url(#gl4)"/>
+        <circle cx="60" cy="42" r="2.6" fill="#9FD8FF"/>
+      </svg>
+    </div>
+    <div class="lockup">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="#3a434d" stroke-width="1.2"/>
+        <g stroke="#59636e" stroke-width="1.8">
+          <path d="M60 4 V14 M60 106 V116 M4 60 H14 M106 60 H116"/>
+        </g>
+        <g stroke="#eef2f6" stroke-width="4.4" stroke-linecap="square">
+          <path d="M32 42 H88"/><path d="M60 42 V94"/>
+        </g>
+        <circle cx="60" cy="42" r="3.4" fill="#9FD8FF"/>
+      </svg>
+      <div class="nm">
+        <div class="n1"><b>Taylor</b>&thinsp;DeMoreaux</div>
+        <div class="n2">AI back office</div>
+      </div>
+    </div>
+    <div class="meta">
+      <h3>04 · Reticle</h3>
+      <p>The T is a targeting crosshair inside a calibrated instrument ring —
+         Jarvis's HUD as a monogram. The lamp sits at the intersection: system
+         armed. Ticks and arcs drop away cleanly at small sizes.</p>
+      <div class="smallrow">
+        <span class="s32"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#3a434d" stroke-width="3"/><g stroke="#eef2f6" stroke-width="9" stroke-linecap="square"><path d="M30 42 H90"/><path d="M60 42 V96"/></g><circle cx="60" cy="42" r="6" fill="#9FD8FF"/></svg></span>
+        <span class="s20"><svg viewBox="0 0 120 120"><g stroke="#eef2f6" stroke-width="12" stroke-linecap="square"><path d="M26 40 H94"/><path d="M60 40 V98"/></g><circle cx="60" cy="40" r="8" fill="#9FD8FF"/></svg></span>
+        <em>32 / 20 px — ring, then ticks, drop out</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---- Concept 5: STEALTH PLATE ---- -->
+  <div class="row">
+    <div class="mk">
+      <svg viewBox="0 0 120 120" aria-label="Concept 5, stealth plate">
+        <defs>
+          <linearGradient id="pl5" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#333c45"/><stop offset="1" stop-color="#232a31"/>
+          </linearGradient>
+        </defs>
+        <!-- faceted hex plate with negative-space T -->
+        <path fill-rule="evenodd" fill="url(#pl5)" stroke="#454f5a" stroke-width="1.3"
+          d="M34 22 L86 22 L104 60 L86 98 L34 98 L16 60 Z
+             M36 42 L84 42 L84 52 L66 52 L66 84 L54 84 L54 52 L36 52 Z"/>
+        <!-- machined facet shadows -->
+        <path d="M34 22 L16 60 L34 98" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4"/>
+        <path d="M86 22 L104 60 L86 98" fill="none" stroke="rgba(0,0,0,0.28)" stroke-width="4"/>
+        <!-- indicator: lamp in the T's stem base -->
+        <path d="M54 84 H66" stroke="#5AC8FA" stroke-width="2.4"/>
+        <path d="M54 84 H66" stroke="#9FD8FF" stroke-width="1" opacity=".8"/>
+      </svg>
+    </div>
+    <div class="lockup">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <path fill-rule="evenodd" fill="url(#pl5)" stroke="#454f5a" stroke-width="1.6"
+          d="M34 22 L86 22 L104 60 L86 98 L34 98 L16 60 Z
+             M36 42 L84 42 L84 52 L66 52 L66 84 L54 84 L54 52 L36 52 Z"/>
+        <path d="M54 84 H66" stroke="#5AC8FA" stroke-width="3"/>
+      </svg>
+      <div class="nm">
+        <div class="n1"><b>Taylor</b>&thinsp;DeMoreaux</div>
+        <div class="n2">AI back office</div>
+      </div>
+    </div>
+    <div class="meta">
+      <h3>05 · Stealth plate</h3>
+      <p>A faceted gunmetal panel — insignia geometry, stealth-aircraft angles —
+         with the T cut clean through as negative space. The cyan lamp underlines
+         the stem: powered, silent. Reads as a unit badge.</p>
+      <div class="smallrow">
+        <span class="s32"><svg viewBox="0 0 120 120"><path fill-rule="evenodd" fill="#2c343c" stroke="#454f5a" stroke-width="3" d="M34 22 L86 22 L104 60 L86 98 L34 98 L16 60 Z M34 40 L86 40 L86 54 L68 54 L68 86 L52 86 L52 54 L34 54 Z"/><path d="M52 86 H68" stroke="#5AC8FA" stroke-width="5"/></svg></span>
+        <span class="s20"><svg viewBox="0 0 120 120"><path fill-rule="evenodd" fill="#2c343c" stroke="#454f5a" stroke-width="4" d="M34 22 L86 22 L104 60 L86 98 L34 98 L16 60 Z M32 38 L88 38 L88 56 L70 56 L70 88 L50 88 L50 56 L32 56 Z"/><path d="M50 88 H70" stroke="#5AC8FA" stroke-width="7"/></svg></span>
+        <em>32 / 20 px — cuts widen for legibility</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---- Concept 6: NAMEPLATE ---- -->
+  <div class="row">
+    <div class="mk" style="justify-content:flex-start; grid-column:1 / span 2;">
+      <span class="plate">
+        <span class="rule-top"></span>
+        <span class="t1"><b>Taylor</b>&thinsp;DeMoreaux</span>
+        <span class="t2">AI&nbsp;back&nbsp;office&nbsp;·&nbsp;est.&nbsp;2026</span>
+        <span class="rule-bot"></span>
+      </span>
+    </div>
+    <div class="meta">
+      <h3>06 · Nameplate</h3>
+      <p>No glyph at all — the tailored option. Extended tracking, hairline
+         rules like a machined case engraving, one cyan tick standing off the
+         short rule: the suit, not the armor. Pairs with 04 or 05 as its
+         small-scale mark, or stands alone.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ LIGHT ============================ -->
+<section class="light">
+  <p class="sheet-cap">Same three · on light</p>
+  <p class="sheet-sub">Gunmetal flips to machined charcoal; the lamp deepens to #0B7FA8 and
+     loses its glow — a printed insignia rather than a lit one.</p>
+
+  <div class="row">
+    <div class="mk">
+      <svg viewBox="0 0 120 120" aria-label="Concept 4 on light">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="#b9bec4" stroke-width="1"/>
+        <g stroke="#8a9096" stroke-width="1.4">
+          <path d="M60 4 V12 M60 108 V116 M4 60 H12 M108 60 H116"/>
+        </g>
+        <g stroke="#b9bec4" stroke-width="1">
+          <path d="M88.3 11.0 L84.3 17.9 M109 31.7 L102.1 35.7 M109 88.3 L102.1 84.3 M88.3 109 L84.3 102.1
+                   M31.7 109 L35.7 102.1 M11.0 88.3 L17.9 84.3 M11.0 31.7 L17.9 35.7 M31.7 11.0 L35.7 17.9"/>
+        </g>
+        <g stroke="#5c646c" stroke-width="1.6" fill="none">
+          <path d="M60 18 A42 42 0 0 1 96.4 39"/>
+          <path d="M96.4 81 A42 42 0 0 1 23.6 81"/>
+          <path d="M23.6 39 A42 42 0 0 1 42 22.4"/>
+        </g>
+        <g stroke="#14181c" stroke-width="3.4" stroke-linecap="square">
+          <path d="M34 42 H86"/><path d="M60 42 V92"/>
+        </g>
+        <circle cx="60" cy="42" r="2.6" fill="#0B7FA8"/>
+      </svg>
+    </div>
+    <div class="lockup">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="#b9bec4" stroke-width="1.2"/>
+        <g stroke="#8a9096" stroke-width="1.8"><path d="M60 4 V14 M60 106 V116 M4 60 H14 M106 60 H116"/></g>
+        <g stroke="#14181c" stroke-width="4.4" stroke-linecap="square"><path d="M32 42 H88"/><path d="M60 42 V94"/></g>
+        <circle cx="60" cy="42" r="3.4" fill="#0B7FA8"/>
+      </svg>
+      <div class="nm">
+        <div class="n1"><b>Taylor</b>&thinsp;DeMoreaux</div>
+        <div class="n2">AI back office</div>
+      </div>
+    </div>
+    <div class="meta"><h3>04 · Reticle</h3>
+      <p>Ink crosshair on paper; the lamp goes deep cyan. Still reads as an
+         instrument, now etched rather than lit.</p></div>
+  </div>
+
+  <div class="row">
+    <div class="mk">
+      <svg viewBox="0 0 120 120" aria-label="Concept 5 on light">
+        <path fill-rule="evenodd" fill="#2b3138" stroke="#14181c" stroke-width="1"
+          d="M34 22 L86 22 L104 60 L86 98 L34 98 L16 60 Z
+             M36 42 L84 42 L84 52 L66 52 L66 84 L54 84 L54 52 L36 52 Z"/>
+        <path d="M54 84 H66" stroke="#0B7FA8" stroke-width="2.4"/>
+      </svg>
+    </div>
+    <div class="lockup">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <path fill-rule="evenodd" fill="#2b3138" stroke="#14181c" stroke-width="1.3"
+          d="M34 22 L86 22 L104 60 L86 98 L34 98 L16 60 Z
+             M36 42 L84 42 L84 52 L66 52 L66 84 L54 84 L54 52 L36 52 Z"/>
+        <path d="M54 84 H66" stroke="#0B7FA8" stroke-width="3"/>
+      </svg>
+      <div class="nm">
+        <div class="n1"><b>Taylor</b>&thinsp;DeMoreaux</div>
+        <div class="n2">AI back office</div>
+      </div>
+    </div>
+    <div class="meta"><h3>05 · Stealth plate</h3>
+      <p>The plate keeps its gunmetal even on white — insignia stay dark. The
+         white page does the T's work through the cut.</p></div>
+  </div>
+
+  <div class="row">
+    <div class="mk" style="justify-content:flex-start; grid-column:1 / span 2;">
+      <span class="plate">
+        <span class="rule-top"></span>
+        <span class="t1"><b>Taylor</b>&thinsp;DeMoreaux</span>
+        <span class="t2">AI&nbsp;back&nbsp;office&nbsp;·&nbsp;est.&nbsp;2026</span>
+        <span class="rule-bot"></span>
+      </span>
+    </div>
+    <div class="meta"><h3>06 · Nameplate</h3>
+      <p>Engraved-plate treatment translates directly — charcoal ink, deep cyan
+         tick, no glow needed.</p></div>
+  </div>
+</section>
+
+</body>
+</html>
