@@ -282,7 +282,14 @@
     if (v <= 11) return "warn";
     return "neg";
   }
-  var SAT_COLORS = { pos:"#3fb950", flat:"#8b98a5", warn:"#f5a524", neg:"#f85149" };
+  /* status colors resolved from the theme vars at render time — the dark
+     set fails contrast on the light basemap (same finding as the
+     dashboard: green 2.5:1, amber 1.7:1 on white), so halos and gauge
+     markers re-resolve and restyle on every theme flip */
+  function satColor(cls) {
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue("--" + cls).trim() || "#8b98a5";
+  }
   var SCALE_MAX = 16;
 
   var map, tileLayer, DATA = null, markers = {}, halos = [], selMarket = null, selPin = null;
@@ -302,12 +309,18 @@
   /* ---------- market halos ---------- */
   function addHalos() {
     DATA.markets.forEach(function (m) {
-      var col = SAT_COLORS[satClass(m.sqft_per_capita)];
+      var col = satColor(satClass(m.sqft_per_capita));
       halos.push(L.circle([m.center.lat, m.center.lng], {
         radius: m.radius_miles * 1609.34,
         color: col, weight: 1.2, opacity: 0.45, dashArray: "5 5",
         fillColor: col, fillOpacity: 0.06, interactive: false
       }).addTo(map));
+    });
+  }
+  function restyleHalos() {
+    DATA.markets.forEach(function (m, i) {
+      var col = satColor(satClass(m.sqft_per_capita));
+      halos[i].setStyle({ color: col, fillColor: col });
     });
   }
 
@@ -348,7 +361,7 @@
           " · " + m.sqft_per_capita.toFixed(1) + " sqft/cap</div>" +
         '<div class="m-scale"><div class="band" style="left:' + (7 / SCALE_MAX * 100) + "%;width:" +
           (1 / SCALE_MAX * 100) + '%"></div>' +
-        '<div class="val" style="left:' + pct + "%;background:" + SAT_COLORS[cls] + '"></div></div>' +
+        '<div class="val" style="left:' + pct + "%;background:" + satColor(cls) + '"></div></div>' +
         '<div class="m-scale-cap"><span>0</span><span>7–8 equilibrium</span><span>' + SCALE_MAX + "</span></div>" +
         '<div class="m-detail">' +
           '<div class="dr"><span>Population</span><b>' + m.population.toLocaleString() + "</b></div>" +
@@ -484,6 +497,16 @@
     document.getElementById("themeBtn").addEventListener("click", function () {
       var t = TMTheme.toggle();
       tileLayer.setUrl(TILES[t]);
+      restyleHalos();
+      var keep = selMarket;                 // re-render gauges in new colors
+      renderPanel();
+      if (keep != null) {
+        selMarket = null;
+        Array.prototype.forEach.call(document.querySelectorAll(".mkt"), function (el, j) {
+          el.classList.toggle("sel", j === keep);
+        });
+        selMarket = keep;
+      }
     });
   }).catch(function (err) {
     document.getElementById("mktList").innerHTML =
