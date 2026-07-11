@@ -42,7 +42,7 @@
   :root[data-theme="light"] #plx-b{ opacity:.3; }
   :root[data-theme="light"] a.tool{ box-shadow:0 1px 3px rgba(16,18,20,0.07), 0 6px 18px rgba(16,18,20,0.06); }
   :root[data-theme="light"] a.tool:hover{ box-shadow:0 4px 10px rgba(16,18,20,0.09), 0 12px 26px rgba(16,18,20,0.09), 0 4px 16px rgba(185,39,50,0.08); }
-  :root[data-theme="light"] .logo-row .chip{ border:1px solid var(--border); }
+  /* (logo chips removed — NSS badge matches the PDF's chipless treatment) */
   html.theme-anim body, html.theme-anim body *{
     transition:background-color .35s ease, color .35s ease,
                border-color .35s ease, box-shadow .35s ease !important;
@@ -176,13 +176,11 @@
     display:flex; align-items:center; justify-content:center; gap:44px; flex-wrap:wrap;
   }
   .logo-row img{ display:block; }
-  /* NSS badge is designed for white backgrounds (brand addendum:
-     "as-is on white") — white chip carries it on this dark page */
-  .logo-row .chip{
-    background:#fff; border-radius:10px; padding:9px 14px; display:inline-flex;
-  }
-  .logo-row img.nss{ height:44px; width:auto; }
+  /* NSS badge sits chipless, exactly as the Portfolio Snapshot PDF renders
+     it (transparent badge body on dark; self-contained black badge on light) */
+  .logo-row img.nss{ height:50px; width:auto; }
   .logo-row img.afam{ height:32px; width:auto; opacity:.92; }
+  .logo-row img.sls{ height:21px; width:auto; opacity:.92; }
 
   footer{
     position:relative; z-index:1;
@@ -203,14 +201,15 @@
   :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
   :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
   /* AFAM logo swaps to its charcoal-'STORAGE' variant on light pages */
-  :root[data-theme="light"] img.afam.for-dark{ display:none; }
-  :root[data-theme="dark"] img.afam.for-light{ display:none; }
+  :root[data-theme="light"] img.for-dark{ display:none; }
+  :root[data-theme="dark"] img.for-light{ display:none; }
 
   @media (max-width:640px){
     .cards{ grid-template-columns:1fr; }
-    .logo-row{ gap:34px; }
-    .logo-row img.nss{ height:42px; }
-    .logo-row img.afam{ height:27px; }
+    .logo-row{ gap:30px; }
+    .logo-row img.nss{ height:44px; }
+    .logo-row img.afam{ height:26px; }
+    .logo-row img.sls{ height:17px; }
   }
   /* entrance reveals (containers only — the parallax cards own their transform) */
   .reveal{ opacity:0; }
@@ -326,9 +325,12 @@
     <section class="brands reveal">
       <p class="cap">Built around the operation</p>
       <div class="logo-row">
-        <span class="chip"><img class="nss" src="assets/nss-logo.png" alt="National Self Storage"></span>
+        <img class="nss for-dark" src="assets/nss-logo-report.png" alt="National Self Storage">
+        <img class="nss for-light" src="assets/nss-logo.png" alt="National Self Storage">
         <img class="afam for-dark" src="assets/afam-logo.png" alt="A Family Storage">
         <img class="afam for-light" src="assets/afam-logo-light.png" alt="A Family Storage">
+        <img class="sls for-dark" src="assets/sls-logo.png" alt="Storelocal Storage">
+        <img class="sls for-light" src="assets/sls-logo-light.png" alt="Storelocal Storage">
       </div>
     </section>
   </main>

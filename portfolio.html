@@ -173,9 +173,14 @@
     box-shadow:var(--shadow-card), 0 6px 24px rgba(185,39,50,0.22);
   }
   .tile .brand{
-    display:flex; align-items:baseline; gap:8px; margin-bottom:12px;
-    padding-bottom:9px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:9px; margin-bottom:12px;
+    padding-bottom:9px; border-bottom:1px solid var(--line); min-height:36px;
   }
+  .tile .brand img{ display:block; width:auto; }
+  .tile .brand img.b-nss{ height:26px; }
+  .tile .brand img.b-afam{ height:17px; }
+  .tile .brand img.b-sls{ height:13px; }
+  .tile .brand .ct{ margin-left:auto; }
   .tile .brand .nm{ font-size:13px; font-weight:700; letter-spacing:.08em; color:var(--bright); text-transform:uppercase; }
   .tile .brand .ct{ font-size:11px; color:var(--dim); }
   .tile .halves{ display:flex; align-items:stretch; }
@@ -309,6 +314,13 @@
   .mini .lbl{ font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--dim); margin-bottom:5px; }
   .mini .v{ font-size:17px; font-weight:800; letter-spacing:-0.02em; color:var(--bright); font-variant-numeric:tabular-nums; }
   .mini .s{ font-size:10.5px; color:var(--dim); margin-top:3px; }
+  .titan-strip{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .titan-strip img{ height:22px; width:auto; display:block; }
+  .titan-strip span{ font-size:11px; color:var(--dim); }
+  /* addendum: on light stock the white Titan wordmark rides a navy chip */
+  :root[data-theme="light"] .titan-strip img{
+    background:#17365D; height:34px; padding:6px 11px; border-radius:6px;
+  }
   .mini .bar{ height:5px; border-radius:3px; background:var(--track); margin-top:7px; position:relative; overflow:hidden; }
   .mini .bar i{ position:absolute; inset:0 auto 0 0; border-radius:3px;
     background:linear-gradient(90deg, var(--meter-a), var(--meter-b)); }
@@ -326,16 +338,15 @@
     display:flex; align-items:center; gap:30px; flex-wrap:wrap; margin-bottom:14px;
   }
   footer .brand-row img{ display:block; }
-  /* the NSS badge is designed for white backgrounds (brand addendum:
-     "as-is on white"), so it sits on a white chip on this dark page */
-  footer .brand-row .chip{
-    background:#fff; border-radius:8px; padding:6px 10px; display:inline-flex;
-  }
-  footer .brand-row img.nss{ height:30px; width:auto; }
+  /* NSS badge sits directly on the panel with no framing — same treatment
+     as the actual Portfolio Snapshot PDF (its vendored logo has a
+     transparent badge body); light mode uses the black-body badge, which
+     is self-contained on white */
+  footer .brand-row img.nss{ height:34px; width:auto; }
   footer .brand-row img.afam{ height:22px; width:auto; opacity:.92; }
-  :root[data-theme="light"] footer .brand-row .chip{ border:1px solid var(--border); }
-  :root[data-theme="light"] img.afam.for-dark{ display:none; }
-  :root[data-theme="dark"] img.afam.for-light{ display:none; }
+  footer .brand-row img.sls{ height:15px; width:auto; opacity:.92; }
+  :root[data-theme="light"] img.for-dark{ display:none; }
+  :root[data-theme="dark"] img.for-light{ display:none; }
 
   /* ---------- motion: entrances, scope swaps, focus ---------- */
   .reveal{ opacity:0; }
@@ -460,9 +471,12 @@
 
     <footer class="reveal">
       <div class="brand-row">
-        <span class="chip"><img class="nss" src="assets/nss-logo.png" alt="National Self Storage"></span>
+        <img class="nss for-dark" src="assets/nss-logo-report.png" alt="National Self Storage">
+        <img class="nss for-light" src="assets/nss-logo.png" alt="National Self Storage">
         <img class="afam for-dark" src="assets/afam-logo.png" alt="A Family Storage">
         <img class="afam for-light" src="assets/afam-logo-light.png" alt="A Family Storage">
+        <img class="sls for-dark" src="assets/sls-logo.png" alt="Storelocal Storage">
+        <img class="sls for-light" src="assets/sls-logo-light.png" alt="Storelocal Storage">
       </div>
       <div id="footFresh"></div>
       <div>ROAS is shown as an ×-multiple under both the standard and the more conservative LTV assumption.
@@ -583,11 +597,15 @@
 
     var host = document.getElementById("hero");
     host.innerHTML = "";
-    /* tiles keep typographic brand labels — the real logo artwork is too
-       small to read at tile scale (tried it), so it lives in the footer
-       brand row and on the landing page instead */
+    /* brand tiles carry the real logo artwork (theme-swapped); the
+       Portfolio tile stays typographic — it has no logo of its own */
+    var LOGOS = {
+      "NSS":     { cls:"b-nss",  dark:"assets/nss-logo-report.png", light:"assets/nss-logo.png" },
+      "AFAM":    { cls:"b-afam", dark:"assets/afam-logo.png",       light:"assets/afam-logo-light.png" },
+      "SL Reno": { cls:"b-sls",  dark:"assets/sls-logo.png",        light:"assets/sls-logo-light.png" }
+    };
     var entries = BRANDS.map(function (b) {
-      return { key:b, label:b, count:counts[b] || 0, d:DATA.brands[b] };
+      return { key:b, label:b, count:counts[b] || 0, d:DATA.brands[b], logo:LOGOS[b] };
     }).concat([{ key:"portfolio", label:"Portfolio", count:DATA.facilities.length, d:DATA.portfolio }]);
 
     entries.forEach(function (e, idx) {
@@ -600,8 +618,12 @@
       btn.type = "button";
       btn.className = "tile";
       btn.setAttribute("aria-pressed", String(scope === e.key));
+      var brandHead = e.logo
+        ? '<img class="' + e.logo.cls + ' for-dark" src="' + e.logo.dark + '" alt="' + esc(e.label) + '">' +
+          '<img class="' + e.logo.cls + ' for-light" src="' + e.logo.light + '" alt="' + esc(e.label) + '">'
+        : '<span class="nm">' + esc(e.label) + '</span>';
       btn.innerHTML =
-        '<div class="brand"><span class="nm">' + esc(e.label) + '</span>' +
+        '<div class="brand">' + brandHead +
         '<span class="ct">' + e.count + (e.count === 1 ? " store" : " stores") + '</span></div>' +
         '<div class="halves">' +
           '<div class="half"><div class="lbl">Net move-ins · MTD</div>' +
@@ -767,7 +789,11 @@
     function bar(pct) {
       return '<div class="bar"><i style="width:' + Math.min(100, Math.max(0, pct)) + '%"></i></div>';
     }
-    return '<div class="mini-grid">' +
+    var titan = f.facility_code === "GRN1"
+      ? '<div class="titan-strip"><img src="assets/titan-logo.png" alt="Titan Self Storage Center">' +
+        '<span>GRN1 operates locally as Titan Self Storage Center</span></div>'
+      : "";
+    return titan + '<div class="mini-grid">' +
       '<div class="mini"><div class="lbl">Sq ft occupancy</div><div class="v">' + fmtPct(f.occupancy_sqft_pct, 2) + '</div>' + bar(f.occupancy_sqft_pct) + '</div>' +
       '<div class="mini"><div class="lbl">Space occupancy</div><div class="v">' + fmtPct(f.occupancy_units_pct, 2) + '</div>' + bar(f.occupancy_units_pct) + '</div>' +
       '<div class="mini"><div class="lbl">Net move-ins · MTD</div><div class="v ' + signClass(f.net_move_ins_mtd) + '">' + fmtSigned(f.net_move_ins_mtd) + '</div>' +

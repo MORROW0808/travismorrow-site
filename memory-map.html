@@ -253,6 +253,33 @@
   #panel .p-conn-item:hover{ background:rgba(185,39,50,0.17); color:var(--text-bright); }
   #panel .p-conn-dot{ width:7px; height:7px; border-radius:50%; flex:0 0 auto; }
 
+  /* ---------- hover preview card ---------- */
+  #hoverCard{
+    position:fixed; z-index:9; max-width:264px; pointer-events:none;
+    background:var(--panel-bg); border:1px solid var(--panel-border);
+    border-radius:10px; padding:12px 14px 11px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    opacity:0; transform:translateY(6px) scale(.98);
+    transition:opacity .18s ease, transform .18s ease, visibility .18s;
+    visibility:hidden;
+  }
+  #hoverCard.show{ opacity:1; transform:translateY(0) scale(1); visibility:visible; }
+  :root[data-theme="light"] #hoverCard{ box-shadow:0 10px 30px rgba(16,18,20,0.16); }
+  #hoverCard .hc-head{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  #hoverCard .hc-dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+  #hoverCard .hc-name{ font-size:13px; font-weight:700; color:var(--text-bright); min-width:0; }
+  #hoverCard .hc-status{
+    font-size:9.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+    padding:2px 7px; border-radius:999px; margin-left:auto; flex:none;
+  }
+  #hoverCard .hc-blurb{
+    font-size:11.5px; line-height:1.5; color:var(--text-main); margin-bottom:7px;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  #hoverCard .hc-meta{ font-size:10px; color:var(--text-dim); display:flex; gap:10px; }
+  #hoverCard .hc-hint{ font-size:9.5px; color:var(--text-dim); opacity:.75; margin-top:5px; }
+
   /* overlay for closing panel by tapping background on mobile */
   #panelOverlay{
     position:absolute; inset:0; z-index:14; display:none;
@@ -375,6 +402,7 @@
   <div id="ticker"></div>
 
   <div id="panelOverlay"></div>
+  <div id="hoverCard" role="tooltip" aria-hidden="true"></div>
   <div id="panel">
     <div class="p-close" id="panelClose">✕</div>
     <div class="p-inner">
@@ -569,6 +597,7 @@ function positionAll(){
     n.el.setAttribute("transform","translate("+n.x+","+n.y+")");
     n.el.style.display = n.visible ? "" : "none";
   });
+  if (hoverId) placeHoverCard();
   edges.forEach(function(e){
     var a=nodeById[e.a], b=nodeById[e.b];
     if(!e.visible || !a.visible || !b.visible){
@@ -1161,6 +1190,89 @@ window.addEventListener("resize", function(){
 /* =========================================================
    12. INIT
    ========================================================= */
+/* =========================================================
+   node hover preview card — low-commitment peek at a node's
+   blurb without opening the full side panel (click still does
+   that, unchanged). Delegated listeners + one reused element,
+   so 87 nodes cost nothing extra. Fine-pointer devices only.
+   ========================================================= */
+var hoverCard = document.getElementById("hoverCard");
+var hoverId = null, hoverTimer = null;
+var HOVER_DELAY = 180;   // absorbs quick sweeps across the graph
+
+function escHtml(t){
+  return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) {
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+  });
+}
+
+function hoverCardHTML(n){
+  var st = STATUS_COLOR[n.status] || "var(--text-main)";
+  var neigh = (neighbors[n.id] || []).length;
+  return '<div class="hc-head">' +
+    '<span class="hc-dot" style="background:' + GROUP_COLOR[n.group].fill + '"></span>' +
+    '<span class="hc-name">' + escHtml(n.label) + '</span>' +
+    '<span class="hc-status" style="color:' + st + ';border:1px solid ' + st + '">' + escHtml(n.status) + '</span>' +
+    '</div>' +
+    '<div class="hc-blurb">' + escHtml(n.blurb) + '</div>' +
+    '<div class="hc-meta"><span>Added in ' + escHtml(VER_LABEL[n.ver] || ("v" + n.ver)) + '</span>' +
+    '<span>' + neigh + (neigh === 1 ? " connection" : " connections") + '</span></div>' +
+    '<div class="hc-hint">Click the node for full details</div>';
+}
+
+function placeHoverCard(){
+  var n = nodeById[hoverId];
+  if(!n || !n.visible){ hideHoverCard(); return; }
+  var p = worldToScreen(n.x, n.y);
+  var off = n.r * camScale + 14;
+  var cw = hoverCard.offsetWidth, ch = hoverCard.offsetHeight;
+  var x = p.x + off, y = p.y - ch / 2;
+  if(x + cw > W - 12) x = p.x - off - cw;   // flip to the left near the edge
+  x = Math.max(12, x);
+  y = Math.max(12, Math.min(H - ch - 12, y));
+  hoverCard.style.left = x + "px";
+  hoverCard.style.top = y + "px";
+}
+
+function showHoverCard(id){
+  var n = nodeById[id];
+  if(!n) return;
+  hoverId = id;
+  hoverCard.innerHTML = hoverCardHTML(n);
+  hoverCard.classList.add("show");
+  hoverCard.setAttribute("aria-hidden", "false");
+  placeHoverCard();
+}
+
+function hideHoverCard(){
+  if(hoverTimer){ clearTimeout(hoverTimer); hoverTimer = null; }
+  if(hoverId === null && !hoverCard.classList.contains("show")) return;
+  hoverId = null;
+  hoverCard.classList.remove("show");
+  hoverCard.setAttribute("aria-hidden", "true");
+}
+
+if(window.matchMedia("(pointer: fine)").matches){
+  nodeLayer.addEventListener("pointerover", function(evt){
+    var g = evt.target.closest ? evt.target.closest(".node-group") : null;
+    if(!g) return;
+    if(isPanning || dragNode) return;
+    var id = g.getAttribute("data-id");
+    if(id === hoverId) return;
+    if(hoverTimer) clearTimeout(hoverTimer);
+    hoverTimer = setTimeout(function(){ hoverTimer = null; showHoverCard(id); }, HOVER_DELAY);
+  });
+  nodeLayer.addEventListener("pointerout", function(evt){
+    var g = evt.target.closest ? evt.target.closest(".node-group") : null;
+    if(!g) return;
+    if(evt.relatedTarget && g.contains(evt.relatedTarget)) return; // circle<->label
+    hideHoverCard();
+  });
+  /* any pan / drag / zoom kills the preview immediately */
+  svg.addEventListener("pointerdown", hideHoverCard, true);
+  svg.addEventListener("wheel", hideHoverCard, { passive:true });
+}
+
 updateTicker();
 updateSubtitle();
 prewarm(220); // pre-warm before first paint so it doesn't explode
