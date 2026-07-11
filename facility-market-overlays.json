@@ -1,0 +1,83 @@
+{
+  "_meta": {
+    "purpose": "Market-level TractIQ overlay data for the travismorrow.com facility map feature. Pulled ONCE and cached here — the map page must read this static file, never call the TractIQ MCP live from the browser (no API keys belong client-side, and the 25-call/day quota would vanish instantly with any real traffic).",
+    "pulled_at": "2026-07-11",
+    "saturation_benchmark_note": "~7-8 sqft of rentable self-storage per capita is roughly market equilibrium per TractIQ guidance (see tractiq-connector-project notes). Below that = undersupplied/opportunity; above = oversupplied/competitive.",
+    "calls_used_today_cumulative": 14,
+    "tool": "market_summary_tool (TractIQ/HERE-backed), one call per distinct metro area covering our facilities"
+  },
+  "markets": [
+    {
+      "market_name": "Tucson AZ metro",
+      "center": {"lat": 32.2226, "lng": -110.9747},
+      "radius_miles": 20,
+      "facility_codes": ["SIL1", "DOV1", "GRN1", "301", "304", "305", "306", "309", "311", "314", "316", "319", "323", "325", "326", "328", "329", "333", "338", "339", "341", "343"],
+      "operating_facilities": 145,
+      "under_construction": 10,
+      "sqft_per_capita": 7.45,
+      "saturation_read": "near-equilibrium",
+      "population": 985904,
+      "population_projected": 1017159,
+      "households": 392684,
+      "renters": 146384,
+      "homeowners": 246300,
+      "avg_household_income": 88416.0,
+      "median_household_income": 70510.0,
+      "housing_starts": 6838
+    },
+    {
+      "market_name": "El Paso TX metro",
+      "center": {"lat": 31.7863, "lng": -106.26632},
+      "radius_miles": 15,
+      "facility_codes": ["ELP5", "ELP6", "ELP7", "ELP8", "ELP9"],
+      "operating_facilities": 90,
+      "under_construction": 9,
+      "sqft_per_capita": 5.94,
+      "saturation_read": "undersupplied — below the 7-8 sqft/capita equilibrium benchmark, room for growth",
+      "population": 718297,
+      "population_projected": 738777,
+      "households": 231931,
+      "renters": 87418,
+      "homeowners": 144513,
+      "avg_household_income": 67100.0,
+      "median_household_income": 51584.0,
+      "housing_starts": 4045
+    },
+    {
+      "market_name": "Deming NM",
+      "center": {"lat": 32.27239, "lng": -107.72808},
+      "radius_miles": 10,
+      "facility_codes": ["DEM1"],
+      "operating_facilities": 8,
+      "under_construction": 0,
+      "sqft_per_capita": 11.37,
+      "saturation_read": "oversupplied relative to benchmark, but a small/thin market (8 total facilities, pop ~18k) so the ratio swings on small numbers",
+      "population": 18016,
+      "population_projected": 18467,
+      "households": 6814,
+      "renters": 1991,
+      "homeowners": 4823,
+      "avg_household_income": 50738.0,
+      "median_household_income": 35894.0,
+      "housing_starts": 0
+    },
+    {
+      "market_name": "Reno NV metro",
+      "center": {"lat": 39.52357, "lng": -119.85948},
+      "radius_miles": 10,
+      "facility_codes": ["RNO1"],
+      "operating_facilities": 94,
+      "under_construction": 3,
+      "sqft_per_capita": 14.24,
+      "saturation_read": "oversupplied relative to benchmark, competitive market, higher-income demographic",
+      "population": 411354,
+      "population_projected": 425680,
+      "households": 162594,
+      "renters": 75326,
+      "homeowners": 87268,
+      "avg_household_income": 102071.0,
+      "median_household_income": 80871.0,
+      "housing_starts": 7737
+    }
+  ]
+}
