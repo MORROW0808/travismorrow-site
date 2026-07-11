@@ -495,14 +495,18 @@
               <th><button type="button" disabled style="cursor:default">Cost</button></th>
               <th><button type="button" disabled style="cursor:default">Conversions</button></th>
               <th><button type="button" disabled style="cursor:default">Cost / conv</button></th>
-              <th><button type="button" disabled style="cursor:default">Conv. value</button></th>
-              <th><button type="button" disabled style="cursor:default">Value / cost</button></th>
+              <th><button type="button" disabled style="cursor:default"
+                    title="Google Ads' self-reported conversion value — not customer lifetime value">Google conv. value</button></th>
+              <th><button type="button" disabled style="cursor:default"
+                    title="Google Ads' self-reported conversion value per dollar of spend — not LTV-based; see the True ROAS tile for that">Google value / $</button></th>
             </tr>
           </thead>
           <tbody id="campBody"></tbody>
         </table>
       </div>
-      <p class="foot-note">Campaigns with zero conversions show “—” for cost per conversion — no number is fabricated for them.</p>
+      <p class="foot-note">Campaigns with zero conversions show “—” for cost per conversion — no number is fabricated for them.
+         Value figures here are Google's self-reported conversion values, useful for ranking campaigns against each other —
+         the True ROAS tile above is the LTV-based number (Nectar move-in data), and the two aren't comparable.</p>
     </section>
 
     <footer class="reveal">
@@ -805,7 +809,7 @@
     }
     var s0 = dialPt(CX, CY, R1 + 1, DIAL_A0), s1 = dialPt(CX, CY, R1 + 1, DIAL_A0 + DIAL_SWEEP);
     var roasCard =
-      '<div class="card"><div class="lbl">Ad spend &amp; ROAS · month</div>' +
+      '<div class="card"><div class="lbl" title="Revenue return on ad spend using real move-ins and customer lifetime value from Nectar — not Google\'s self-reported conversion values">True ROAS (Nectar LTV) · month</div>' +
       '<div class="g-row"><div class="g-dial">' +
       '<svg viewBox="0 0 132 104" aria-hidden="true">' +
         bandArc(0, 3, "var(--neg)") + bandArc(3, 8, "var(--warn)") + bandArc(8, roasMax, "var(--pos)") +
@@ -993,7 +997,7 @@
         '<div class="s">of units delinquent</div></div>' +
       '<div class="mini"><div class="lbl">Net revenue · MTD</div><div class="v">' + fmtMoneyFull(f.revenue_net_mtd) + '</div>' +
         '<div class="s">' + (f.rent_per_sqft == null ? "—" : "$" + f.rent_per_sqft.toFixed(2) + " / sq ft") + '</div></div>' +
-      '<div class="mini"><div class="lbl">ROAS · standard LTV</div><div class="v">' + fmtX(f.roas_standard) + '</div>' +
+      '<div class="mini"><div class="lbl">True ROAS · standard (Nectar LTV)</div><div class="v">' + fmtX(f.roas_standard) + '</div>' +
         '<div class="s">' + (f.roas_standard == null ? "no paid campaigns attributed" : "this month") + '</div></div>' +
       '</div>';
   }
