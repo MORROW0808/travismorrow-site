@@ -976,7 +976,7 @@
       '<div class="mini"><div class="lbl">Delinquency</div><div class="v ' + delinqClass(f.delinquency_pct) + '">' + fmtPct(f.delinquency_pct, 1) + '</div>' +
         '<div class="s">of units delinquent</div></div>' +
       '<div class="mini"><div class="lbl">Net revenue · MTD</div><div class="v">' + fmtMoneyFull(f.revenue_net_mtd) + '</div>' +
-        '<div class="s">$' + f.rent_per_sqft.toFixed(2) + ' / sq ft</div></div>' +
+        '<div class="s">' + (f.rent_per_sqft == null ? "—" : "$" + f.rent_per_sqft.toFixed(2) + " / sq ft") + '</div></div>' +
       '<div class="mini"><div class="lbl">ROAS · standard LTV</div><div class="v">' + fmtX(f.roas_standard) + '</div>' +
         '<div class="s">' + (f.roas_standard == null ? "no paid campaigns attributed" : "this month") + '</div></div>' +
       '</div>';
