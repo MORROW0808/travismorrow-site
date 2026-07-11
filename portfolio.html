@@ -21,10 +21,11 @@
        --accent-bright = lightened brand red for small text on dark.
        Data-viz colors below (status + channels) are intentionally
        UNCHANGED — brand chrome and data language stay separate. */
-    --bg:#141414;
-    --panel-bg:rgba(33,33,33,0.72);
-    --panel-solid:#1c1c1c;
-    --border:rgba(255,255,255,0.08);
+    --bg:#15171A;            /* report sheet background */
+    --panel:#1F2226;         /* report PANEL — solid, not translucent */
+    --panel2:#262A30;        /* report PANEL2 — inner boxes, headers */
+    --line:#313640;          /* report hairline */
+    --border:#313640;
     --text:#d2d2d2;
     --dim:#9c9c9c;
     --bright:#f2f2f2;
@@ -99,19 +100,23 @@
   }
   .tile{
     font-family:inherit; text-align:left; color:var(--text);
-    background:var(--panel-bg); border:1px solid var(--border); border-radius:14px;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
     padding:16px 18px 14px; cursor:pointer; position:relative;
-    box-shadow:0 4px 18px rgba(0,0,0,0.25);
-    transition:border-color .15s, box-shadow .15s, transform .12s, background .15s;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 22px rgba(0,0,0,0.35);
+    transition:border-color .18s, box-shadow .18s, transform .18s, background .18s;
   }
-  .tile:hover{ border-color:rgba(185,39,50,0.55); transform:translateY(-1px); }
+  .tile:hover{
+    border-color:rgba(222,89,100,0.55); transform:translateY(-2px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 14px 30px rgba(0,0,0,0.45), 0 4px 18px rgba(185,39,50,0.14);
+  }
   .tile[aria-pressed="true"]{
-    border-color:rgba(185,39,50,0.80);
-    background:linear-gradient(180deg, rgba(185,39,50,0.10), rgba(33,33,33,0.72));
-    box-shadow:0 6px 26px rgba(185,39,50,0.26);
+    border-color:rgba(185,39,50,0.85);
+    background:linear-gradient(180deg, rgba(185,39,50,0.10), var(--panel) 55%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 26px rgba(185,39,50,0.24);
   }
   .tile .brand{
-    display:flex; align-items:baseline; gap:8px; margin-bottom:10px;
+    display:flex; align-items:baseline; gap:8px; margin-bottom:12px;
+    padding-bottom:9px; border-bottom:1px solid var(--line);
   }
   .tile .brand .nm{ font-size:13px; font-weight:700; letter-spacing:.08em; color:var(--bright); text-transform:uppercase; }
   .tile .brand .ct{ font-size:11px; color:var(--dim); }
@@ -119,7 +124,7 @@
   .tile .half{ flex:1 1 50%; min-width:0; }
   .tile .divider{ width:1px; background:var(--border); margin:2px 14px; }
   .tile .lbl{ font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-bottom:4px; }
-  .tile .big{ font-size:24px; font-weight:700; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .tile .big{ font-size:24px; font-weight:800; letter-spacing:-0.02em; line-height:1.1; font-variant-numeric:tabular-nums; }
   .tile .sub{ font-size:11px; color:var(--dim); margin-top:4px; white-space:nowrap; }
   .up{ color:var(--pos); } .down{ color:var(--neg); } .zero{ color:var(--flat); }
   .warm{ color:var(--warn); }
@@ -129,17 +134,34 @@
     display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
     margin:26px 0 10px;
   }
-  #scopebar h2{ margin:0; font-size:15px; font-weight:700; color:var(--bright); letter-spacing:.03em; }
+  #scopebar h2, .sec-head h2{
+    display:flex; align-items:center; gap:9px;
+    margin:0; font-size:12.5px; font-weight:800; color:var(--bright);
+    letter-spacing:.13em; text-transform:uppercase;
+  }
+  #scopebar h2::before, .sec-head h2::before{
+    content:""; width:4px; height:13px; border-radius:2px; flex:none;
+    background:linear-gradient(180deg,var(--accent),var(--accent-2));
+  }
   #scopebar .hint{ font-size:11.5px; color:var(--dim); }
   #kpis{
     display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
   }
   .card{
-    background:var(--panel-bg); border:1px solid var(--border); border-radius:14px;
-    padding:15px 17px 13px; box-shadow:0 4px 18px rgba(0,0,0,0.25); min-width:0;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:15px 17px 13px; min-width:0;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 22px rgba(0,0,0,0.35);
+    transition:border-color .18s, transform .18s, box-shadow .18s;
   }
-  .card .lbl{ font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-bottom:7px; }
-  .card .big{ font-size:23px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; }
+  .card:hover{
+    border-color:rgba(255,255,255,0.16); transform:translateY(-2px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 14px 30px rgba(0,0,0,0.45);
+  }
+  .card .lbl{
+    font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim);
+    margin-bottom:9px; padding-bottom:7px; border-bottom:1px solid var(--line);
+  }
+  .card .big{ font-size:23px; font-weight:800; letter-spacing:-0.02em; color:var(--bright); font-variant-numeric:tabular-nums; }
   .card .big small{ font-size:13px; font-weight:600; color:var(--dim); }
   .card .sub{ font-size:11.5px; color:var(--dim); margin-top:4px; }
   .card .sub b{ color:var(--text); font-weight:600; }
@@ -167,7 +189,6 @@
   /* ---------- sections ---------- */
   section.block{ margin-top:30px; }
   .sec-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
-  .sec-head h2{ margin:0; font-size:15px; font-weight:700; color:var(--bright); letter-spacing:.03em; }
   .sec-head .hint{ font-size:11.5px; color:var(--dim); }
   input#facSearch{
     font-family:inherit; font-size:12px; padding:7px 11px; border-radius:8px;
@@ -177,13 +198,14 @@
   input#facSearch:focus{ border-color:rgba(222,89,100,0.6); }
 
   .tbl-wrap{
-    border:1px solid var(--border); border-radius:14px; overflow-x:auto;
-    background:var(--panel-bg); box-shadow:0 4px 18px rgba(0,0,0,0.25);
+    border:1px solid var(--line); border-radius:14px; overflow-x:auto;
+    background:var(--panel);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 22px rgba(0,0,0,0.35);
   }
   table{ border-collapse:collapse; width:100%; min-width:980px; font-size:12.5px; }
   thead th{
     position:sticky; top:0; z-index:2;
-    background:var(--panel-solid); color:var(--dim);
+    background:var(--panel2); color:var(--dim);
     font-size:10px; letter-spacing:.08em; text-transform:uppercase; font-weight:600;
     text-align:right; padding:0; border-bottom:1px solid var(--border);
     white-space:nowrap;
@@ -198,7 +220,7 @@
   thead th button:hover{ color:var(--text); }
   thead th .arrow{ opacity:.9; color:var(--accent); }
   tbody td{
-    padding:8px 12px; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05);
+    padding:8px 12px; text-align:right; border-bottom:1px solid rgba(49,54,64,0.55);
     font-variant-numeric:tabular-nums; white-space:nowrap;
   }
   tbody td:first-child{ text-align:left; }
@@ -212,21 +234,22 @@
     border:1px solid var(--border); border-radius:5px; padding:1px 5px; margin-left:7px;
     vertical-align:1px;
   }
-  tr.total td{ font-weight:700; color:var(--bright); background:rgba(255,255,255,0.025);
-    border-top:1px solid var(--border); }
+  tr.total td{ font-weight:800; color:var(--bright); background:var(--panel2);
+    border-top:1px solid var(--line); }
   .caret{ display:inline-block; margin-right:7px; color:var(--dim); font-size:9px;
     transition:transform .15s; }
   tr[aria-expanded="true"] .caret{ transform:rotate(90deg); color:var(--accent); }
 
   /* expanded facility detail row */
-  tr.detail > td{ background:rgba(24,24,24,0.9); padding:14px 16px 16px; white-space:normal; cursor:default; }
+  tr.detail > td{ background:#191C20; padding:14px 16px 16px; white-space:normal; cursor:default; }
   .mini-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
   .mini{
-    background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px;
+    background:var(--panel2); border:1px solid var(--line); border-radius:10px;
     padding:10px 12px; text-align:left;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
   }
   .mini .lbl{ font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--dim); margin-bottom:5px; }
-  .mini .v{ font-size:17px; font-weight:700; color:var(--bright); font-variant-numeric:tabular-nums; }
+  .mini .v{ font-size:17px; font-weight:800; letter-spacing:-0.02em; color:var(--bright); font-variant-numeric:tabular-nums; }
   .mini .s{ font-size:10.5px; color:var(--dim); margin-top:3px; }
   .mini .bar{ height:5px; border-radius:3px; background:rgba(255,255,255,0.07); margin-top:7px; position:relative; overflow:hidden; }
   .mini .bar i{ position:absolute; inset:0 auto 0 0; border-radius:3px;
@@ -252,6 +275,25 @@
   }
   footer .brand-row img.nss{ height:30px; width:auto; }
   footer .brand-row img.afam{ height:22px; width:auto; opacity:.92; }
+
+  /* ---------- motion: entrances, scope swaps, focus ---------- */
+  .reveal{ opacity:0; }
+  .reveal.in{ opacity:1; animation:riseIn .55s cubic-bezier(.2,.7,.3,1) backwards; }
+  @keyframes riseIn{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+  #scopebar, #kpis, #facSection, #campSection{
+    transition:opacity .17s ease, transform .17s ease;
+  }
+  .swap-out{ opacity:0 !important; transform:translateY(8px); }
+  .mini-grid{ animation:riseIn .35s cubic-bezier(.2,.7,.3,1) backwards; }
+  .tile:focus-visible, a.hdr-btn:focus-visible, button.hdr-btn:focus-visible,
+  thead th button:focus-visible, tbody tr.fac:focus-visible, input#facSearch:focus-visible{
+    outline:2px solid var(--accent-bright); outline-offset:2px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; }
+    .reveal.in, .mini-grid{ animation:none; }
+    #scopebar, #kpis, #facSection, #campSection, .tile, .card{ transition:none; }
+  }
 
   /* loading / error */
   #status{ padding:60px 0; text-align:center; color:var(--dim); font-size:13px; }
@@ -304,7 +346,7 @@
     <div id="kpis"></div>
 
     <!-- ===== per-facility drill-down table ===== -->
-    <section class="block">
+    <section class="block reveal" id="facSection">
       <div class="sec-head">
         <h2 id="facTitle">Facilities</h2>
         <div style="display:flex;gap:10px;align-items:center;">
@@ -321,7 +363,7 @@
     </section>
 
     <!-- ===== campaign efficiency ===== -->
-    <section class="block">
+    <section class="block reveal" id="campSection">
       <div class="sec-head">
         <h2 id="campTitle">Campaign efficiency</h2>
         <span class="hint">this month · ranked cheapest cost-per-conversion first</span>
@@ -344,7 +386,7 @@
       <p class="foot-note">Campaigns with zero conversions show “—” for cost per conversion — no number is fabricated for them.</p>
     </section>
 
-    <footer>
+    <footer class="reveal">
       <div class="brand-row">
         <span class="chip"><img class="nss" src="assets/nss-logo.png" alt="National Self Storage"></span>
         <img class="afam" src="assets/afam-logo.png" alt="A Family Storage">
@@ -374,6 +416,26 @@
   var BRANDS = ["NSS", "AFAM", "SL Reno"];
   var sortKey = null, sortDir = -1;     // facility table sort state
   var expanded = null;                  // facility_code of the expanded row
+
+  var MOTION = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* count-up tween for KPI numerals — formats each frame so signs,
+     separators and units stay correct throughout */
+  function animNum(el, target, fmt) {
+    if (!el) return;
+    if (!MOTION || !target) { el.textContent = fmt(target); return; }
+    el.textContent = fmt(0);   // paint immediately — rAF may be throttled in background tabs
+    var t0 = performance.now(), dur = 700;
+    function step(now) {
+      // clamp BOTH ends: rAF timestamps are vsync-start and can precede
+      // the performance.now() captured above, sending p negative
+      var p = Math.min(1, Math.max(0, (now - t0) / dur));
+      var e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(target * e);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
 
   var CHANNELS = [
     { key:"web_leads",     label:"Web",     color:"var(--ch-web)"    },
@@ -452,7 +514,7 @@
       return { key:b, label:b, count:counts[b] || 0, d:DATA.brands[b] };
     }).concat([{ key:"portfolio", label:"Portfolio", count:DATA.facilities.length, d:DATA.portfolio }]);
 
-    entries.forEach(function (e) {
+    entries.forEach(function (e, idx) {
       var mv  = e.d.move_activity_mtd;
       var yoy = e.d.revenue_yoy;
       var priorYr = new Date(DATA.generated_at).getFullYear() - 1;
@@ -475,7 +537,25 @@
             '<div class="sub">' + yoyWord + ' ' + priorYr + ' · ' + fmtMoney(yoy.current) + '</div></div>' +
         '</div>';
       btn.addEventListener("click", function () { setScope(e.key); });
+      btn.setAttribute("data-scope", e.key);
+      if (MOTION) {
+        btn.classList.add("reveal");
+        btn.style.animationDelay = (idx * 70) + "ms";
+        requestAnimationFrame(function () { btn.classList.add("in"); });
+      }
       host.appendChild(btn);
+
+      var bigs = btn.querySelectorAll(".big");
+      animNum(bigs[0], mv.net_move_ins, function (v) { return fmtSigned(Math.round(v)); });
+      animNum(bigs[1], yoy.delta, fmtSignedMoney);
+    });
+  }
+
+  /* scope change repaints tiles' pressed state only — no rebuild, so the
+     entrance animation never replays and keyboard focus is preserved */
+  function paintHeroPressed() {
+    Array.prototype.forEach.call(document.querySelectorAll("#hero .tile"), function (t) {
+      t.setAttribute("aria-pressed", String(t.getAttribute("data-scope") === scope));
     });
   }
 
@@ -495,7 +575,7 @@
     var pct = occ.occupancy_sqft_pct;
     var occCard =
       '<div class="card"><div class="lbl">Occupancy</div>' +
-      '<div class="big">' + fmtPct(pct, 2) + ' <small>sq ft</small></div>' +
+      '<div class="big"><span class="num"></span> <small>sq ft</small></div>' +
       '<div class="sub"><b>' + fmtPct(occ.occupancy_units_pct, 2) + '</b> of units · ' +
         occ.units_occupied.toLocaleString() + ' / ' + occ.units_total.toLocaleString() + ' units</div>' +
       '<div class="bullet"><div class="fill" style="width:' + Math.min(100, pct) + '%"></div>' +
@@ -504,12 +584,12 @@
 
     var convCard =
       '<div class="card"><div class="lbl">Lead conversion · MTD</div>' +
-      '<div class="big">' + fmtPct(leads.conversion_pct, 1) + '</div>' +
+      '<div class="big"><span class="num"></span></div>' +
       '<div class="sub"><b>' + leads.leads_converted + '</b> converted of <b>' + leads.leads_total + '</b> leads</div></div>';
 
     var roasCard =
       '<div class="card"><div class="lbl">Ad spend &amp; ROAS · month</div>' +
-      '<div class="big">' + fmtX(roas.roas_standard) + ' <small>standard LTV</small></div>' +
+      '<div class="big"><span class="num"></span> <small>standard LTV</small></div>' +
       '<div class="sub"><b>' + fmtX(roas.roas_conservative) + '</b> conservative LTV</div>' +
       '<div class="sub">' + fmtMoneyFull(ads.spend) + ' spend · ' + ads.stores +
         (ads.stores === 1 ? " store" : " stores") + ' advertising</div></div>';
@@ -528,12 +608,26 @@
     });
     var chCard =
       '<div class="card"><div class="lbl">Leads by channel · MTD</div>' +
-      '<div class="big">' + total + ' <small>leads</small></div>' +
+      '<div class="big"><span class="num"></span> <small>leads</small></div>' +
       '<div class="stack" role="img" aria-label="Lead share by channel">' + segs + '</div>' +
       '<div class="legend">' + lis + '</div>' +
       '<div class="foot-note">Counts &amp; share only — per-channel conversion isn’t trackable at the source.</div></div>';
 
     host.innerHTML = occCard + convCard + roasCard + chCard;
+
+    var nums = host.querySelectorAll(".big .num");
+    animNum(nums[0], pct, function (v) { return fmtPct(v, 2); });
+    animNum(nums[1], leads.conversion_pct, function (v) { return fmtPct(v, 1); });
+    animNum(nums[2], roas.roas_standard, fmtX);
+    animNum(nums[3], total, function (v) { return String(Math.round(v)); });
+
+    if (MOTION) {
+      Array.prototype.forEach.call(host.children, function (c, i) {
+        c.classList.add("reveal");
+        c.style.animationDelay = (i * 60) + "ms";
+        requestAnimationFrame(function () { c.classList.add("in"); });
+      });
+    }
   }
 
   /* ------------------------------------------------------------------ *
@@ -711,7 +805,20 @@
   function setScope(s) {
     if (scope === s) return;
     scope = s; expanded = null;
-    renderHero(); renderKpis(); renderFacBody(); renderCampaigns();
+    paintHeroPressed();
+    var parts = ["scopebar", "kpis", "facSection", "campSection"].map(function (id) {
+      return document.getElementById(id);
+    });
+    if (!MOTION) { renderKpis(); renderFacBody(); renderCampaigns(); return; }
+    parts.forEach(function (el) { el.classList.add("swap-out"); });
+    setTimeout(function () {
+      renderKpis(); renderFacBody(); renderCampaigns();
+      // timeout, not rAF — rAF can stall in throttled/background tabs and
+      // would leave the sections faded out
+      setTimeout(function () {
+        parts.forEach(function (el) { el.classList.remove("swap-out"); });
+      }, 30);
+    }, 180);
   }
 
   function renderAll() {
@@ -727,6 +834,19 @@
     renderHero(); renderKpis(); renderFacHead(); renderFacBody(); renderCampaigns();
     document.getElementById("status").hidden = true;
     document.getElementById("dash").hidden = false;
+
+    /* staggered entrance for below-fold sections as they scroll into view */
+    var toReveal = document.querySelectorAll("section.reveal, footer.reveal");
+    if (MOTION && "IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+        });
+      }, { threshold: 0.08 });
+      Array.prototype.forEach.call(toReveal, function (el) { io.observe(el); });
+    } else {
+      Array.prototype.forEach.call(toReveal, function (el) { el.classList.add("in"); });
+    }
   }
 
   document.getElementById("facSearch").addEventListener("input", renderFacBody);
