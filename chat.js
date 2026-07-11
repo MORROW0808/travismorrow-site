@@ -60,7 +60,7 @@
 
     /* ---- launcher ---- */
     "#tcLauncher{",
-    "  position:fixed; right:20px; bottom:20px; z-index:2000;",
+    "  position:fixed; right:20px; bottom:var(--tc-bottom, 20px); z-index:2000;",
     "  width:58px; height:58px; border-radius:50%; cursor:pointer; padding:7px;",
     "  background:var(--tc-panel); border:1px solid var(--tc-border);",
     "  box-shadow:var(--tc-shadow);",
@@ -78,7 +78,7 @@
 
     /* ---- panel ---- */
     "#tcPanel{",
-    "  position:fixed; right:20px; bottom:20px; z-index:2001;",
+    "  position:fixed; right:20px; bottom:var(--tc-bottom, 20px); z-index:2001;",
     "  width:min(92vw, 370px); height:min(76vh, 540px);",
     "  display:flex; flex-direction:column;",
     "  background:var(--tc-panel); border:1px solid var(--tc-border); border-radius:16px;",
@@ -159,12 +159,12 @@
 
   /* ---- stubbed replies: honest about being a shell, no fake capability ---- */
   var GREETING = "How can I help, Mr. Morrow?";
-  var STUB_REPLIES = [
-    "This is a design preview — my conversational side isn’t wired in yet. The rest of the site is live, though: the map, the dashboard, all of it.",
-    "Still just the shell here — no brain behind this box yet. That decision is being scoped separately.",
-    "Noted — though I should be honest: this chat is a preview. Nothing I say here comes from live systems yet."
-  ];
-  var stubIdx = 0;
+  /* ---- live backend: Cloudflare Worker (POST {message, history} -> {reply}).
+     History is threaded client-side, capped to the worker's 12-turn limit.
+     Failures degrade to an honest in-bubble error — never a fake answer. ---- */
+  var ENDPOINT = "https://taylor-chat.morrow0808.workers.dev/chat";
+  var history = [];
+  var busy = false;
 
   function init() {
     var style = document.createElement("style");
@@ -210,7 +210,18 @@
       row.innerHTML =
         (who === "user" ? "" : '<span class="tc-avatar">' + MARK + "</span>") +
         '<div class="tc-bubble"></div>';
-      row.querySelector(".tc-bubble").textContent = text;
+      var el = row.querySelector(".tc-bubble");
+      if (who === "user") {
+        el.textContent = text;
+      } else {
+        /* minimal, escape-first markdown: **bold** and line breaks only */
+        var safe = String(text).replace(/[&<>"']/g, function (c) {
+          return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+        });
+        el.innerHTML = safe
+          .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+          .replace(/\n/g, "<br>");
+      }
       msgs.appendChild(row);
       msgs.scrollTop = msgs.scrollHeight;
       return row;
@@ -243,15 +254,29 @@
 
     function send() {
       var text = input.value.trim();
-      if (!text) return;
+      if (!text || busy) return;
+      busy = true;
       input.value = "";
       bubble(text, "user");
       var t = typingRow();
-      setTimeout(function () {
-        t.remove();
-        bubble(STUB_REPLIES[stubIdx % STUB_REPLIES.length], "taylor");
-        stubIdx++;
-      }, 950);
+      fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, history: history.slice(-12) })
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        t.remove(); busy = false;
+        if (d && d.reply) {
+          bubble(d.reply, "taylor");
+          history.push({ role: "user", content: text },
+                       { role: "assistant", content: d.reply.slice(0, 1000) });
+          history = history.slice(-12);
+        } else {
+          bubble((d && d.error) || "Something went wrong on my end — give it another try.", "taylor");
+        }
+      }).catch(function () {
+        t.remove(); busy = false;
+        bubble("I can’t reach my backend right now — try again in a moment.", "taylor");
+      });
     }
 
     launcher.addEventListener("click", open);
@@ -266,12 +291,9 @@
     var q = new URLSearchParams(location.search).get("chat");
     if (q === "open" || q === "demo") open();
     if (q === "demo") setTimeout(function () {
-      bubble("What can you show me on this site?", "user");
-      var t = typingRow();
-      setTimeout(function () {
-        t.remove();
-        bubble(STUB_REPLIES[0], "taylor");
-      }, 950);
+      input.value = new URLSearchParams(location.search).get("q") ||
+        "How many facilities are in Tucson?";
+      send();
     }, 700);
   }
 
