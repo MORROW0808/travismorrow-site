@@ -10,6 +10,8 @@
      session has not unlocked. Client-side only — see README. */
   TMAuth.guard();
 </script>
+<script src="theme.js"></script>
+<script>TMTheme.init();</script>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
 <title>TAYLOR — memory map</title>
@@ -39,6 +41,52 @@
     --edge-data:#22b8cf;
     --edge-workaround:#f5a524;
     --edge-route:#8b98a5;
+  }
+  /* ---------- light mode ----------
+     Node/status/edge palette is kept except the two greys (planned nodes,
+     route edges) and the workaround amber, which sit too faint on a light
+     surface and are darkened for legibility — same hue families. */
+  :root[data-theme="light"]{
+    --bg:#EFEFEC;
+    --panel-bg:rgba(255,255,255,0.94);
+    --panel-border:#D9DBDE;
+    --text-main:#33363B;
+    --text-dim:#6B6E73;
+    --text-bright:#111318;
+    --grey-fill:#6e7681;
+    --status-planned:#6e7681;
+    --edge-route:#848e98;
+    --edge-workaround:#c08a1e;
+  }
+  :root[data-theme="light"] #vignette{
+    background: radial-gradient(ellipse at 50% 45%, rgba(255,255,255,0.5) 0%, rgba(239,239,236,0) 55%),
+                radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.10) 100%);
+  }
+  :root[data-theme="light"] #depthGlow{ opacity:.45; }
+  :root[data-theme="light"] button.ctrl-btn{ background:rgba(0,0,0,0.04); }
+  :root[data-theme="light"] button.ctrl-btn:hover{ background:rgba(0,0,0,0.08); }
+  :root[data-theme="light"] button#growBtn{
+    background:linear-gradient(180deg, rgba(185,39,50,0.14), rgba(182,32,37,0.07));
+    border-color:rgba(185,39,50,0.5); color:#B92732;
+  }
+  :root[data-theme="light"] button#growBtn:hover{
+    background:linear-gradient(180deg, rgba(185,39,50,0.22), rgba(182,32,37,0.12));
+  }
+  :root[data-theme="light"] input#searchBox{ background:rgba(0,0,0,0.04); }
+  :root[data-theme="light"] #searchResults div{ border-bottom-color:rgba(0,0,0,0.06); }
+  :root[data-theme="light"] #legend .lg-sep{ background:rgba(0,0,0,0.10); }
+  :root[data-theme="light"] #panel .p-conn-item{ background:rgba(0,0,0,0.03); }
+  :root[data-theme="light"] #stageLabel .sl-ver{ color:rgba(51,54,59,0.55); }
+  :root[data-theme="light"] #stageLabel .sl-txt{ color:rgba(107,110,115,0.9); }
+  :root[data-theme="light"] #stageLabel{
+    background:radial-gradient(ellipse at center, rgba(239,239,236,0.8) 0%, rgba(239,239,236,0) 75%);
+  }
+  #themeBtn svg{ width:13px; height:13px; display:block; }
+  :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
+  :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
+  html.theme-anim body, html.theme-anim body *{
+    transition:background-color .35s ease, color .35s ease,
+               border-color .35s ease, fill .35s ease, stroke .35s ease !important;
   }
   *{box-sizing:border-box;}
   html,body{
@@ -287,6 +335,17 @@
       </div>
       <button class="ctrl-btn" id="growBtn">⟲ Grow</button>
       <button class="ctrl-btn" id="resetBtn">Reset</button>
+      <button class="ctrl-btn" id="themeBtn" title="Toggle light / dark mode" aria-label="Toggle light or dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5"/>
+          <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/>
+        </svg>
+      </button>
     </div>
   </div>
 
@@ -1118,6 +1177,9 @@ requestAnimationFrame(frame);
 /* Pointer-depth on the brand glow layer — a light parallax touch suited to
    a full-viewport canvas (no page scroll here). Lerped, tiny amplitude, and
    skipped entirely under prefers-reduced-motion or without a fine pointer. */
+document.getElementById("themeBtn").addEventListener("click", function () {
+  TMTheme.toggle();
+});
 (function () {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (!window.matchMedia("(pointer: fine)").matches) return;

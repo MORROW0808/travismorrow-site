@@ -10,6 +10,8 @@
      Client-side only, demo-grade — see README. */
   TMAuth.guard();
 </script>
+<script src="theme.js"></script>
+<script>TMTheme.init();</script>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Portfolio Snapshot — living dashboard</title>
@@ -46,6 +48,59 @@
     --ch-phone:#c08a1e;
     --ch-walkin:#00a3bf;
     --ch-other:#9a6ee0;
+
+    /* surfaces/effects that need a per-theme value */
+    --panel-deep:#191C20;
+    --row-line:rgba(49,54,64,0.55);
+    --track:rgba(255,255,255,0.06);
+    --meter-a:rgba(255,255,255,0.30);
+    --meter-b:rgba(255,255,255,0.72);
+    --chip-bg:rgba(255,255,255,0.04);
+    --chip-bg-hover:rgba(255,255,255,0.09);
+    --shadow-card:inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 22px rgba(0,0,0,0.35);
+    --shadow-hover:inset 0 1px 0 rgba(255,255,255,0.05), 0 14px 30px rgba(0,0,0,0.45), 0 4px 18px rgba(185,39,50,0.14);
+  }
+
+  /* ---------- light mode — the report printed on white stock ----------
+     Brand reds are kept verbatim (#B92732 is 6.2:1 on white — AA, so the
+     small-text accent needs no lightened variant here). Status semantics
+     get light-safe steps (the dark set fails contrast on white: green
+     2.5:1, amber 1.7:1). Channel palette is UNCHANGED — it passes the
+     dataviz six-checks on white as-is. */
+  :root[data-theme="light"]{
+    --bg:#F2F2F0;
+    --panel:#FFFFFF;
+    --panel2:#F3F4F6;
+    --line:#D9DBDE;
+    --border:#D9DBDE;
+    --text:#33363B;
+    --dim:#6B6E73;
+    --bright:#111318;
+    --accent-bright:#B92732;
+    --pos:#1A7F37;
+    --warn:#9A6700;
+    --neg:#CF222E;
+    --flat:#57606A;
+    --panel-deep:#E9EAEC;
+    --row-line:rgba(0,0,0,0.08);
+    --track:rgba(0,0,0,0.08);
+    --meter-a:rgba(0,0,0,0.20);
+    --meter-b:rgba(0,0,0,0.55);
+    --chip-bg:rgba(0,0,0,0.035);
+    --chip-bg-hover:rgba(0,0,0,0.07);
+    --shadow-card:0 1px 3px rgba(16,18,20,0.07), 0 6px 18px rgba(16,18,20,0.06);
+    --shadow-hover:0 4px 10px rgba(16,18,20,0.09), 0 12px 26px rgba(16,18,20,0.09), 0 4px 16px rgba(185,39,50,0.08);
+  }
+  /* glows tuned for dark read as pink smears on white — fade them */
+  :root[data-theme="light"] #plx-a{ opacity:.35; }
+  :root[data-theme="light"] #plx-b{ opacity:.3; }
+  :root[data-theme="light"] .pill.mock{
+    color:#7A5200; border-color:rgba(154,103,0,0.45); background:rgba(154,103,0,0.08);
+  }
+  /* brief color cross-fade when the toggle flips the theme */
+  html.theme-anim body, html.theme-anim body *{
+    transition:background-color .35s ease, color .35s ease,
+               border-color .35s ease, box-shadow .35s ease !important;
   }
   *{box-sizing:border-box;}
   html,body{margin:0; min-height:100%;}
@@ -78,7 +133,7 @@
   .h-right{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   .pill{
     font-size:11.5px; color:var(--dim); padding:6px 12px; border-radius:999px;
-    border:1px solid var(--border); background:rgba(255,255,255,0.03);
+    border:1px solid var(--border); background:var(--chip-bg);
     white-space:nowrap;
   }
   .pill b{ color:var(--text); font-weight:600; }
@@ -89,10 +144,13 @@
   a.hdr-btn, button.hdr-btn{
     font-family:inherit; font-size:12px; font-weight:600; text-decoration:none;
     padding:7px 14px; border-radius:8px; border:1px solid var(--border);
-    background:rgba(255,255,255,0.04); color:var(--text); cursor:pointer;
+    background:var(--chip-bg); color:var(--text); cursor:pointer;
     transition:background .15s, border-color .15s;
   }
-  a.hdr-btn:hover, button.hdr-btn:hover{ background:rgba(255,255,255,0.09); }
+  a.hdr-btn:hover, button.hdr-btn:hover{ background:var(--chip-bg-hover); }
+  #themeBtn svg{ width:14px; height:14px; display:block; }
+  :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
+  :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
 
   /* ---------- hero tiles ---------- */
   #hero{
@@ -102,17 +160,17 @@
     font-family:inherit; text-align:left; color:var(--text);
     background:var(--panel); border:1px solid var(--line); border-radius:14px;
     padding:16px 18px 14px; cursor:pointer; position:relative;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 22px rgba(0,0,0,0.35);
+    box-shadow:var(--shadow-card);
     transition:border-color .18s, box-shadow .18s, transform .18s, background .18s;
   }
   .tile:hover{
-    border-color:rgba(222,89,100,0.55); transform:translateY(-2px);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 14px 30px rgba(0,0,0,0.45), 0 4px 18px rgba(185,39,50,0.14);
+    border-color:rgba(185,39,50,0.55); transform:translateY(-2px);
+    box-shadow:var(--shadow-hover);
   }
   .tile[aria-pressed="true"]{
     border-color:rgba(185,39,50,0.85);
     background:linear-gradient(180deg, rgba(185,39,50,0.10), var(--panel) 55%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 26px rgba(185,39,50,0.24);
+    box-shadow:var(--shadow-card), 0 6px 24px rgba(185,39,50,0.22);
   }
   .tile .brand{
     display:flex; align-items:baseline; gap:8px; margin-bottom:12px;
@@ -150,12 +208,12 @@
   .card{
     background:var(--panel); border:1px solid var(--line); border-radius:14px;
     padding:15px 17px 13px; min-width:0;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 22px rgba(0,0,0,0.35);
+    box-shadow:var(--shadow-card);
     transition:border-color .18s, transform .18s, box-shadow .18s;
   }
   .card:hover{
-    border-color:rgba(255,255,255,0.16); transform:translateY(-2px);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 14px 30px rgba(0,0,0,0.45);
+    border-color:var(--dim); transform:translateY(-2px);
+    box-shadow:var(--shadow-hover);
   }
   .card .lbl{
     font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim);
@@ -167,11 +225,11 @@
   .card .sub b{ color:var(--text); font-weight:600; }
 
   /* occupancy bullet vs target */
-  .bullet{ position:relative; height:8px; border-radius:4px; background:rgba(255,255,255,0.06); margin-top:10px; overflow:visible; }
+  .bullet{ position:relative; height:8px; border-radius:4px; background:var(--track); margin-top:10px; overflow:visible; }
   /* progress fills stay NEUTRAL (not brand red): on a magnitude bar,
      red reads as "problem", so occupancy progress uses quiet greys */
   .bullet .fill{ position:absolute; inset:0 auto 0 0; border-radius:4px;
-    background:linear-gradient(90deg, rgba(255,255,255,0.30), rgba(255,255,255,0.72)); }
+    background:linear-gradient(90deg, var(--meter-a), var(--meter-b)); }
   .bullet .target{ position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--bright); opacity:.75; border-radius:1px; }
   .bullet-cap{ display:flex; justify-content:space-between; font-size:10px; color:var(--dim); margin-top:5px; }
 
@@ -192,7 +250,7 @@
   .sec-head .hint{ font-size:11.5px; color:var(--dim); }
   input#facSearch{
     font-family:inherit; font-size:12px; padding:7px 11px; border-radius:8px;
-    border:1px solid var(--border); background:rgba(255,255,255,0.04);
+    border:1px solid var(--border); background:var(--chip-bg);
     color:var(--text); width:190px; outline:none;
   }
   input#facSearch:focus{ border-color:rgba(222,89,100,0.6); }
@@ -200,7 +258,7 @@
   .tbl-wrap{
     border:1px solid var(--line); border-radius:14px; overflow-x:auto;
     background:var(--panel);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 22px rgba(0,0,0,0.35);
+    box-shadow:var(--shadow-card);
   }
   table{ border-collapse:collapse; width:100%; min-width:980px; font-size:12.5px; }
   thead th{
@@ -220,7 +278,7 @@
   thead th button:hover{ color:var(--text); }
   thead th .arrow{ opacity:.9; color:var(--accent); }
   tbody td{
-    padding:8px 12px; text-align:right; border-bottom:1px solid rgba(49,54,64,0.55);
+    padding:8px 12px; text-align:right; border-bottom:1px solid var(--row-line);
     font-variant-numeric:tabular-nums; white-space:nowrap;
   }
   tbody td:first-child{ text-align:left; }
@@ -241,19 +299,19 @@
   tr[aria-expanded="true"] .caret{ transform:rotate(90deg); color:var(--accent); }
 
   /* expanded facility detail row */
-  tr.detail > td{ background:#191C20; padding:14px 16px 16px; white-space:normal; cursor:default; }
+  tr.detail > td{ background:var(--panel-deep); padding:14px 16px 16px; white-space:normal; cursor:default; }
   .mini-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
   .mini{
-    background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
     padding:10px 12px; text-align:left;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+    box-shadow:var(--shadow-card);
   }
   .mini .lbl{ font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--dim); margin-bottom:5px; }
   .mini .v{ font-size:17px; font-weight:800; letter-spacing:-0.02em; color:var(--bright); font-variant-numeric:tabular-nums; }
   .mini .s{ font-size:10.5px; color:var(--dim); margin-top:3px; }
-  .mini .bar{ height:5px; border-radius:3px; background:rgba(255,255,255,0.07); margin-top:7px; position:relative; overflow:hidden; }
+  .mini .bar{ height:5px; border-radius:3px; background:var(--track); margin-top:7px; position:relative; overflow:hidden; }
   .mini .bar i{ position:absolute; inset:0 auto 0 0; border-radius:3px;
-    background:linear-gradient(90deg, rgba(255,255,255,0.30), rgba(255,255,255,0.72)); }
+    background:linear-gradient(90deg, var(--meter-a), var(--meter-b)); }
 
   /* campaigns */
   #campTbl{ min-width:760px; }
@@ -275,6 +333,9 @@
   }
   footer .brand-row img.nss{ height:30px; width:auto; }
   footer .brand-row img.afam{ height:22px; width:auto; opacity:.92; }
+  :root[data-theme="light"] footer .brand-row .chip{ border:1px solid var(--border); }
+  :root[data-theme="light"] img.afam.for-dark{ display:none; }
+  :root[data-theme="dark"] img.afam.for-light{ display:none; }
 
   /* ---------- motion: entrances, scope swaps, focus ---------- */
   .reveal{ opacity:0; }
@@ -326,6 +387,17 @@
       <span class="pill mock" id="mockBadge" hidden
             title="This page is rendering the sample portfolio-data.json committed with the dashboard. The badge disappears automatically once the real twice-daily export replaces that file.">SAMPLE&nbsp;DATA</span>
       <span class="pill" id="freshness">Loading…</span>
+      <button class="hdr-btn" id="themeBtn" title="Toggle light / dark mode" aria-label="Toggle light or dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5"/>
+          <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/>
+        </svg>
+      </button>
       <a class="hdr-btn" href="memory-map.html">Memory map</a>
       <button class="hdr-btn" id="lockBtn" title="Lock this session and return to the landing page">Lock</button>
     </div>
@@ -389,7 +461,8 @@
     <footer class="reveal">
       <div class="brand-row">
         <span class="chip"><img class="nss" src="assets/nss-logo.png" alt="National Self Storage"></span>
-        <img class="afam" src="assets/afam-logo.png" alt="A Family Storage">
+        <img class="afam for-dark" src="assets/afam-logo.png" alt="A Family Storage">
+        <img class="afam for-light" src="assets/afam-logo-light.png" alt="A Family Storage">
       </div>
       <div id="footFresh"></div>
       <div>ROAS is shown as an ×-multiple under both the standard and the more conservative LTV assumption.
@@ -406,6 +479,9 @@
 
   document.getElementById("lockBtn").addEventListener("click", function () {
     TMAuth.logout(); location.href = "index.html";
+  });
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    TMTheme.toggle();
   });
 
   /* ------------------------------------------------------------------ *

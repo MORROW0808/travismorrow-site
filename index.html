@@ -6,6 +6,8 @@
 <title>Travis Morrow</title>
 <meta name="description" content="Travis Morrow — personal site.">
 <meta name="robots" content="noindex, nofollow">
+<script src="theme.js"></script>
+<script>TMTheme.init();</script>
 <style>
   :root{
     /* NSS / AFAM brand theme (see Assets/BRAND-GUIDELINES.md):
@@ -22,6 +24,28 @@
     --accent:#B92732;
     --accent-2:#B62025;
     --accent-bright:#de5964;
+    --chip-bg:rgba(255,255,255,0.04);
+    --chip-bg-hover:rgba(255,255,255,0.08);
+  }
+  :root[data-theme="light"]{
+    --bg:#F2F2F0;
+    --panel:#FFFFFF;
+    --border:#D9DBDE;
+    --text:#33363B;
+    --dim:#6B6E73;
+    --bright:#111318;
+    --accent-bright:#B92732;  /* brand red is AA on white — no lightening needed */
+    --chip-bg:rgba(0,0,0,0.035);
+    --chip-bg-hover:rgba(0,0,0,0.07);
+  }
+  :root[data-theme="light"] #plx-a{ opacity:.35; }
+  :root[data-theme="light"] #plx-b{ opacity:.3; }
+  :root[data-theme="light"] a.tool{ box-shadow:0 1px 3px rgba(16,18,20,0.07), 0 6px 18px rgba(16,18,20,0.06); }
+  :root[data-theme="light"] a.tool:hover{ box-shadow:0 4px 10px rgba(16,18,20,0.09), 0 12px 26px rgba(16,18,20,0.09), 0 4px 16px rgba(185,39,50,0.08); }
+  :root[data-theme="light"] .logo-row .chip{ border:1px solid var(--border); }
+  html.theme-anim body, html.theme-anim body *{
+    transition:background-color .35s ease, color .35s ease,
+               border-color .35s ease, box-shadow .35s ease !important;
   }
   *{box-sizing:border-box;}
   html{ scroll-behavior:smooth; }
@@ -82,10 +106,10 @@
   .cta:active{ transform:translateY(0); }
   .cta svg{ width:18px; height:18px; }
   .cta.secondary{
-    margin-top:14px; color:var(--text); background:rgba(255,255,255,0.04);
+    margin-top:14px; color:var(--text); background:var(--chip-bg);
     border:1px solid var(--border); box-shadow:none;
   }
-  .cta.secondary:hover{ background:rgba(255,255,255,0.08); border-color:rgba(185,39,50,0.55); box-shadow:none; }
+  .cta.secondary:hover{ background:var(--chip-bg-hover); border-color:rgba(185,39,50,0.55); box-shadow:none; }
   .lock-note{
     margin-top:18px; font-size:12.5px; color:var(--dim);
     display:inline-flex; align-items:center; gap:6px;
@@ -165,6 +189,22 @@
     padding:22px; text-align:center; color:var(--dim);
     font-size:12px; border-top:1px solid var(--border);
   }
+  #themeBtn{
+    position:fixed; top:16px; right:16px; z-index:5;
+    width:38px; height:38px; border-radius:50%; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text); background:var(--chip-bg);
+    border:1px solid var(--border);
+    transition:background .15s, border-color .15s;
+  }
+  #themeBtn:hover{ background:var(--chip-bg-hover); border-color:rgba(185,39,50,0.5); }
+  #themeBtn:focus-visible{ outline:2px solid var(--accent-bright); outline-offset:2px; }
+  #themeBtn svg{ width:16px; height:16px; }
+  :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
+  :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
+  /* AFAM logo swaps to its charcoal-'STORAGE' variant on light pages */
+  :root[data-theme="light"] img.afam.for-dark{ display:none; }
+  :root[data-theme="dark"] img.afam.for-light{ display:none; }
 
   @media (max-width:640px){
     .cards{ grid-template-columns:1fr; }
@@ -186,6 +226,18 @@
 </style>
 </head>
 <body>
+  <button id="themeBtn" title="Toggle light / dark mode" aria-label="Toggle light or dark mode">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.5"/>
+      <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/>
+    </svg>
+  </button>
+
   <!-- parallax layers: translated on scroll at different rates (JS below) -->
   <div class="plx" id="plx-a" data-speed="0.25"></div>
   <div class="plx" id="plx-b" data-speed="0.5"></div>
@@ -275,7 +327,8 @@
       <p class="cap">Built around the operation</p>
       <div class="logo-row">
         <span class="chip"><img class="nss" src="assets/nss-logo.png" alt="National Self Storage"></span>
-        <img class="afam" src="assets/afam-logo.png" alt="A Family Storage">
+        <img class="afam for-dark" src="assets/afam-logo.png" alt="A Family Storage">
+        <img class="afam for-light" src="assets/afam-logo-light.png" alt="A Family Storage">
       </div>
     </section>
   </main>
@@ -287,6 +340,9 @@
   <script>
     // Keep the year fresh without a build step.
     document.getElementById("yr").textContent = new Date().getFullYear();
+    document.getElementById("themeBtn").addEventListener("click", function () {
+      TMTheme.toggle();
+    });
 
     // Scroll parallax: background glow layers drift slower than the page;
     // the two tool cards get a gentle counter-drift. Disabled for

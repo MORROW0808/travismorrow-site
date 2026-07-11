@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Enter password — Travis Morrow</title>
 <meta name="robots" content="noindex, nofollow">
+<script src="theme.js"></script>
+<script>TMTheme.init();</script>
 <style>
   :root{
     /* NSS / AFAM brand theme — NSS Red #B92732, AFAM Red #B62025,
@@ -13,8 +15,19 @@
     --bg:#141414; --border:rgba(255,255,255,0.08);
     --text:#d2d2d2; --dim:#9c9c9c; --bright:#f2f2f2;
     --accent:#B92732; --accent-2:#B62025; --accent-bright:#de5964;
-    --error:#f85149;
+    --error:#f85149; --ok:#3fb950;
+    --chip-bg:rgba(255,255,255,0.04);
   }
+  /* honors the site-wide stored theme; no toggle here — it's a
+     pass-through page and the chrome should stay minimal */
+  :root[data-theme="light"]{
+    --bg:#F2F2F0; --border:#D9DBDE;
+    --text:#33363B; --dim:#6B6E73; --bright:#111318;
+    --accent-bright:#B92732; --error:#CF222E; --ok:#1A7F37;
+    --chip-bg:rgba(0,0,0,0.035);
+  }
+  :root[data-theme="light"] body::before{ opacity:.4; }
+  :root[data-theme="light"] .card{ background:#FFFFFF; box-shadow:0 8px 30px rgba(16,18,20,0.10); }
   *{box-sizing:border-box;}
   html,body{height:100%;}
   body{
@@ -49,7 +62,7 @@
   form{ display:flex; flex-direction:column; gap:12px; }
   input[type=password]{
     width:100%; padding:13px 14px; font-size:15px;
-    color:var(--bright); background:rgba(255,255,255,0.04);
+    color:var(--bright); background:var(--chip-bg);
     border:1px solid var(--border); border-radius:10px; outline:none;
     transition:border-color .15s ease, box-shadow .15s ease;
   }
@@ -69,7 +82,7 @@
   button:disabled{ opacity:.6; cursor:default; }
   .msg{ min-height:18px; margin-top:12px; font-size:13px; }
   .msg.error{ color:var(--error); }
-  .msg.ok{ color:#3fb950; } /* success stays green — brand red would read as an error */
+  .msg.ok{ color:var(--ok); } /* success stays green — brand red would read as an error */
   .hint{ margin-top:18px; font-size:11.5px; color:var(--dim); opacity:.75; }
   .shake{ animation:shake .4s; }
   @keyframes shake{
