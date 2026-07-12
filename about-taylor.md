@@ -54,7 +54,7 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-87 nodes and 137 connections — every system, workflow, and
+90 nodes and 144 connections — every system, workflow, and
 automation in Taylor's operation, as of Living History v1.9. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
@@ -98,6 +98,7 @@ details, say the map only shows what exists, not private specifics.
 - **Messages chat.db** (LIVE, since v1.6) — The local Messages database read every few seconds so the inbound listener can catch new texts in real time.
 - **Live web** (LIVE, since v1.0) — General web research and lookups done live through the browser.
 - **Supermetrics (Google Ads)** (LIVE, since v1.9) — Live Google Ads ad-spend, upgraded to a paid plan and reconnected — the real cost side behind every ROAS number, pulled per facility and brand.
+- **Joiin (QuickBooks roll-up)** (LIMITED, since v1.9) — A newly-added connector that rolls up QuickBooks companies via live natural-language query — reopening part of the financial-data path that had been off the board, not yet explored for production use.
 
 ### Integrations & access lanes
 
@@ -127,9 +128,9 @@ details, say the map only shows what exists, not private specifics.
 - **iMessage — Senators** (LIVE, since v1.6) — The couple's group thread, handled in gated real time so it only responds when actually addressed.
 - **iMessage — NSS owners** (LIVE, since v1.6) — The owner-group thread used for daily reporting to the ownership group.
 - **Dropbox deliverables** (LIVE, since v1.0) — Where reports and files land for pickup.
-- **Google Drive (bridge)** (LIVE, since v1.0) — The Drive-side leg of the two-way bridge mirroring files with Dropbox.
 - **Calendar & TimeTree** (LIVE, since v1.0) — Where events get written back out to the calendar and travel tracker.
 - **PDF reports & dashboards** (LIVE, since v1.0) — Monthly snapshots, EOM packages, and one-pagers — the finished, ready-to-read output.
+- **travismorrow.com** (LIVE, since v1.9) — The system's first public-facing surface: a real-data portfolio dashboard, a facility map, and an embedded chat widget that knows this very memory map's own node inventory.
 
 ### Engineered workarounds & infrastructure
 
@@ -140,7 +141,6 @@ details, say the map only shows what exists, not private specifics.
 - **Maps / address-book rail** (LIVE, since v1.8) — Location questions and address requests route through a curated address book as the single source of truth.
 - **X / LinkedIn post lookup** (LIVE, since v1.8) — Drop a social post link in a thread and get a fetched, summarized reply back.
 - **Model routing + quiet hours** (LIVE, since v1.8) — Right-sizes which AI model handles which thread, and stays quiet overnight rather than composing at odd hours.
-- **Drive ↔ Dropbox bridge** (LIVE, since v1.0) — A two-way mirror keeping files in sync across both file systems, refreshed nightly and on demand.
 - **iMessage reliability stack** (LIVE, since v1.7) — Exactly-once sends, post-send delivery confirmation, and watchdog monitoring so texts don't silently fail or duplicate.
 - **Member-set thread binding** (LIVE, since v1.7) — Threads are identified by who's in them, not by a fragile stored ID — rotation-proof against platform quirks.
 - **Worker watchdog** (LIVE, since v1.6) — Heartbeat monitoring with automatic recovery if a background worker stalls.
@@ -149,6 +149,9 @@ details, say the map only shows what exists, not private specifics.
 - **ROAS / ad-spend Q&A by text** (LIVE, since v1.9) — Ask a ROAS or ad-spend question by text — for any facility, brand, or the whole portfolio — and the lookup rail answers from live data, right in the owners' thread. No brand fencing: the NSS owners get any answer they want.
 - **Twice-daily datastore ingest** (LIVE, since v1.9) — A twice-daily job (noon + 7 PM AZ) that refreshes the portfolio datastore from live operations data across all 29 facilities, so every store-backed report stays current — loaded and verified running on the host, with healthy data flowing into the store.
 - **Attribution-lite Q&A by text** (LIVE, since v1.9) — Ask by text for the lead-channel mix (web / phone / walk-in / other) or the most cost-effective ad campaigns — any facility, brand, or the whole portfolio, answered live from the datastore in the owners' thread. Deeper click-to-move-in attribution still waits on a Hummingbird product change.
+- **Subagent Verifier** (LIVE, since v1.9) — An independent, fresh-eyes checker for delegated work, signed off and promoted live — its own data load and its own math, so it can catch an error the original work made rather than repeating it.
+- **Spawner + Approval-Loop** (LIVE, since v1.9) — Lets Taylor delegate work with a text-based go/no-go confirm loop back to Travis — proven live end to end. Never autonomous: Travis's standing decision is no self-directed AI spawner, ever.
+- **Reminder job-type** (LIMITED, since v1.9) — Text 'remind me...' for a future scheduled send. Built across several rounds of real bug fixes; the durable fire-and-send path is not yet proven by a real live send, so it's reported honestly as limited, not live.
 
 ### Business workstreams
 
