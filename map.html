@@ -39,6 +39,7 @@
     --pin-nss:#B92732;
     --pin-afam:#c08a1e;
     --pin-sls:#00a3bf;
+    --pin-titan:#17365D;
     --track:rgba(255,255,255,0.08);
   }
   :root[data-theme="light"]{
@@ -168,6 +169,7 @@
   .pin.nss{ background:var(--pin-nss); color:var(--pin-nss); }
   .pin.afam{ background:var(--pin-afam); color:var(--pin-afam); }
   .pin.sls{ background:var(--pin-sls); color:var(--pin-sls); }
+  .pin.titan{ background:var(--pin-titan); color:var(--pin-titan); }
 
   /* ---------- hover/detail card (memory-map hover-card pattern) ---------- */
   #card{
@@ -212,6 +214,12 @@
   #card .c-brand img.nss{ height:22px; }
   #card .c-brand img.afam{ height:15px; }
   #card .c-brand img.sls{ height:11px; }
+  #card .c-brand img.titan{ height:20px; }
+  /* Titan's wordmark is white — on the light basemap it needs the same
+     navy chip treatment as the dashboard's .titan-strip (portfolio.html) */
+  :root[data-theme="light"] #card .c-brand img.titan.for-light{
+    background:#17365D; height:14px; padding:4px 8px; border-radius:5px;
+  }
   /* #card's ID selector outweighs bare img rules — scope the theme swap
      to match (same pattern, higher specificity) */
   :root[data-theme="light"] #card img.for-dark{ display:none; }
@@ -290,14 +298,19 @@
   };
   var ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
   var BRAND = {
-    "NSS":     { cls:"nss",  color:"var(--pin-nss)",  label:"NSS" },
-    "AFAM":    { cls:"afam", color:"var(--pin-afam)", label:"AFAM" },
-    "SL Reno": { cls:"sls",  color:"var(--pin-sls)",  label:"SL Reno" }
+    "NSS":     { cls:"nss",   color:"var(--pin-nss)",   label:"NSS" },
+    "AFAM":    { cls:"afam",  color:"var(--pin-afam)",  label:"AFAM" },
+    "SL Reno": { cls:"sls",   color:"var(--pin-sls)",   label:"SL Reno" },
+    "Titan":   { cls:"titan", color:"var(--pin-titan)", label:"Titan" }
   };
   var LOGOS = {
-    "NSS":     { cls:"nss",  dark:"assets/nss-logo-report.png", light:"assets/nss-logo.png" },
-    "AFAM":    { cls:"afam", dark:"assets/afam-logo.png",       light:"assets/afam-logo-light.png" },
-    "SL Reno": { cls:"sls",  dark:"assets/sls-logo.png",        light:"assets/sls-logo-light.png" }
+    "NSS":     { cls:"nss",   dark:"assets/nss-logo-report.png", light:"assets/nss-logo.png" },
+    "AFAM":    { cls:"afam",  dark:"assets/afam-logo.png",       light:"assets/afam-logo-light.png" },
+    "SL Reno": { cls:"sls",   dark:"assets/sls-logo.png",        light:"assets/sls-logo-light.png" },
+    /* reuses the single existing Titan asset (assets/titan-logo.png,
+       already used on the dashboard's GRN1 card) for both slots — the
+       light-theme navy chip is handled in CSS, same as portfolio.html */
+    "Titan":   { cls:"titan", dark:"assets/titan-logo.png",      light:"assets/titan-logo.png" }
   };
   /* saturation semantics from the owner's seat: below the 7-8 band =
      room to grow (green), in-band = balanced (neutral), 8-11 = getting
