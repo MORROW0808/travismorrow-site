@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-90 nodes and 144 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.9. The full
+92 nodes and 150 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.10. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -98,7 +98,7 @@ details, say the map only shows what exists, not private specifics.
 - **Messages chat.db** (LIVE, since v1.6) — The local Messages database read every few seconds so the inbound listener can catch new texts in real time.
 - **Live web** (LIVE, since v1.0) — General web research and lookups done live through the browser.
 - **Supermetrics (Google Ads)** (LIVE, since v1.9) — Live Google Ads ad-spend, upgraded to a paid plan and reconnected — the real cost side behind every ROAS number, pulled per facility and brand.
-- **Joiin (QuickBooks roll-up)** (LIMITED, since v1.9) — A newly-added connector that rolls up QuickBooks companies via live natural-language query — reopening part of the financial-data path that had been off the board, not yet explored for production use.
+- **Joiin (QuickBooks roll-up)** (LIVE, since v1.9) — A connector that rolls up QuickBooks companies via live natural-language query. Fully wired now: all 28 tracked facilities pulled to full GL-line-item detail and powering live financial Q&A in the NSS owners' thread.
 
 ### Integrations & access lanes
 
@@ -151,7 +151,9 @@ details, say the map only shows what exists, not private specifics.
 - **Attribution-lite Q&A by text** (LIVE, since v1.9) — Ask by text for the lead-channel mix (web / phone / walk-in / other) or the most cost-effective ad campaigns — any facility, brand, or the whole portfolio, answered live from the datastore in the owners' thread. Deeper click-to-move-in attribution still waits on a Hummingbird product change.
 - **Subagent Verifier** (LIVE, since v1.9) — An independent, fresh-eyes checker for delegated work, signed off and promoted live — its own data load and its own math, so it can catch an error the original work made rather than repeating it.
 - **Spawner + Approval-Loop** (LIVE, since v1.9) — Lets Taylor delegate work with a text-based go/no-go confirm loop back to Travis — proven live end to end. Never autonomous: Travis's standing decision is no self-directed AI spawner, ever.
-- **Reminder job-type** (LIMITED, since v1.9) — Text 'remind me...' for a future scheduled send. Built across several rounds of real bug fixes; the durable fire-and-send path is not yet proven by a real live send, so it's reported honestly as limited, not live.
+- **Reminder job-type** (LIVE, since v1.9) — Text 'remind me...' for a future scheduled send. The on-Mac runner now self-schedules off its own poll loop instead of depending on an external registrar task, firing by direct wall-clock comparison — proven live across a battery of test scenarios.
+- **NSS financial Q&A (Joiin-backed)** (LIVE, since v1.10) — Ask a real financial question in the owners' thread — P&L, budget vs. actual, revenue, expenses, variance — and get an answer pulled live from QuickBooks, across 28 of the 29 tracked facilities (one small property keeps its own books; a second is no longer managed). A separate lane from the ROAS/attribution Q&A above, and it's honest when the freshest answer is last month's closed books, not this month's.
+- **Idea capture** (LIVE, since v1.10) — Text an idea in the 1:1 — or just say "idea:" — and it's captured to a running ideas inbox that folds into the project backlog automatically overnight, so a passing thought doesn't get lost.
 
 ### Business workstreams
 
