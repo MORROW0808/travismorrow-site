@@ -1482,6 +1482,9 @@ if(KIOSK){
   var startKioskCycle = function(){
     kioskTimer = null;
     if(kioskPaused || growRunning) return;
+    // re-read the viewport each cycle so the framing self-corrects after
+    // fullscreen toggles, TV mirroring, or resolution changes mid-evening
+    W = window.innerWidth || W; H = window.innerHeight || H;
     holdActive = false; driftBase = null;
     svg.style.opacity = "0";               // graceful fade-out of the old map
     setTimeout(function(){
