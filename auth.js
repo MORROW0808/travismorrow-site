@@ -56,7 +56,7 @@
   // Redirects to the login page (remembering where we were) if not authed.
   function guard() {
     if (!isAuthed()) {
-      var here = location.pathname.split("/").pop() || CFG.PROTECTED_PAGE || "";
+      var here = (location.pathname.split("/").pop() || CFG.PROTECTED_PAGE || "") + (location.search || "");
       var target = (CFG.LOGIN_PAGE || "login.html") + "?next=" + encodeURIComponent(here);
       location.replace(target);
       return false;

@@ -131,7 +131,7 @@
     function nextTarget() {
       var params = new URLSearchParams(location.search);
       var next = params.get("next") || "";
-      if (next && /^[A-Za-z0-9._-]+\.html$/.test(next)) return next;
+      if (next && /^[A-Za-z0-9._-]+\.html(?:\?[A-Za-z0-9._~&=-]*)?$/.test(next)) return next;
       return (window.TM_CONFIG && TM_CONFIG.PROTECTED_PAGE) || "memory-map.html";
     }
 

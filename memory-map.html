@@ -227,6 +227,30 @@
   #stageLabel .sl-ver{ font-size:26px; font-weight:800; color:rgba(210,210,210,0.5); letter-spacing:1px; }
   #stageLabel .sl-txt{ font-size:13px; color:rgba(156,156,156,0.85); margin-top:2px; }
 
+  /* ---------- Kiosk / ambient loop mode (?loop or ?kiosk) ----------
+     Only active when the URL carries the param; the default page never
+     gets the body.kiosk class, so none of this applies to normal visits. */
+  svg#graph{ transition:opacity 1.05s ease; }
+  @keyframes hubPulse{ 0%,100%{opacity:1;} 50%{opacity:.72;} }
+  @keyframes arcSpin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+  @keyframes auroraA{
+    0%,100%{ transform:translate3d(-2%,-1%,0) scale(1); }
+    50%{ transform:translate3d(2.5%,2%,0) scale(1.08); }
+  }
+  body.kiosk .node-group[data-id="taylor"] circle.node-circle{
+    animation:hubPulse 5.5s ease-in-out infinite;
+  }
+  body.kiosk .mk-arc{
+    animation:arcSpin 70s linear infinite;
+    transform-origin:60px 60px;
+  }
+  body.kiosk #depthGlow{ animation:auroraA 40s ease-in-out infinite; }
+  body.kiosk .node-label{ font-size:12.5px; }
+  body.kiosk .node-label.hub{ font-size:17px; }
+  body.kiosk #stageLabel .sl-ver{ font-size:42px; }
+  body.kiosk #stageLabel .sl-txt{ font-size:17px; letter-spacing:.03em; }
+  body.kiosk.cursor-idle, body.kiosk.cursor-idle *{ cursor:none !important; }
+
   /* ---------- Side panel ---------- */
   #panel{
     position:absolute; top:0; right:0; height:100%; width:300px; max-width:88vw;
@@ -435,6 +459,13 @@
 (function(){
 "use strict";
 
+/* Kiosk / ambient-loop mode (?loop or ?kiosk): auto-replays the Grow
+   animation forever with fades between cycles, particle accents, edge
+   signal pulses, idle drift and a slow camera breathe — for hands-off
+   big-screen display. Without the param, behavior is exactly the original. */
+var KIOSK = /[?&](loop|kiosk)(=|&|$)/.test(location.search);
+if (KIOSK) document.body.classList.add("kiosk");
+
 /* =========================================================
    1. DATA MODEL
    ========================================================= */
@@ -596,7 +627,7 @@ function buildReticle(r){
                  "M31.7 109 L35.7 102.1 M11 88.3 L17.9 84.3 M11 31.7 L17.9 35.7 M31.7 11 L35.7 17.9",
                stroke:"var(--mk-tick2)", "stroke-width":1.4, fill:"none" });
   el("path", { d:"M60 18 A42 42 0 0 1 96.4 39 M96.4 81 A42 42 0 0 1 23.6 81 M23.6 39 A42 42 0 0 1 42 22.4",
-               stroke:"var(--mk-arc)", "stroke-width":1.8, fill:"none" });
+               "class":"mk-arc", stroke:"var(--mk-arc)", "stroke-width":1.8, fill:"none" });
   el("path", { d:"M34 42 H86 M60 42 V92",
                stroke:"var(--mk-ink)", "stroke-width":4, "stroke-linecap":"square", fill:"none" });
   el("circle", { cx:60, cy:42, r:6.5, fill:"var(--mk-lamp)", opacity:".35" });
@@ -685,6 +716,7 @@ var SIM = {
 function simTick(activeNodes){
   var n = activeNodes;
   var i,j;
+  var driftT = performance.now()/1000;
   // pairwise repulsion O(n^2) -- fine for ~80 nodes
   for(i=0;i<n.length;i++){
     var a = n[i];
@@ -730,8 +762,14 @@ function simTick(activeNodes){
     if(node.fixed){ node.vx=0; node.vy=0; continue; }
     var cfx = -node.x*SIM.centerK;
     var cfy = -node.y*SIM.centerK;
-    var hfx = (node.homeX-node.x)*SIM.homeK;
-    var hfy = (node.homeY-node.y)*SIM.homeK;
+    var hx = node.homeX, hy = node.homeY;
+    if(KIOSK && node.group!=="hub" && node.driftP1!==undefined){
+      // ambient idle drift: home targets orbit slowly so the map breathes
+      hx += Math.sin(driftT*0.22 + node.driftP1) * 14;
+      hy += Math.cos(driftT*0.17 + node.driftP2) * 12;
+    }
+    var hfx = (hx-node.x)*SIM.homeK;
+    var hfy = (hy-node.y)*SIM.homeK;
     var totalFx = (node._fx||0) + cfx + hfx;
     var totalFy = (node._fy||0) + cfy + hfy;
     node.vx = (node.vx + totalFx*0.016) * SIM.damping;
@@ -749,6 +787,8 @@ function activeNodeList(){
 
 var running = true;
 var lastFrameTime = 0;
+var kioskTick = null;    // kiosk FX frame hook (particles, pulses, camera breathe)
+var kioskFxBurst = null; // kiosk node-birth particle burst hook
 
 function frame(ts){
   if(running){
@@ -756,6 +796,7 @@ function frame(ts){
     simTick(an);
     positionAll();
     updateEdgeHighlight();
+    if(kioskTick) kioskTick(ts);
   }
   requestAnimationFrame(frame);
 }
@@ -898,16 +939,27 @@ svg.addEventListener("wheel", function(evt){
 
 var selectedId = null;
 
+/* Grow-replay reveal fade: items stamped with a bornAt timestamp fade from
+   0 to their base opacity over 650ms (bornAt may sit in the future so the
+   fade can be staggered). Items without bornAt render at base opacity. */
+function revealOpacity(item, base){
+  if(!item.bornAt) return base;
+  var t = (performance.now() - item.bornAt) / 650;
+  if(t >= 1){ item.bornAt = 0; return base; }
+  return Math.max(0, base * t);
+}
+
 function updateEdgeHighlight(){
   if(!selectedId){
     edges.forEach(function(e){
       if(!e.visible) return;
-      e.el.setAttribute("opacity","0.45");
+      e.el.setAttribute("opacity", revealOpacity(e, 0.45));
       e.el.setAttribute("stroke-width","1.2");
     });
     nodes.forEach(function(n){
-      n.circleEl.setAttribute("opacity","1");
-      n.labelEl.setAttribute("opacity","1");
+      var o = revealOpacity(n, 1);
+      n.circleEl.setAttribute("opacity", o);
+      n.labelEl.setAttribute("opacity", o);
       n.circleEl.setAttribute("filter", n.baseFilter);
     });
     return;
@@ -1085,6 +1137,8 @@ function updateSubtitle(){
    ========================================================= */
 
 var growRunning = false;
+var onGrowComplete = null;          // kiosk loop hook, set only in kiosk mode
+var STAGE_MS = KIOSK ? 2600 : 1600; // slower stage cadence for big-screen kiosk
 var stageLabelEl = document.getElementById("stageLabel");
 var stageVerEl = document.getElementById("stageVer");
 var stageTxtEl = document.getElementById("stageTxt");
@@ -1103,14 +1157,17 @@ function hideStageLabel(){
   stageLabelEl.classList.remove("show");
 }
 
-function popInNode(n){
-  // scale spring pop: animate radius from 0 -> r with slight overshoot, plus a glow pulse
-  var el = n.el;
-  var startTime = performance.now();
+function popInNode(n, delay){
+  // scale spring pop: animate radius from 0 -> r with slight overshoot,
+  // optionally delayed so a stage's nodes land staggered instead of at once
+  var startTime = performance.now() + (delay||0);
   var dur = 480;
   var baseR = n.r;
+  n.circleEl.setAttribute("r", 0.5);
   function step(now){
-    var t = Math.min(1, (now-startTime)/dur);
+    var t = (now-startTime)/dur;
+    if(t < 0){ requestAnimationFrame(step); return; }
+    t = Math.min(1, t);
     // spring ease-out-back approximation
     var c1 = 1.70158, c3 = c1+1;
     var eased = 1 + c3*Math.pow(t-1,3) + c1*Math.pow(t-1,2);
@@ -1143,13 +1200,15 @@ function runGrowReplay(){
       selectedId = null;
       updateEdgeHighlight();
       // final ease camera back to a full fit-to-bounds view
-      var fit = computeFit();
+      var fit = KIOSK ? computeFitHomes(70) : computeFit();
       easeCameraTo(fit.x, fit.y, fit.scale, 700);
+      if(onGrowComplete) onGrowComplete();
       return;
     }
     var stage = STAGES[stageIdx];
     showStageLabel(stage);
 
+    var born = performance.now();
     var newlyVisible = [];
     nodes.forEach(function(n){
       if(!n.visible && stage.vers.indexOf(n.ver)!==-1){
@@ -1159,7 +1218,12 @@ function runGrowReplay(){
     });
     edges.forEach(function(e){
       var a = nodeById[e.a], b = nodeById[e.b];
-      if(a.visible && b.visible) e.visible = true;
+      if(!e.visible && a.visible && b.visible){
+        e.visible = true;
+        // edges fade + trace in just behind their nodes, loosely scattered
+        e.bornAt = born + 380 + Math.random()*520;
+        if(KIOSK) e.traceStart = e.bornAt;
+      }
     });
 
     // reposition newly visible nodes near their home before pop so physics can settle them
@@ -1170,10 +1234,22 @@ function runGrowReplay(){
     });
 
     positionAll();
-    newlyVisible.forEach(popInNode);
+    // staggered pops: each node in the stage lands a beat after the last
+    newlyVisible.forEach(function(n, i){
+      var d = Math.min(i*70, 950);
+      n.bornAt = born + d;
+      popInNode(n, d);
+      if(KIOSK && kioskFxBurst) kioskFxBurst(n, born + d);
+    });
+
+    // kiosk: choreograph the camera to hug the graph as it grows
+    if(KIOSK){
+      var f = computeFitHomes(90);
+      easeCameraTo(f.x, f.y, Math.min(f.scale, 1.12), 1400);
+    }
 
     stageIdx++;
-    setTimeout(runStage, 1600);
+    setTimeout(runStage, STAGE_MS);
   }
 
   runStage();
@@ -1210,6 +1286,28 @@ function computeFit(padding){
   return { x:cx, y:cy, scale:scale };
 }
 
+/* Kiosk camera fit: like computeFit but over the visible nodes' HOME
+   (settle-target) positions. Live positions briefly scatter when a stage
+   of new nodes drops in (repulsion spike before the springs win), which
+   made live-bounds fits collapse to the min-scale clamp mid-grow. Homes
+   are where the layout settles, so the framing is always right. */
+function computeFitHomes(padding){
+  padding = (padding===undefined) ? 90 : padding;
+  var an = nodes.filter(function(n){ return n.visible; });
+  if(an.length===0){ return { x:0, y:0, scale:0.72 }; }
+  var minX=Infinity, maxX=-Infinity, minY=Infinity, maxY=-Infinity;
+  an.forEach(function(n){
+    var pad = n.r + 55; // room for label + physics wander around home
+    if(n.homeX-pad<minX) minX=n.homeX-pad;
+    if(n.homeX+pad>maxX) maxX=n.homeX+pad;
+    if(n.homeY-pad<minY) minY=n.homeY-pad;
+    if(n.homeY+pad>maxY) maxY=n.homeY+pad;
+  });
+  var bw = Math.max(1, maxX-minX), bh = Math.max(1, maxY-minY);
+  var scale = Math.min(Math.max(50,W-padding*2)/bw, Math.max(50,H-padding*2)/bh);
+  return { x:(minX+maxX)/2, y:(minY+maxY)/2, scale: Math.max(0.15, Math.min(1.4, scale)) };
+}
+
 document.getElementById("growBtn").addEventListener("click", runGrowReplay);
 
 /* =========================================================
@@ -1222,12 +1320,17 @@ function resetAll(){
   hideStageLabel();
   closePanel();
   setAllVisible(true);
+  edges.forEach(function(e){
+    e.bornAt = 0; e.traceStart = 0;
+    e.el.removeAttribute("stroke-dasharray");
+    e.el.removeAttribute("stroke-dashoffset");
+  });
   nodes.forEach(function(n){
     var jitterX = (hashStr(n.id) % 200 - 100);
     var jitterY = ((hashStr(n.id+"y")) % 200 - 100);
     n.x = n.homeX + jitterX*0.3;
     n.y = n.homeY + jitterY*0.3;
-    n.vx=0; n.vy=0; n.fixed=false;
+    n.vx=0; n.vy=0; n.fixed=false; n.bornAt = 0;
     n.circleEl.setAttribute("r", n.r);
   });
   prewarm(140);
@@ -1236,6 +1339,199 @@ function resetAll(){
   easeCameraTo(fit.x, fit.y, fit.scale, 500);
 }
 document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+/* =========================================================
+   10b. KIOSK AMBIENT LOOP + FX (?loop / ?kiosk only)
+   ========================================================= */
+if(KIOSK){
+  var KIOSK_HOLD_MS = 18000;    // full-map dwell between grow cycles
+  var KIOSK_RESUME_MS = 45000;  // resume this long after someone interacts
+  var kioskTimer = null, kioskResumeTimer = null, kioskPaused = false;
+  var holdActive = false, holdStart = 0, driftBase = null;
+
+  /* ---- FX layer: fixed pools (no per-cycle allocation, no leaks) ---- */
+  var fxLayer = document.createElementNS("http://www.w3.org/2000/svg","g");
+  viewport.appendChild(fxLayer);
+
+  var PARTICLE_POOL = 64, particles = [];
+  (function(){
+    for(var i=0;i<PARTICLE_POOL;i++){
+      var c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      c.setAttribute("r","1.7"); c.style.display="none";
+      fxLayer.appendChild(c);
+      particles.push({el:c, active:false});
+    }
+  })();
+  var pendingBursts = [];
+  kioskFxBurst = function(n, at){ pendingBursts.push({n:n, at:at}); };
+
+  function fireBurst(n){
+    for(var i=0;i<7;i++){
+      var p = null;
+      for(var j=0;j<PARTICLE_POOL;j++){ if(!particles[j].active){ p=particles[j]; break; } }
+      if(!p) return;
+      var ang = Math.random()*Math.PI*2;
+      var sp = 18 + Math.random()*26;
+      p.active = true;
+      p.x = n.x; p.y = n.y;
+      p.vx = Math.cos(ang)*sp; p.vy = Math.sin(ang)*sp;
+      p.born = performance.now(); p.life = 550 + Math.random()*350;
+      p.el.setAttribute("fill", GROUP_COLOR[n.group].glow);
+      p.el.style.display = "";
+    }
+  }
+
+  var PULSE_POOL = 14, pulses = [];
+  (function(){
+    for(var i=0;i<PULSE_POOL;i++){
+      var c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      c.setAttribute("r","2.6"); c.style.display="none";
+      fxLayer.appendChild(c);
+      pulses.push({el:c, active:false});
+    }
+  })();
+  var nextPulseAt = 0;
+  var EDGE_COLOR = { data:"var(--edge-data)", workaround:"var(--edge-workaround)", route:"var(--edge-route)" };
+
+  function spawnPulse(now){
+    var vis = edges.filter(function(e){ return e.visible && !e.traceStart; });
+    if(!vis.length) return;
+    var p = null;
+    for(var j=0;j<PULSE_POOL;j++){ if(!pulses[j].active){ p=pulses[j]; break; } }
+    if(!p) return;
+    var e = vis[(Math.random()*vis.length)|0];
+    p.active = true; p.edge = e; p.t0 = now; p.dur = 1100 + Math.random()*700;
+    p.el.setAttribute("fill", EDGE_COLOR[e.kind] || "var(--edge-route)");
+    p.el.style.display = "";
+  }
+
+  /* ---- per-frame FX tick, driven from the main rAF loop ---- */
+  kioskTick = function(){
+    var now = performance.now();
+    var i, e, p;
+
+    // particle bursts that have come due
+    for(i=pendingBursts.length-1;i>=0;i--){
+      if(now >= pendingBursts[i].at){ fireBurst(pendingBursts[i].n); pendingBursts.splice(i,1); }
+    }
+    // particles: drift out, decelerate, fade
+    for(i=0;i<PARTICLE_POOL;i++){
+      p = particles[i];
+      if(!p.active) continue;
+      var lt = (now - p.born)/p.life;
+      if(lt>=1){ p.active=false; p.el.style.display="none"; continue; }
+      p.x += p.vx*0.016; p.y += p.vy*0.016;
+      p.vx *= 0.94; p.vy *= 0.94;
+      p.el.setAttribute("cx", p.x); p.el.setAttribute("cy", p.y);
+      p.el.setAttribute("opacity", (1-lt)*0.85);
+    }
+    // edge trace-in: draw the line from source to target as it is born
+    for(i=0;i<edges.length;i++){
+      e = edges[i];
+      if(!e.traceStart) continue;
+      var a=nodeById[e.a], b=nodeById[e.b];
+      var L = Math.hypot(b.x-a.x, b.y-a.y) || 1;
+      var tt = (now - e.traceStart)/700;
+      if(tt>=1){
+        e.traceStart = 0;
+        e.el.removeAttribute("stroke-dasharray");
+        e.el.removeAttribute("stroke-dashoffset");
+        continue;
+      }
+      var ease = tt<=0 ? 0 : 1-Math.pow(1-tt,3);
+      e.el.setAttribute("stroke-dasharray", L);
+      e.el.setAttribute("stroke-dashoffset", L*(1-ease));
+    }
+    // travelling signal pulses along edges — the map's data paths, alive
+    if(now >= nextPulseAt && !document.hidden){
+      spawnPulse(now);
+      nextPulseAt = now + 380 + Math.random()*520;
+    }
+    for(i=0;i<PULSE_POOL;i++){
+      p = pulses[i];
+      if(!p.active) continue;
+      e = p.edge;
+      var pt = (now - p.t0)/p.dur;
+      if(pt>=1 || !e.visible){ p.active=false; p.el.style.display="none"; continue; }
+      var a2=nodeById[e.a], b2=nodeById[e.b];
+      var ps = pt*pt*(3-2*pt); // smoothstep along the edge
+      p.el.setAttribute("cx", a2.x + (b2.x-a2.x)*ps);
+      p.el.setAttribute("cy", a2.y + (b2.y-a2.y)*ps);
+      p.el.setAttribute("opacity", Math.sin(Math.PI*pt)*0.9);
+    }
+    // hold phase only: node breathe + slow Ken Burns camera drift
+    if(holdActive && !kioskPaused && !growRunning){
+      var ht = (now - holdStart)/1000;
+      var ramp = Math.min(1, Math.max(0, (ht-0.9)/2)); // wait out the fit ease, then ease in
+      if(ramp>0){
+        for(i=0;i<nodes.length;i++){
+          var nn = nodes[i];
+          if(!nn.visible || nn.group==="hub") continue;
+          nn.circleEl.setAttribute("r", nn.r * (1 + 0.06*ramp*Math.sin(ht*1.1 + nn.driftP1)));
+        }
+        if(!driftBase) driftBase = { x:camX, y:camY, s:camScale };
+        camX = driftBase.x + Math.sin(ht*0.21)*26*ramp;
+        camY = driftBase.y + Math.sin(ht*0.16)*18*ramp;
+        camScale = driftBase.s * (1 + 0.028*ramp*Math.sin(ht*0.13));
+        applyTransform();
+      }
+    }
+  };
+
+  /* ---- cycle control ---- */
+  var startKioskCycle = function(){
+    kioskTimer = null;
+    if(kioskPaused || growRunning) return;
+    holdActive = false; driftBase = null;
+    svg.style.opacity = "0";               // graceful fade-out of the old map
+    setTimeout(function(){
+      if(kioskPaused){ svg.style.opacity = "1"; return; }
+      runGrowReplay();                     // clears the canvas immediately...
+      svg.style.opacity = "1";             // ...then fade back in as stage 1 pops
+    }, 1100);
+  };
+  var scheduleKioskCycle = function(delay){
+    if(kioskTimer) clearTimeout(kioskTimer);
+    kioskTimer = setTimeout(startKioskCycle, delay);
+  };
+  onGrowComplete = function(){
+    holdActive = true; holdStart = performance.now(); driftBase = null;
+    scheduleKioskCycle(KIOSK_HOLD_MS);
+  };
+
+  // anyone touching the map pauses the loop; it resumes on its own
+  var kioskInteracted = function(){
+    kioskPaused = true; holdActive = false; driftBase = null;
+    nodes.forEach(function(n){ if(n.visible) n.circleEl.setAttribute("r", n.r); });
+    if(kioskTimer){ clearTimeout(kioskTimer); kioskTimer = null; }
+    if(kioskResumeTimer) clearTimeout(kioskResumeTimer);
+    kioskResumeTimer = setTimeout(function(){
+      kioskPaused = false;
+      if(!growRunning) scheduleKioskCycle(2500);
+    }, KIOSK_RESUME_MS);
+  };
+  svg.addEventListener("pointerdown", kioskInteracted, true);
+  svg.addEventListener("wheel", kioskInteracted, { passive:true, capture:true });
+
+  // per-node phases for idle drift + breathe
+  nodes.forEach(function(n){
+    n.driftP1 = hashStr(n.id) * 0.05;
+    n.driftP2 = hashStr(n.id + "~") * 0.05;
+  });
+
+  // hide the cursor once the pointer goes quiet
+  var cursorTimer = null;
+  var pokeCursor = function(){
+    document.body.classList.remove("cursor-idle");
+    if(cursorTimer) clearTimeout(cursorTimer);
+    cursorTimer = setTimeout(function(){ document.body.classList.add("cursor-idle"); }, 4000);
+  };
+  window.addEventListener("pointermove", pokeCursor, { passive:true });
+  pokeCursor();
+
+  // opening beat: show the finished map briefly, then start the first cycle
+  scheduleKioskCycle(6000);
+}
 
 /* =========================================================
    11. RESIZE
