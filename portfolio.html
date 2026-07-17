@@ -377,6 +377,39 @@
     .dq-side{ border-left:0; padding-left:0; border-top:1px solid var(--line); padding-top:14px; }
     .dq-row{ grid-template-columns:62px 1fr 100px; }
   }
+  /* ---------- Storelocal Protection · coverage ring ----------
+     SLP identity color = the Portfolio Snapshot SLP page's gold
+     (#F5C518 on dark); light mode darkens it for contrast on white stock,
+     same convention as the status/aging palettes. Identity is never
+     color-alone: the ring ships a key and every figure is labeled. */
+  :root{ --slp:#F5C518; }
+  :root[data-theme="light"]{ --slp:#9A7B00; }
+  .slp-card{ position:relative; padding:18px 20px 16px; cursor:pointer; }
+  .slp-card::after{
+    content:"details \2192"; position:absolute; top:13px; right:16px;
+    font-size:9px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent-bright); opacity:0; transition:opacity .15s;
+  }
+  .slp-card:hover::after{ opacity:1; }
+  .slp-layout{ display:flex; gap:28px; align-items:stretch; }
+  .slp-ringcol{ flex:0 0 auto; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:8px; }
+  .slp-ring{ position:relative; width:196px; }
+  .slp-ring svg{ display:block; width:100%; height:auto; }
+  .slp-side{ flex:1; min-width:0; border-left:1px solid var(--line); padding-left:26px;
+    display:flex; flex-direction:column; justify-content:center; gap:9px; }
+  .slp-cov{ font-size:22px; font-weight:800; letter-spacing:-0.02em; color:var(--slp);
+    font-variant-numeric:tabular-nums; line-height:1.1; }
+  .slp-cov small{ display:block; font-size:10px; font-weight:600; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--dim); margin-top:3px; }
+  .slp-key{ display:flex; gap:14px; font-size:10px; color:var(--dim); }
+  .slp-key i{ display:inline-block; width:12px; height:0; border-top:4px solid var(--slp);
+    border-radius:2px; margin-right:5px; vertical-align:2px; }
+  .slp-key i.k2{ border-top-width:2.5px; opacity:.45; }
+  @media (max-width:760px){
+    .slp-layout{ flex-direction:column; gap:16px; }
+    .slp-side{ border-left:0; padding-left:0; border-top:1px solid var(--line); padding-top:14px; }
+  }
   .card{
     background:var(--panel); border:1px solid var(--line); border-radius:14px;
     padding:15px 17px 13px; min-width:0;
@@ -654,6 +687,25 @@
           <div class="dq-side" id="dqSide"></div>
         </div>
         <div class="drTipBox" id="dqTip"></div>
+      </div>
+    </section>
+
+    <!-- ===== Storelocal Protection · coverage & premiums ===== -->
+    <section class="block reveal" id="slpSection" hidden>
+      <div class="sec-head">
+        <h2>Storelocal Protection</h2>
+        <span class="hint">tenant coverage &middot; hover the ring &middot; click for per-facility detail</span>
+      </div>
+      <div class="card slp-card" id="slpCard" role="button" tabindex="0"
+           aria-label="Open Storelocal Protection drill-down">
+        <div class="slp-layout">
+          <div class="slp-ringcol">
+            <div class="slp-ring" id="slpRing"></div>
+            <div class="slp-key"><span><i></i>&divide; occupied</span><span><i class="k2"></i>&divide; all units</span></div>
+          </div>
+          <div class="slp-side" id="slpSide"></div>
+        </div>
+        <div class="drTipBox" id="slpTip"></div>
       </div>
     </section>
 
@@ -1253,6 +1305,121 @@
     });
   })();
 
+  /* ------------------------------------------------------------------ *
+   *  Storelocal Protection — coverage penetration ring + premium KPIs
+   *  (data: scope.protection from the store export — the SAME MSR fields
+   *  the Portfolio Snapshot's SLP page uses, so site and PDF can't drift;
+   *  absent block hides the section so a stale JSON can never break the
+   *  page)
+   * ------------------------------------------------------------------ */
+  var prevSlp = null;               // last painted ring fractions, so scopes morph
+
+  function slpData() { var d = scopeData(); return (d && d.protection) || null; }
+
+  function renderSlp() {
+    var sec = document.getElementById("slpSection");
+    var p = slpData();
+    if (!p || !p.occupied_units) { sec.hidden = true; return; }
+    sec.hidden = false;
+
+    var ring = document.getElementById("slpRing");
+    var side = document.getElementById("slpSide");
+
+    var occF = Math.min(1, (p.insured_units || 0) / p.occupied_units);
+    var totF = p.total_units ? Math.min(1, (p.insured_units || 0) / p.total_units) : 0;
+
+    /* twin coverage ring: outer = insured ÷ occupied (the MSR's own headline
+       definition), inner = insured ÷ all units — same twin-band language as
+       the occupancy dial */
+    var C = 100, R1 = 78, R2 = 58;
+    ring.innerHTML =
+      '<svg viewBox="0 0 200 200" role="img" aria-label="Storelocal Protection penetration">' +
+        '<circle cx="' + C + '" cy="' + C + '" r="' + R1 + '" fill="none" stroke="var(--track)" stroke-width="17"></circle>' +
+        '<circle cx="' + C + '" cy="' + C + '" r="' + R2 + '" fill="none" stroke="var(--track)" stroke-width="8"></circle>' +
+        '<path id="gSlpOcc" fill="none" stroke="var(--slp)" stroke-width="17" stroke-linecap="round"></path>' +
+        '<path id="gSlpTot" fill="none" stroke="var(--slp)" stroke-opacity=".45" stroke-width="8" stroke-linecap="round"></path>' +
+      '</svg>' +
+      '<div class="g-center"><span class="gv" style="font-size:26px"><span class="num"></span></span>' +
+      '<span class="gu">of occupied insured</span></div>';
+
+    var from = prevSlp || { occ: 0, tot: 0 };
+    var to = { occ: occF, tot: totF };
+    var aOcc = document.getElementById("gSlpOcc"), aTot = document.getElementById("gSlpTot");
+    tweenGauges(function (t) {
+      aOcc.setAttribute("d", dialArc(C, C, R1, 0, Math.min(359.9, 360 * lerp(from.occ, to.occ, t))));
+      aTot.setAttribute("d", dialArc(C, C, R2, 0, Math.min(359.9, 360 * lerp(from.tot, to.tot, t))));
+    });
+    prevSlp = to;
+    animNum(ring.querySelector(".gv .num"), p.penetration_occ_pct,
+      function (v) { return fmtPct(v, 1); });
+
+    var unins = Math.max(0, p.occupied_units - (p.insured_units || 0));
+    var avg = p.avg_premium_per_insured_unit;
+    var sp = p.split_mtd || {};
+    var itemized = (sp.storelocal || 0) + (sp.tenant || 0) + (sp.other || 0);
+    var splitHtml = "";
+    if (itemized > 0.01) {
+      var segsArr = [["Storelocal", sp.storelocal || 0, 1], ["Tenant", sp.tenant || 0, .55], ["Other", sp.other || 0, .3]];
+      var barSegs = segsArr.map(function (s) {
+        return s[1] > 0 ? '<i style="flex:0 1 ' + (100 * s[1] / itemized).toFixed(1) +
+          '%;background:var(--slp);opacity:' + s[2] + '" title="' + s[0] + ': ' + fmtMoneyFull(s[1]) + '"></i>' : "";
+      }).join("");
+      var lbl = segsArr.filter(function (s) { return s[1] > 0; })
+        .map(function (s) { return s[0] + " " + fmtMoney(s[1]); }).join(" · ");
+      splitHtml = '<div class="dq-stat">Product mix · MTD<div class="mini-stack" style="margin-top:5px">' +
+        barSegs + '</div><span style="font-size:10.5px">' + lbl + '</span></div>';
+    } else if (p.collected_premiums_mtd) {
+      splitHtml = '<div class="dq-stat">All coverage books under the <b>Storelocal Protection</b> program (no product-type split reported).</div>';
+    }
+    side.innerHTML =
+      '<div class="dq-big"><span class="num"></span><small>units protected · Storelocal Protection</small></div>' +
+      '<div class="dq-big2">' + fmtMoneyFull(p.collected_premiums_mtd) + ' <small>premiums collected · MTD' +
+        (avg != null ? ' · $' + avg.toFixed(2) + ' / insured unit' : '') + '</small></div>' +
+      '<div class="slp-cov">' + fmtMoney(p.coverage_in_force_est) +
+        '<small>est. coverage in force · floor @ $' + ((p.base_tier || 2500) / 1000) + 'K base tier</small></div>' +
+      (p.insurance_revenue_mtd != null
+        ? '<div class="dq-stat"><b>' + fmtMoneyFull(p.insurance_revenue_mtd) + '</b> insurance revenue recognized · MTD</div>'
+        : '') +
+      splitHtml +
+      '<div class="dq-take" style="border-left-color:var(--slp)"><b>' + fmtPct(p.penetration_occ_pct, 1) +
+        '</b> of occupied units carry protection (<b>' + p.insured_units.toLocaleString() + '</b> of ' +
+        p.occupied_units.toLocaleString() + ') — <b>' + unins.toLocaleString() +
+        '</b> occupied units are unenrolled.</div>' +
+      '<div class="foot-note">Penetration = insured ÷ occupied units (the MSR’s own definition); inner ring ÷ all ' +
+        (p.total_units ? p.total_units.toLocaleString() : '—') + ' units. Premium &amp; revenue $ are month-to-date; ' +
+        'coverage in force is an estimate floor — $3.5K / $5K plans push it higher. ' +
+        'Latest snapshot per facility, refreshed twice daily.</div>';
+    animNum(side.querySelector(".dq-big .num"), p.insured_units,
+      function (v) { return Math.round(v).toLocaleString(); });
+  }
+
+  /* ring interactions: hover tooltip, click/keys -> drill */
+  (function () {
+    var card = document.getElementById("slpCard");
+    var tip = document.getElementById("slpTip");
+    card.addEventListener("pointermove", function (e) {
+      var over = e.target && e.target.closest ? e.target.closest(".slp-ring") : null;
+      var p = slpData();
+      if (!over || !p) { tip.style.display = "none"; return; }
+      var unins = Math.max(0, p.occupied_units - (p.insured_units || 0));
+      tip.innerHTML = "<b>" + p.insured_units.toLocaleString() + "</b> insured · <b>" +
+        unins.toLocaleString() + "</b> occupied unprotected · " + fmtPct(p.penetration_occ_pct, 1) +
+        " of occupied" + (p.total_units ? " (" + fmtPct(p.penetration_total_pct, 1) + " of all " +
+        p.total_units.toLocaleString() + " units)" : "");
+      tip.style.display = "block";
+      var r = card.getBoundingClientRect();
+      var x = Math.min(e.clientX - r.left + 14, r.width - tip.offsetWidth - 8);
+      tip.style.left = Math.max(4, x) + "px";
+      tip.style.top = (e.clientY - r.top + 14) + "px";
+    });
+    card.addEventListener("pointerleave", function () { tip.style.display = "none"; });
+    function go() { openDrill("protection"); }
+    card.addEventListener("click", go);
+    card.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+    });
+  })();
+
   /* ================================================================== *
    *  KPI drill-downs — slide-over panel
    *  Occupancy is the reference implementation; the other three follow
@@ -1434,6 +1601,18 @@
           (target ? '<span class="tk" style="left:' + target + '%"></span>' : "") + "</span>" +
         '<span class="v">' + r.label + "</span></div>";
     }).join("") + "</div>";
+  }
+
+  /* gold penetration rows for the Storelocal Protection drill (barRows'
+     shape, SLP-gold fills, optional per-row title + scope-average tick) */
+  function slpRows(rows, target) {
+    return '<div class="dr-bars">' + rows.map(function (r) {
+      return '<div class="dr-bar"' + (r.title ? ' title="' + esc(r.title) + '"' : '') + '>' +
+        '<span class="nm">' + (r.code ? '<small>' + esc(r.code) + '</small>' : '') + esc(r.name) + '</span>' +
+        '<span class="tr"><i style="width:' + Math.min(100, r.pct) + '%;background:var(--slp)"></i>' +
+          (target ? '<span class="tk" style="left:' + Math.min(100, target) + '%"></span>' : '') + '</span>' +
+        '<span class="v">' + r.label + '</span></div>';
+    }).join('') + '</div>';
   }
 
   var SPEND_SOURCE_LABELS = {
@@ -1713,6 +1892,65 @@
           });
         }
       };
+    },
+
+    protection: function () {
+      var p = slpData();
+      if (!p) {
+        return { title: "Storelocal Protection", html:
+          '<div class="dr-sec"><div class="dr-panel"><div class="foot-note" style="margin-top:0">No protection data in this export yet — it lands with the next twice-daily refresh.</div></div></div>',
+          bind: null };
+      }
+      var hero =
+        '<div class="dr-sec"><div class="dr-panel dr-hero">' +
+        '<div class="nums"><div class="b">' + fmtPct(p.penetration_occ_pct, 1) + ' <small>of occupied insured</small></div>' +
+        '<div class="l"><b>' + p.insured_units.toLocaleString() + '</b> of ' + p.occupied_units.toLocaleString() +
+        ' occupied units · <b>' + fmtMoneyFull(p.collected_premiums_mtd) + '</b> premiums MTD · ' +
+        fmtMoney(p.coverage_in_force_est) + ' est. coverage in force</div></div></div></div>';
+
+      var brandSec = "";
+      if (scope === "portfolio") {
+        var bl = BRANDS.filter(function (b) {
+          return DATA.brands[b] && DATA.brands[b].protection;
+        }).map(function (b) {
+          var q = DATA.brands[b].protection;
+          return { name: b, pct: q.penetration_occ_pct,
+                   title: fmtMoneyFull(q.collected_premiums_mtd) + " premiums MTD",
+                   label: fmtPct(q.penetration_occ_pct, 1) + " · " +
+                     q.insured_units.toLocaleString() + "/" + q.occupied_units.toLocaleString() + "u" };
+        });
+        if (bl.length) {
+          brandSec = '<div class="dr-sec"><div class="cap">By brand · insured ÷ occupied</div>' +
+            '<div class="dr-panel">' + slpRows(bl, p.penetration_occ_pct) + '</div></div>';
+        }
+      }
+
+      var fl = [];
+      scopeFacs().forEach(function (f) {
+        var q = f.protection;
+        if (!q || !q.occupied_units) return;
+        fl.push({ code: f.facility_code,
+          name: f.facility_name.replace(/^(National Self Storage|A Family Storage) - /, ""),
+          pct: q.penetration_occ_pct,
+          title: fmtMoneyFull(q.collected_premiums_mtd) + " premiums MTD",
+          label: fmtPct(q.penetration_occ_pct, 1) + " · " +
+            q.insured_units.toLocaleString() + "/" + q.occupied_units.toLocaleString() + "u" });
+      });
+      fl.sort(function (a, b) { return b.pct - a.pct; });
+      var facSec = '<div class="dr-sec"><div class="cap">By facility · insured ÷ occupied · highest first</div>' +
+        '<div class="dr-panel">' +
+        (fl.length ? slpRows(fl, p.penetration_occ_pct)
+          : '<div class="foot-note" style="margin-top:0">No facility protection data in this scope.</div>') +
+        '<div class="foot-note" style="margin-top:10px">White tick = ' + esc(scopeLabel()) + ' average (' +
+          fmtPct(p.penetration_occ_pct, 1) + '). Hover a row for its premiums MTD.</div></div></div>';
+
+      var foot = '<div class="dr-sec"><div class="dr-panel"><div class="foot-note" style="margin-top:0">' +
+        'Same stats — and the same Nectar MSR fields — as the monthly Portfolio Snapshot’s Storelocal Protection page, ' +
+        'so the two can’t drift. Premiums are coverage deposits booked month-to-date; coverage in force is an estimate ' +
+        'floor at the $' + ((p.base_tier || 2500) / 1000) + 'K base tier ($3.5K / $5K plans push it higher — no per-tenant ' +
+        'tier exists in the MSR). Latest snapshot per facility from the portfolio datastore, refreshed twice daily.</div></div></div>';
+
+      return { title: "Storelocal Protection", html: hero + brandSec + facSec + foot, bind: null };
     }
   };
 
@@ -1824,6 +2062,19 @@
       '<div class="s">' + a.gt30_units.toLocaleString() + ' units 30+ days · ' + fmtMoney(a.gt30_amount) + '</div>';
   }
 
+  /* Storelocal Protection mini for the expanded facility row (guarded —
+     absent block renders nothing, so an older cached JSON can't break it) */
+  function protMini(f) {
+    var p = f.protection;
+    if (!p || !p.occupied_units) return "";
+    return '<div class="mini"><div class="lbl">Storelocal Protection</div>' +
+      '<div class="v">' + fmtPct(p.penetration_occ_pct, 1) + '</div>' +
+      '<div class="s">' + p.insured_units.toLocaleString() + ' of ' + p.occupied_units.toLocaleString() +
+      ' occupied · ' + fmtMoney(p.collected_premiums_mtd) + ' MTD</div>' +
+      '<div class="bar"><i style="width:' + Math.min(100, Math.max(0, p.penetration_occ_pct)) +
+      '%;background:var(--slp)"></i></div></div>';
+  }
+
   function detailHTML(f) {
     function bar(pct) {
       return '<div class="bar"><i style="width:' + Math.min(100, Math.max(0, pct)) + '%"></i></div>';
@@ -1841,6 +2092,7 @@
         '<div class="s">' + fmtPct(f.conversion_pct, 1) + ' converted MTD</div></div>' +
       '<div class="mini"><div class="lbl">Delinquency</div><div class="v ' + delinqClass(f.delinquency_pct) + '">' + fmtPct(f.delinquency_pct, 1) + '</div>' +
         '<div class="s">of units delinquent</div>' + agingStrip(f) + '</div>' +
+      protMini(f) +
       '<div class="mini"><div class="lbl">Net revenue · MTD</div><div class="v">' + fmtMoneyFull(f.revenue_net_mtd) + '</div>' +
         '<div class="s">' + (f.rent_per_sqft == null ? "—" : "$" + f.rent_per_sqft.toFixed(2) + " / sq ft") + '</div></div>' +
       '<div class="mini"><div class="lbl">True ROAS · standard (Nectar LTV)</div><div class="v">' + fmtX(f.roas_standard) + '</div>' +
@@ -1948,13 +2200,13 @@
     if (scope === s) return;
     scope = s; expanded = null;
     paintHeroPressed();
-    var parts = ["scopebar", "kpis", "delinqSection", "facSection", "campSection"].map(function (id) {
+    var parts = ["scopebar", "kpis", "delinqSection", "slpSection", "facSection", "campSection"].map(function (id) {
       return document.getElementById(id);
     });
-    if (!MOTION) { renderKpis(); renderDelinq(); renderFacBody(); renderCampaigns(); return; }
+    if (!MOTION) { renderKpis(); renderDelinq(); renderSlp(); renderFacBody(); renderCampaigns(); return; }
     parts.forEach(function (el) { el.classList.add("swap-out"); });
     setTimeout(function () {
-      renderKpis(); renderDelinq(); renderFacBody(); renderCampaigns();
+      renderKpis(); renderDelinq(); renderSlp(); renderFacBody(); renderCampaigns();
       // timeout, not rAF — rAF can stall in throttled/background tabs and
       // would leave the sections faded out
       setTimeout(function () {
@@ -1973,7 +2225,7 @@
     document.getElementById("subTitle").textContent =
       DATA.facilities.length + " facilities · NSS · AFAM · SL Reno · month-to-date";
 
-    renderHero(); renderKpis(); renderDelinq(); renderFacHead(); renderFacBody(); renderCampaigns();
+    renderHero(); renderKpis(); renderDelinq(); renderSlp(); renderFacHead(); renderFacBody(); renderCampaigns();
     document.getElementById("status").hidden = true;
     document.getElementById("dash").hidden = false;
 
