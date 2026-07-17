@@ -307,6 +307,76 @@
     #drill{ width:calc(100vw - 16px); max-height:92vh; }
     .dr-bar{ grid-template-columns:92px 1fr 46px; }
   }
+  /* ---------- delinquency aging funnel (30+ days) ----------
+     Severity ramp is SEQUENTIAL data language (amber -> crimson/near-black),
+     matching the shared aging-funnel design spec (site + PDF). Identity is
+     never color-alone: every bar row carries its bucket label; the drill's
+     stacked bars ship a legend. Light-mode steps are darkened for contrast
+     on white stock, same convention as the status palette above. */
+  :root{
+    --age-60:#F5A524;  --age-90:#EF7D24;  --age-120:#E1572A;
+    --age-180:#CC3333; --age-360:#99202C; --age-gt360:#5C1420;
+  }
+  :root[data-theme="light"]{
+    --age-60:#DD8F0B;  --age-90:#D96A15;  --age-120:#C84B20;
+    --age-180:#B52D2D; --age-360:#8C1D28; --age-gt360:#54121D;
+  }
+  .dq-card{ position:relative; padding:18px 20px 16px; cursor:pointer; }
+  .dq-card::after{
+    content:"details \2192"; position:absolute; top:13px; right:16px;
+    font-size:9px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent-bright); opacity:0; transition:opacity .15s;
+  }
+  .dq-card:hover::after{ opacity:1; }
+  .dq-layout{ display:flex; gap:28px; align-items:stretch; }
+  .dq-funnel{ flex:1.55; min-width:0; display:flex; flex-direction:column; gap:9px; justify-content:center; }
+  .dq-row{ display:grid; grid-template-columns:76px 1fr 116px; gap:12px; align-items:center; }
+  .dq-lbl{ font-size:11.5px; font-weight:600; color:var(--text); text-align:right;
+    font-variant-numeric:tabular-nums; white-space:nowrap; line-height:1.15; }
+  .dq-lbl small{ display:block; font-size:8px; font-weight:400; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--dim); }
+  .dq-tr{ height:22px; border-radius:5px; background:var(--track); overflow:hidden; }
+  .dq-fill{ display:block; height:100%; width:0; border-radius:5px 4px 4px 5px; }
+  .dq-val{ font-size:11px; color:var(--dim); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .dq-val b{ font-size:12.5px; color:var(--bright); font-weight:700; }
+  .dq-empty{ padding:26px 0; text-align:center; color:var(--dim); font-size:12.5px; }
+  .dq-side{ flex:1; min-width:0; border-left:1px solid var(--line); padding-left:26px;
+    display:flex; flex-direction:column; justify-content:center; gap:9px; }
+  .dq-big{ font-size:26px; font-weight:800; letter-spacing:-0.02em; color:var(--bright);
+    font-variant-numeric:tabular-nums; line-height:1.05; }
+  .dq-big small{ display:block; font-size:10px; font-weight:600; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--dim); margin-top:3px; }
+  .dq-big2{ font-size:15px; font-weight:700; color:var(--text); font-variant-numeric:tabular-nums; }
+  .dq-big2 small{ font-size:10.5px; font-weight:400; color:var(--dim); }
+  .dq-take{ font-size:12.5px; line-height:1.55; color:var(--text);
+    border-left:3px solid var(--age-90); padding-left:10px; margin-top:2px; }
+  .dq-take b{ color:var(--bright); font-variant-numeric:tabular-nums; }
+  .dq-stat{ font-size:11.5px; color:var(--dim); }
+  .dq-stat b{ color:var(--bright); font-variant-numeric:tabular-nums; }
+  .seg{ display:inline-flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; flex:none; }
+  .seg button{
+    font-family:inherit; font-size:11px; font-weight:600; padding:5px 13px; border:0;
+    background:var(--chip-bg); color:var(--dim); cursor:pointer;
+    transition:background .15s, color .15s;
+  }
+  .seg button + button{ border-left:1px solid var(--border); }
+  .seg button[aria-pressed="true"]{ background:rgba(185,39,50,0.16); color:var(--bright); }
+  .seg button:focus-visible{ outline:2px solid var(--accent-bright); outline-offset:-2px; }
+  /* drill: stacked severity bars + legend (2px surface gaps between segments) */
+  .dq-legend{ display:flex; flex-wrap:wrap; gap:6px 14px; margin-bottom:12px;
+    font-size:10.5px; color:var(--dim); }
+  .dq-legend i{ display:inline-block; width:10px; height:10px; border-radius:3px;
+    margin-right:5px; vertical-align:-1px; }
+  .dr-bar .dq-stack{ display:flex; gap:2px; height:13px; border-radius:5px; overflow:hidden; }
+  .dr-bar .dq-stack i{ position:static; display:block; height:100%; border-radius:2px; }
+  .mini-stack{ display:flex; gap:2px; height:6px; border-radius:3px; background:var(--track);
+    overflow:hidden; margin-top:7px; }
+  .mini-stack i{ display:block; height:100%; border-radius:2px; }
+  @media (max-width:760px){
+    .dq-layout{ flex-direction:column; gap:16px; }
+    .dq-side{ border-left:0; padding-left:0; border-top:1px solid var(--line); padding-top:14px; }
+    .dq-row{ grid-template-columns:62px 1fr 100px; }
+  }
   .card{
     background:var(--panel); border:1px solid var(--line); border-radius:14px;
     padding:15px 17px 13px; min-width:0;
@@ -564,6 +634,28 @@
       <span class="hint">click a tile above to drill into a brand · Portfolio resets</span>
     </div>
     <div id="kpis"></div>
+
+    <!-- ===== delinquency aging funnel · 30+ days ===== -->
+    <section class="block reveal" id="delinqSection" hidden>
+      <div class="sec-head">
+        <h2>Delinquency aging &mdash; 30+ days</h2>
+        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <span class="hint">hover a bar &middot; click for per-facility detail</span>
+          <div class="seg" id="dqToggle" role="group" aria-label="Show units or dollars">
+            <button type="button" data-mode="units" aria-pressed="true">Units</button>
+            <button type="button" data-mode="amount" aria-pressed="false">Dollars</button>
+          </div>
+        </div>
+      </div>
+      <div class="card dq-card" id="dqCard" role="button" tabindex="0"
+           aria-label="Open delinquency aging drill-down">
+        <div class="dq-layout">
+          <div class="dq-funnel" id="dqFunnel"></div>
+          <div class="dq-side" id="dqSide"></div>
+        </div>
+        <div class="drTipBox" id="dqTip"></div>
+      </div>
+    </section>
 
     <!-- ===== per-facility drill-down table ===== -->
     <section class="block reveal" id="facSection">
@@ -1029,6 +1121,138 @@
     });
   }
 
+  /* ------------------------------------------------------------------ *
+   *  delinquency aging funnel — 30+ day buckets, severity ramp
+   *  (data: scope.delinquency_aging from the store export; absent block
+   *  hides the section so a stale JSON can never break the page)
+   * ------------------------------------------------------------------ */
+  var AGING_COLORS = {
+    "60": "var(--age-60)",  "90": "var(--age-90)",   "120": "var(--age-120)",
+    "180": "var(--age-180)", "360": "var(--age-360)", "gt_360": "var(--age-gt360)"
+  };
+  var dqMode = "units";          // "units" | "amount" — shared with the drill
+  var prevDqFrac = null;         // last painted widths, so toggles/scopes morph
+
+  function dqData() { var d = scopeData(); return (d && d.delinquency_aging) || null; }
+
+  function paintDqToggle() {
+    Array.prototype.forEach.call(document.querySelectorAll("#dqToggle button"), function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === dqMode));
+    });
+  }
+
+  function renderDelinq() {
+    var sec = document.getElementById("delinqSection");
+    var d = dqData();
+    if (!d || !d.buckets || !d.buckets.length) { sec.hidden = true; return; }
+    sec.hidden = false;
+
+    var isU = dqMode === "units";
+    var funnel = document.getElementById("dqFunnel");
+    var side = document.getElementById("dqSide");
+
+    if (!d.gt30_units) {
+      funnel.innerHTML = '<div class="dq-empty">No units 30+ days past due in this scope.</div>';
+      side.innerHTML = '<div class="foot-note" style="margin-top:0">Nothing has aged past 30 days here — the funnel will populate if that changes.</div>';
+      prevDqFrac = null;
+      return;
+    }
+
+    var vals = d.buckets.map(function (b) { return isU ? b.units : b.amount; });
+    var maxV = Math.max.apply(null, vals) || 1;
+
+    funnel.innerHTML = d.buckets.map(function (b, i) {
+      var v = vals[i];
+      return '<div class="dq-row" data-i="' + i + '">' +
+        '<span class="dq-lbl">' + esc(b.label) + '<small>days</small></span>' +
+        '<div class="dq-tr"><i class="dq-fill" style="background:' + AGING_COLORS[b.bucket] + '"></i></div>' +
+        '<span class="dq-val">' + (isU
+          ? '<b>' + b.units.toLocaleString() + '</b> · ' + fmtMoney(b.amount)
+          : '<b>' + fmtMoney(b.amount) + '</b> · ' + b.units.toLocaleString() + 'u') + '</span></div>';
+    }).join("");
+
+    /* grow-in on first paint; width morph on toggle / scope change */
+    var from = prevDqFrac && prevDqFrac.length === vals.length
+      ? prevDqFrac : vals.map(function () { return 0; });
+    var to = vals.map(function (v) { return v / maxV; });
+    Array.prototype.forEach.call(funnel.querySelectorAll(".dq-fill"), function (el, i) {
+      if (!MOTION) { el.style.width = (100 * to[i]).toFixed(2) + "%"; return; }
+      el.style.transition = "none";
+      el.style.width = (100 * from[i]).toFixed(2) + "%";
+      requestAnimationFrame(function () { requestAnimationFrame(function () {
+        el.style.transition = "width .7s cubic-bezier(.2,.7,.3,1) " + (i * 70) + "ms";
+        el.style.width = (100 * to[i]).toFixed(2) + "%";
+      }); });
+    });
+    prevDqFrac = to;
+
+    /* side: totals + takeaway computed from the live buckets, denominator
+       stated honestly (30+ subset primary; all-delinquency figure noted) */
+    var le90 = d.buckets[0].units + d.buckets[1].units;
+    var over90 = d.beyond_90_units != null ? d.beyond_90_units : (d.gt30_units - le90);
+    var pct = Math.round(100 * le90 / d.gt30_units);
+    var allNote = "";
+    if (d.delinquent_units_all) {
+      var pctAll = (100 * (d.delinquent_units_all - over90) / d.delinquent_units_all).toFixed(1);
+      allNote = " Counting all " + d.delinquent_units_all.toLocaleString() +
+        " delinquent units (incl. under-31-day), " + pctAll + "% sit at 90 days or less.";
+    }
+    side.innerHTML =
+      '<div class="dq-big"><span class="num"></span><small>units 30+ days past due</small></div>' +
+      '<div class="dq-big2">' + fmtMoneyFull(d.gt30_amount) + ' <small>outstanding</small></div>' +
+      '<div class="dq-take">~<b>' + pct + '%</b> of 30+ day past-due units sit at 90 days or less — only <b>' +
+        over90.toLocaleString() + '</b> ' + (over90 === 1 ? "unit has" : "units have") + ' aged past day 90.</div>' +
+      (d.beyond_90_units != null
+        ? '<div class="dq-stat"><b>' + d.beyond_90_units.toLocaleString() + '</b> units · <b>' +
+          fmtMoney(d.beyond_90_amount) + '</b> beyond 90 days</div>'
+        : "") +
+      (d.delinquency_pct_units != null
+        ? '<div class="dq-stat"><b>' + fmtPct(d.delinquency_pct_units, 1) + '</b> of occupied units delinquent (any age)</div>'
+        : "") +
+      '<div class="foot-note">Denominator: the ' + d.gt30_units.toLocaleString() +
+        ' units 30+ days past due in this scope.' + allNote +
+        ' Point-in-time aging snapshot (latest per facility), not a cohort clear-rate.</div>';
+    animNum(side.querySelector(".dq-big .num"), d.gt30_units,
+      function (v) { return Math.round(v).toLocaleString(); });
+  }
+
+  /* funnel interactions: hover tooltip, click/keys -> drill, units↔$ toggle */
+  (function () {
+    var card = document.getElementById("dqCard");
+    var tip = document.getElementById("dqTip");
+    card.addEventListener("pointermove", function (e) {
+      var row = e.target && e.target.closest ? e.target.closest(".dq-row") : null;
+      var d = dqData();
+      if (!row || !d || !d.buckets) { tip.style.display = "none"; return; }
+      var b = d.buckets[+row.getAttribute("data-i")];
+      if (!b) { tip.style.display = "none"; return; }
+      var isU = dqMode === "units";
+      var base = isU ? d.gt30_units : d.gt30_amount;
+      var share = base ? Math.round(100 * (isU ? b.units : b.amount) / base) : 0;
+      tip.innerHTML = "<b>" + esc(b.label) + " days</b> · " +
+        b.units.toLocaleString() + (b.units === 1 ? " unit" : " units") + " · " +
+        fmtMoneyFull(b.amount) + " · " + share + "% of 30+ " + (isU ? "units" : "balance");
+      tip.style.display = "block";
+      var r = card.getBoundingClientRect();
+      var x = Math.min(e.clientX - r.left + 14, r.width - tip.offsetWidth - 8);
+      tip.style.left = Math.max(4, x) + "px";
+      tip.style.top = (e.clientY - r.top + 14) + "px";
+    });
+    card.addEventListener("pointerleave", function () { tip.style.display = "none"; });
+    function go() { openDrill("delinquency"); }
+    card.addEventListener("click", go);
+    card.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#dqToggle button"), function (b) {
+      b.addEventListener("click", function () {
+        var m = b.getAttribute("data-mode");
+        if (m === dqMode) return;
+        dqMode = m; paintDqToggle(); renderDelinq();
+      });
+    });
+  })();
+
   /* ================================================================== *
    *  KPI drill-downs — slide-over panel
    *  Occupancy is the reference implementation; the other three follow
@@ -1392,6 +1616,103 @@
         '<div class="foot-note" style="margin-top:10px">Counts &amp; share only — per-channel conversion isn’t trackable at the source.</div></div></div>' +
         gaHtml;
       return { title: "Leads by channel", html: html, bind: null };
+    },
+
+    delinquency: function () {
+      var d = dqData();
+      if (!d || !d.buckets) {
+        return { title: "Delinquency aging", html:
+          '<div class="dr-sec"><div class="dr-panel"><div class="foot-note" style="margin-top:0">No aging data in this export yet — it lands with the next twice-daily refresh.</div></div></div>',
+          bind: null };
+      }
+      var isU = dqMode === "units";
+      function totOf(a) { return (isU ? a.gt30_units : a.gt30_amount) || 0; }
+      function fv(v) { return isU ? Math.round(v).toLocaleString() : fmtMoney(v); }
+
+      var legend = '<div class="dq-legend">' + d.buckets.map(function (b) {
+        return '<span><i style="background:' + AGING_COLORS[b.bucket] + '"></i>' + esc(b.label) + 'd</span>';
+      }).join("") + '</div>';
+
+      function stack(aging, maxV) {
+        return '<span class="tr dq-stack">' + aging.buckets.map(function (b) {
+          var v = isU ? b.units : b.amount;
+          if (!v) return "";
+          return '<i style="flex:0 1 ' + (100 * v / maxV).toFixed(2) + '%;background:' + AGING_COLORS[b.bucket] +
+            '" title="' + esc(b.label) + ' days: ' + b.units.toLocaleString() +
+            (b.units === 1 ? " unit" : " units") + ' · ' + fmtMoneyFull(b.amount) + '"></i>';
+        }).join("") + '</span>';
+      }
+      function rowsFor(list) {
+        var maxV = Math.max.apply(null, list.map(function (r) { return totOf(r.aging); })) || 1;
+        return '<div class="dr-bars">' + list.map(function (r) {
+          return '<div class="dr-bar">' +
+            '<span class="nm">' + (r.code ? '<small>' + esc(r.code) + '</small>' : '') + esc(r.name) + '</span>' +
+            stack(r.aging, maxV) +
+            '<span class="v">' + fv(totOf(r.aging)) + '</span></div>';
+        }).join("") + '</div>';
+      }
+
+      var hero =
+        '<div class="dr-sec"><div class="dr-panel dr-hero">' +
+        '<div class="nums"><div class="b">' + d.gt30_units.toLocaleString() + ' <small>units 30+ days</small></div>' +
+        '<div class="l"><b>' + fmtMoneyFull(d.gt30_amount) + '</b> outstanding' +
+        (d.beyond_90_units != null
+          ? ' · <b>' + d.beyond_90_units.toLocaleString() + '</b> units beyond 90 days (' + fmtMoney(d.beyond_90_amount) + ')'
+          : '') +
+        '</div></div>' +
+        '<div class="seg" id="dqDrillSeg" role="group" aria-label="Show units or dollars">' +
+          '<button type="button" data-mode="units" aria-pressed="' + isU + '">Units</button>' +
+          '<button type="button" data-mode="amount" aria-pressed="' + !isU + '">Dollars</button></div>' +
+        '</div></div>';
+
+      var brandSec = "";
+      if (scope === "portfolio") {
+        var bl = BRANDS.filter(function (b) {
+          return DATA.brands[b] && DATA.brands[b].delinquency_aging;
+        }).map(function (b) { return { name: b, aging: DATA.brands[b].delinquency_aging }; });
+        if (bl.length) {
+          brandSec = '<div class="dr-sec"><div class="cap">By brand · 30+ day ' + (isU ? 'units' : 'balance') + '</div>' +
+            '<div class="dr-panel">' + rowsFor(bl) + '</div></div>';
+        }
+      }
+
+      var withD = [], zeroN = 0;
+      scopeFacs().forEach(function (f) {
+        var a = f.delinquency_aging;
+        if (!a || !a.buckets) return;
+        if (a.gt30_units > 0) {
+          withD.push({ code: f.facility_code,
+            name: f.facility_name.replace(/^(National Self Storage|A Family Storage) - /, ""),
+            aging: a });
+        } else { zeroN++; }
+      });
+      withD.sort(function (a, b) { return totOf(b.aging) - totOf(a.aging); });
+      var facSec = '<div class="dr-sec"><div class="cap">By facility · ' + (isU ? 'units' : 'dollars') + ' 30+ days past due</div>' +
+        '<div class="dr-panel">' + legend +
+        (withD.length ? rowsFor(withD)
+          : '<div class="foot-note" style="margin-top:0">No facilities with 30+ day delinquency in this scope.</div>') +
+        (zeroN ? '<div class="foot-note" style="margin-top:10px">' + zeroN + ' more ' +
+          (zeroN === 1 ? 'facility has' : 'facilities have') + ' no 30+ day delinquency.</div>' : '') +
+        '</div></div>';
+
+      var foot = '<div class="dr-sec"><div class="dr-panel"><div class="foot-note" style="margin-top:0">' +
+        'Buckets are Hummingbird’s own fixed aging ranges (31–60 · 61–90 · 91–120 · 121–180 · 181–360 · 361+) — ' +
+        'no exact day-level cut exists between edges. Latest snapshot per facility from the portfolio datastore, ' +
+        'refreshed twice daily with the rest of the dashboard.</div></div></div>';
+
+      return {
+        title: "Delinquency aging — 30+ days",
+        html: hero + brandSec + facSec + foot,
+        bind: function () {
+          Array.prototype.forEach.call(document.querySelectorAll("#dqDrillSeg button"), function (b) {
+            b.addEventListener("click", function () {
+              var m = b.getAttribute("data-mode");
+              if (m === dqMode) return;
+              dqMode = m; paintDqToggle(); renderDelinq(); openDrill("delinquency");
+            });
+          });
+        }
+      };
     }
   };
 
@@ -1488,6 +1809,21 @@
     return rows;
   }
 
+  /* 30+ day severity strip for the expanded facility row (guarded — absent
+     block renders nothing, so an older cached JSON can't break the table) */
+  function agingStrip(f) {
+    var a = f.delinquency_aging;
+    if (!a || !a.buckets || !a.gt30_units) return "";
+    var segs = a.buckets.map(function (b) {
+      return b.units
+        ? '<i style="flex:0 1 ' + (100 * b.units / a.gt30_units).toFixed(2) + '%;background:' +
+          AGING_COLORS[b.bucket] + '" title="' + esc(b.label) + 'd: ' + b.units.toLocaleString() + '"></i>'
+        : "";
+    }).join("");
+    return '<div class="mini-stack">' + segs + '</div>' +
+      '<div class="s">' + a.gt30_units.toLocaleString() + ' units 30+ days · ' + fmtMoney(a.gt30_amount) + '</div>';
+  }
+
   function detailHTML(f) {
     function bar(pct) {
       return '<div class="bar"><i style="width:' + Math.min(100, Math.max(0, pct)) + '%"></i></div>';
@@ -1504,7 +1840,7 @@
       '<div class="mini"><div class="lbl">Leads &amp; conversion</div><div class="v">' + f.leads_mtd + ' <small style="font-size:11px;color:var(--dim)">leads</small></div>' +
         '<div class="s">' + fmtPct(f.conversion_pct, 1) + ' converted MTD</div></div>' +
       '<div class="mini"><div class="lbl">Delinquency</div><div class="v ' + delinqClass(f.delinquency_pct) + '">' + fmtPct(f.delinquency_pct, 1) + '</div>' +
-        '<div class="s">of units delinquent</div></div>' +
+        '<div class="s">of units delinquent</div>' + agingStrip(f) + '</div>' +
       '<div class="mini"><div class="lbl">Net revenue · MTD</div><div class="v">' + fmtMoneyFull(f.revenue_net_mtd) + '</div>' +
         '<div class="s">' + (f.rent_per_sqft == null ? "—" : "$" + f.rent_per_sqft.toFixed(2) + " / sq ft") + '</div></div>' +
       '<div class="mini"><div class="lbl">True ROAS · standard (Nectar LTV)</div><div class="v">' + fmtX(f.roas_standard) + '</div>' +
@@ -1612,13 +1948,13 @@
     if (scope === s) return;
     scope = s; expanded = null;
     paintHeroPressed();
-    var parts = ["scopebar", "kpis", "facSection", "campSection"].map(function (id) {
+    var parts = ["scopebar", "kpis", "delinqSection", "facSection", "campSection"].map(function (id) {
       return document.getElementById(id);
     });
-    if (!MOTION) { renderKpis(); renderFacBody(); renderCampaigns(); return; }
+    if (!MOTION) { renderKpis(); renderDelinq(); renderFacBody(); renderCampaigns(); return; }
     parts.forEach(function (el) { el.classList.add("swap-out"); });
     setTimeout(function () {
-      renderKpis(); renderFacBody(); renderCampaigns();
+      renderKpis(); renderDelinq(); renderFacBody(); renderCampaigns();
       // timeout, not rAF — rAF can stall in throttled/background tabs and
       // would leave the sections faded out
       setTimeout(function () {
@@ -1637,7 +1973,7 @@
     document.getElementById("subTitle").textContent =
       DATA.facilities.length + " facilities · NSS · AFAM · SL Reno · month-to-date";
 
-    renderHero(); renderKpis(); renderFacHead(); renderFacBody(); renderCampaigns();
+    renderHero(); renderKpis(); renderDelinq(); renderFacHead(); renderFacBody(); renderCampaigns();
     document.getElementById("status").hidden = true;
     document.getElementById("dash").hidden = false;
 

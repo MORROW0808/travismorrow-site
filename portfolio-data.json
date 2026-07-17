@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T19:02:35-07:00",
+  "generated_at": "2026-07-16T22:01:13-07:00",
   "portfolio": {
     "occupancy": {
       "units_total": 17066,
@@ -61,6 +61,65 @@
         "RNO1",
         "SIL1"
       ]
+    },
+    "delinquency_aging": {
+      "buckets": [
+        {
+          "bucket": "60",
+          "label": "31\u201360",
+          "days_min": 31,
+          "days_max": 60,
+          "units": 144,
+          "amount": 33340.74
+        },
+        {
+          "bucket": "90",
+          "label": "61\u201390",
+          "days_min": 61,
+          "days_max": 90,
+          "units": 36,
+          "amount": 8705.6
+        },
+        {
+          "bucket": "120",
+          "label": "91\u2013120",
+          "days_min": 91,
+          "days_max": 120,
+          "units": 16,
+          "amount": 3522.67
+        },
+        {
+          "bucket": "180",
+          "label": "121\u2013180",
+          "days_min": 121,
+          "days_max": 180,
+          "units": 4,
+          "amount": 1837.93
+        },
+        {
+          "bucket": "360",
+          "label": "181\u2013360",
+          "days_min": 181,
+          "days_max": 360,
+          "units": 1,
+          "amount": 1354.57
+        },
+        {
+          "bucket": "gt_360",
+          "label": "361+",
+          "days_min": 361,
+          "days_max": null,
+          "units": 4,
+          "amount": 2151.68
+        }
+      ],
+      "gt30_units": 205,
+      "gt30_amount": 50913.19,
+      "delinquent_units_all": 984,
+      "delinquent_amount_all": 223092.2,
+      "delinquency_pct_units": 7.78,
+      "beyond_90_units": 25,
+      "beyond_90_amount": 8866.85
     },
     "leads_by_channel_mtd": {
       "web_leads": 73,
@@ -304,6 +363,65 @@
           "SIL1"
         ]
       },
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 46,
+            "amount": 13355.81
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 19,
+            "amount": 5043.21
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 11,
+            "amount": 2450.51
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 4,
+            "amount": 1055.79
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 144.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 3,
+            "amount": 156.0
+          }
+        ],
+        "gt30_units": 83,
+        "gt30_amount": 22205.32,
+        "delinquent_units_all": 335,
+        "delinquent_amount_all": 76231.57,
+        "delinquency_pct_units": 9.59,
+        "beyond_90_units": 18,
+        "beyond_90_amount": 3806.3
+      },
       "leads_by_channel_mtd": {
         "web_leads": 11,
         "phone_leads": 16,
@@ -400,6 +518,65 @@
           "341",
           "343"
         ]
+      },
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 89,
+            "amount": 17346.77
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 15,
+            "amount": 3569.39
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 5,
+            "amount": 1072.16
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 782.14
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 1,
+            "amount": 1210.57
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 1,
+            "amount": 1995.68
+          }
+        ],
+        "gt30_units": 111,
+        "gt30_amount": 25976.71,
+        "delinquent_units_all": 606,
+        "delinquent_amount_all": 135034.92,
+        "delinquency_pct_units": 7.25,
+        "beyond_90_units": 7,
+        "beyond_90_amount": 5060.55
       },
       "leads_by_channel_mtd": {
         "web_leads": 54,
@@ -608,6 +785,65 @@
           "RNO1"
         ]
       },
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 9,
+            "amount": 2638.16
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 2,
+            "amount": 93.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 11,
+        "gt30_amount": 2731.16,
+        "delinquent_units_all": 43,
+        "delinquent_amount_all": 11825.71,
+        "delinquency_pct_units": 5.42,
+        "beyond_90_units": 0,
+        "beyond_90_amount": 0.0
+      },
       "leads_by_channel_mtd": {
         "web_leads": 8,
         "phone_leads": 3,
@@ -648,6 +884,60 @@
       "net_move_ins_mtd": -3,
       "net_move_ins_ytd": 14.0,
       "delinquency_pct": 15.19,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 3,
+            "amount": 1511.0
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 3,
+            "amount": 950.2
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 3,
+            "amount": 536.2
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 1,
+            "amount": 506.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 10,
+        "gt30_amount": 3503.4
+      },
       "revenue_net_mtd": 17922.45,
       "roas_standard": null
     },
@@ -666,6 +956,60 @@
       "net_move_ins_mtd": -1,
       "net_move_ins_ytd": 19.0,
       "delinquency_pct": 5.42,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 2,
+            "amount": 1353.11
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 3,
+            "amount": 740.39
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 446.31
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 3,
+            "amount": 501.79
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 8,
+        "gt30_amount": 3041.6
+      },
       "revenue_net_mtd": 58926.88,
       "roas_standard": null
     },
@@ -684,6 +1028,60 @@
       "net_move_ins_mtd": 1,
       "net_move_ins_ytd": 19.0,
       "delinquency_pct": 9.32,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 6,
+            "amount": 1529.5
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 1,
+            "amount": 532.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 1,
+            "amount": 330.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 8,
+        "gt30_amount": 2391.5
+      },
       "revenue_net_mtd": 32530.15,
       "roas_standard": null
     },
@@ -702,6 +1100,60 @@
       "net_move_ins_mtd": 1,
       "net_move_ins_ytd": 4.0,
       "delinquency_pct": 12.08,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 7,
+            "amount": 1448.0
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 415.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 2,
+            "amount": 334.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 48.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 144.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 3,
+            "amount": 156.0
+          }
+        ],
+        "gt30_units": 12,
+        "gt30_amount": 2545.0
+      },
       "revenue_net_mtd": 59744.33,
       "roas_standard": 23.23
     },
@@ -720,6 +1172,60 @@
       "net_move_ins_mtd": 0,
       "net_move_ins_ytd": 16.0,
       "delinquency_pct": 10.49,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 4,
+            "amount": 1190.9
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 3,
+            "amount": 328.56
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 7,
+        "gt30_amount": 1519.46
+      },
       "revenue_net_mtd": 22258.41,
       "roas_standard": null
     },
@@ -738,6 +1244,60 @@
       "net_move_ins_mtd": 3,
       "net_move_ins_ytd": 12.0,
       "delinquency_pct": 11.84,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 9,
+            "amount": 2959.9
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 4,
+            "amount": 1409.6
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 4,
+            "amount": 706.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 17,
+        "gt30_amount": 5075.5
+      },
       "revenue_net_mtd": 40480.78,
       "roas_standard": null
     },
@@ -756,6 +1316,60 @@
       "net_move_ins_mtd": -2,
       "net_move_ins_ytd": 29.0,
       "delinquency_pct": 14.09,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 11,
+            "amount": 2738.5
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 2,
+            "amount": 470.7
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 1,
+            "amount": 98.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 14,
+        "gt30_amount": 3307.2
+      },
       "revenue_net_mtd": 31463.73,
       "roas_standard": null
     },
@@ -774,6 +1388,60 @@
       "net_move_ins_mtd": 0,
       "net_move_ins_ytd": 3.0,
       "delinquency_pct": 4.51,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 0,
+            "amount": 192.76
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 1,
+            "amount": 172.76
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 1,
+        "gt30_amount": 365.52
+      },
       "revenue_net_mtd": 23852.74,
       "roas_standard": 1.58
     },
@@ -792,6 +1460,60 @@
       "net_move_ins_mtd": 15,
       "net_move_ins_ytd": 74.0,
       "delinquency_pct": 5.02,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 4,
+            "amount": 432.14
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 2,
+            "amount": 24.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 6,
+        "gt30_amount": 456.14
+      },
       "revenue_net_mtd": 27678.36,
       "roas_standard": 6.78
     },
@@ -810,6 +1532,60 @@
       "net_move_ins_mtd": 4,
       "net_move_ins_ytd": 41.0,
       "delinquency_pct": 5.42,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 9,
+            "amount": 2638.16
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 2,
+            "amount": 93.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 11,
+        "gt30_amount": 2731.16
+      },
       "revenue_net_mtd": 155238.59,
       "roas_standard": 24.02
     },
@@ -828,6 +1604,60 @@
       "net_move_ins_mtd": 8,
       "net_move_ins_ytd": 41.0,
       "delinquency_pct": 5.88,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 3,
+            "amount": 462.47
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 3,
+        "gt30_amount": 462.47
+      },
       "revenue_net_mtd": 26048.71,
       "roas_standard": 30.49
     },
@@ -846,6 +1676,60 @@
       "net_move_ins_mtd": -2,
       "net_move_ins_ytd": 32.0,
       "delinquency_pct": 14.33,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 4,
+            "amount": 1057.0
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 1,
+            "amount": 570.04
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 2,
+            "amount": 416.54
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 436.54
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 1,
+            "amount": 173.77
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 8,
+        "gt30_amount": 2653.89
+      },
       "revenue_net_mtd": 21202.78,
       "roas_standard": 30.3
     },
@@ -864,6 +1748,60 @@
       "net_move_ins_mtd": -6,
       "net_move_ins_ytd": -2.0,
       "delinquency_pct": 7.87,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 6,
+            "amount": 1797.38
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 3,
+            "amount": 516.46
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 9,
+        "gt30_amount": 2313.84
+      },
       "revenue_net_mtd": 52523.98,
       "roas_standard": 19.31
     },
@@ -882,6 +1820,60 @@
       "net_move_ins_mtd": -4,
       "net_move_ins_ytd": -11.0,
       "delinquency_pct": 7.2,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 8,
+            "amount": 1187.24
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 1,
+            "amount": 101.23
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 9,
+        "gt30_amount": 1288.47
+      },
       "revenue_net_mtd": 32060.65,
       "roas_standard": 7.28
     },
@@ -900,6 +1892,60 @@
       "net_move_ins_mtd": -4,
       "net_move_ins_ytd": 5.0,
       "delinquency_pct": 4.46,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 3,
+            "amount": 595.72
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 3,
+        "gt30_amount": 595.72
+      },
       "revenue_net_mtd": 41621.02,
       "roas_standard": 35.69
     },
@@ -918,6 +1964,60 @@
       "net_move_ins_mtd": 3,
       "net_move_ins_ytd": -33.0,
       "delinquency_pct": 8.77,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 6,
+            "amount": 1224.74
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 2,
+            "amount": 400.67
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 8,
+        "gt30_amount": 1625.41
+      },
       "revenue_net_mtd": 58305.23,
       "roas_standard": 17.77
     },
@@ -936,6 +2036,60 @@
       "net_move_ins_mtd": -1,
       "net_move_ins_ytd": 5.0,
       "delinquency_pct": 4.6,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 0,
+        "gt30_amount": 0.0
+      },
       "revenue_net_mtd": 46165.88,
       "roas_standard": 39.65
     },
@@ -954,6 +2108,60 @@
       "net_move_ins_mtd": 1,
       "net_move_ins_ytd": 5.0,
       "delinquency_pct": 6.9,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 4,
+            "amount": 534.87
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 4,
+        "gt30_amount": 534.87
+      },
       "revenue_net_mtd": 35495.99,
       "roas_standard": 25.18
     },
@@ -972,6 +2180,60 @@
       "net_move_ins_mtd": 0,
       "net_move_ins_ytd": 5.0,
       "delinquency_pct": 3.87,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 3,
+            "amount": 567.86
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 3,
+        "gt30_amount": 567.86
+      },
       "revenue_net_mtd": 13029.35,
       "roas_standard": 112.5
     },
@@ -990,6 +2252,60 @@
       "net_move_ins_mtd": 0,
       "net_move_ins_ytd": 45.0,
       "delinquency_pct": 9.3,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 12,
+            "amount": 2258.63
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 3,
+            "amount": 560.31
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 1,
+            "amount": 78.29
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 16,
+        "gt30_amount": 2897.23
+      },
       "revenue_net_mtd": 47230.01,
       "roas_standard": 38.62
     },
@@ -1008,6 +2324,60 @@
       "net_move_ins_mtd": 0,
       "net_move_ins_ytd": -15.0,
       "delinquency_pct": 5.26,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 2,
+            "amount": 904.05
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 391.66
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 1,
+            "amount": 356.66
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 345.6
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 1036.8
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 1,
+            "amount": 1995.68
+          }
+        ],
+        "gt30_units": 4,
+        "gt30_amount": 5030.45
+      },
       "revenue_net_mtd": 39960.47,
       "roas_standard": 39.75
     },
@@ -1026,6 +2396,60 @@
       "net_move_ins_mtd": 4,
       "net_move_ins_ytd": -8.0,
       "delinquency_pct": 9.35,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 8,
+            "amount": 1672.67
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 2,
+            "amount": 450.94
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 10,
+        "gt30_amount": 2123.61
+      },
       "revenue_net_mtd": 41109.7,
       "roas_standard": 20.28
     },
@@ -1044,6 +2468,60 @@
       "net_move_ins_mtd": -1,
       "net_move_ins_ytd": -23.0,
       "delinquency_pct": 3.93,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 0,
+        "gt30_amount": 0.0
+      },
       "revenue_net_mtd": 62345.25,
       "roas_standard": 31.28
     },
@@ -1062,6 +2540,60 @@
       "net_move_ins_mtd": -1,
       "net_move_ins_ytd": -4.0,
       "delinquency_pct": 4.09,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 1,
+            "amount": 146.46
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 1,
+        "gt30_amount": 146.46
+      },
       "revenue_net_mtd": 38844.84,
       "roas_standard": 14.67
     },
@@ -1080,6 +2612,60 @@
       "net_move_ins_mtd": 7,
       "net_move_ins_ytd": 34.0,
       "delinquency_pct": 11.71,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 11,
+            "amount": 1566.64
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 2,
+            "amount": 148.75
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 13,
+        "gt30_amount": 1715.39
+      },
       "revenue_net_mtd": 40952.85,
       "roas_standard": 19.5
     },
@@ -1098,6 +2684,60 @@
       "net_move_ins_mtd": -4,
       "net_move_ins_ytd": 9.0,
       "delinquency_pct": 11.11,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 4,
+            "amount": 672.79
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 4,
+        "gt30_amount": 672.79
+      },
       "revenue_net_mtd": 23343.72,
       "roas_standard": 31.19
     },
@@ -1116,6 +2756,60 @@
       "net_move_ins_mtd": -2,
       "net_move_ins_ytd": 3.0,
       "delinquency_pct": 5.08,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 3,
+            "amount": 664.55
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 255.93
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 1,
+            "amount": 220.67
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 4,
+        "gt30_amount": 1141.15
+      },
       "revenue_net_mtd": 54026.1,
       "roas_standard": 42.95
     },
@@ -1134,6 +2828,60 @@
       "net_move_ins_mtd": 6,
       "net_move_ins_ytd": -13.0,
       "delinquency_pct": 5.32,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 1,
+            "amount": 96.08
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 1,
+        "gt30_amount": 96.08
+      },
       "revenue_net_mtd": 55832.9,
       "roas_standard": 9.67
     },
@@ -1152,6 +2900,60 @@
       "net_move_ins_mtd": -4,
       "net_move_ins_ytd": -15.0,
       "delinquency_pct": 9.19,
+      "delinquency_aging": {
+        "buckets": [
+          {
+            "bucket": "60",
+            "label": "31\u201360",
+            "days_min": 31,
+            "days_max": 60,
+            "units": 10,
+            "amount": 1937.62
+          },
+          {
+            "bucket": "90",
+            "label": "61\u201390",
+            "days_min": 61,
+            "days_max": 90,
+            "units": 1,
+            "amount": 173.4
+          },
+          {
+            "bucket": "120",
+            "label": "91\u2013120",
+            "days_min": 91,
+            "days_max": 120,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "180",
+            "label": "121\u2013180",
+            "days_min": 121,
+            "days_max": 180,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "360",
+            "label": "181\u2013360",
+            "days_min": 181,
+            "days_max": 360,
+            "units": 0,
+            "amount": 0.0
+          },
+          {
+            "bucket": "gt_360",
+            "label": "361+",
+            "days_min": 361,
+            "days_max": null,
+            "units": 0,
+            "amount": 0.0
+          }
+        ],
+        "gt30_units": 11,
+        "gt30_amount": 2111.02
+      },
       "revenue_net_mtd": 44153.14,
       "roas_standard": 13.36
     }
@@ -1164,6 +2966,7 @@
     "ad_spend_month": "reflects 2026-06, the latest CLOSED month \u2014 ad spend refreshes monthly at month-close, not on this twice-daily cadence. roas above uses the SAME month so spend and leads/LTV are period-coherent.",
     "rent_per_sqft": "FIXED 2026-07-11: now reads space_metrics.average_rent_area.occupied verbatim (Travis's \"economic occupancy $/sqft\") off each facility's latest MSR snapshot \u2014 captured on every ingest, no derived/summed proxy.",
     "units_total_and_net_move_ins_ytd": "ADDED 2026-07-11 for the facility map hover cards. facilities[].units_total is the latest facility_day snapshot (store-native, no extra API call). facilities[].net_move_ins_ytd is read verbatim from a live MSR pull's own rental_metrics.net_count_movein_moveout.ytd field (same reasoning as nectar/sil1_daily_card.py) because facility_day's daily move_ins/move_outs only cover 2026-07-01 onward, too short a window to sum a full-year YTD locally. All 29 facilities returned a real YTD figure.",
+    "delinquency_aging": "ADDED 2026-07-16 for the delinquency aging funnel. 30+ day Hummingbird buckets (31-60 ... 361+) in units + dollars at every scope, kind='delinquency' (the deliquencies MSR node, not AR_aging), via portfolio_query.delinquency()/delinquency_beyond() -- same latest-snapshot-per-facility sum pattern as occupancy. gt30_* is the 30+ subset the funnel shows; delinquent_units_all additionally counts the under-31-day buckets so percentage claims can state their denominator honestly. Bucket columns only exist in facility_day from 2026-07-15 onward (no earlier raw MSR payloads were persisted to backfill from).",
     "revenue_history_backfill": "13 months of MSR history (2025-05 through 2026-06, monthly grain) are now in facility_day, reused from nectar.history's existing snapshots/history_<key>.jsonl cache (zero new API calls for 12 of those months) plus one live pull each for 2026-06-30 and last year's same calendar date. Historical LTV was NOT backfilled beyond the current month + 2026-06 \u2014 a ROAS trend chart would need that; revenue/occupancy trend is ready for a future date-range selector today."
   }
 }
