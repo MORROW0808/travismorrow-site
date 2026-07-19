@@ -1259,12 +1259,14 @@
         ? '<div class="dq-stat"><b>' + d.beyond_90_units.toLocaleString() + '</b> units · <b>' +
           fmtMoney(d.beyond_90_amount) + '</b> beyond 90 days</div>'
         : "") +
+      (d.delinquency_pct_dollars != null
+        ? '<div class="dq-stat"><b>' + fmtPct(d.delinquency_pct_dollars, 1) + '</b> of monthly rent roll delinquent — the NSS Delinquency Report headline ($-based)</div>'
+        : "") +
       (d.delinquency_pct_units != null
         ? '<div class="dq-stat"><b>' + fmtPct(d.delinquency_pct_units, 1) + '</b> of occupied units delinquent (any age)</div>'
         : "") +
-      '<div class="foot-note">Denominator: the ' + d.gt30_units.toLocaleString() +
-        ' units 30+ days past due in this scope.' + allNote +
-        ' Point-in-time aging snapshot (latest per facility), not a cohort clear-rate.</div>';
+      '<div class="foot-note">Delinquent units are open leases past their paid-through date (per-lease, from the same source as the NSS Delinquency Report).' + allNote +
+        ' Point-in-time snapshot (latest daily pull), not a cohort clear-rate.</div>';
     animNum(side.querySelector(".dq-big .num"), d.gt30_units,
       function (v) { return Math.round(v).toLocaleString(); });
   }
@@ -1876,9 +1878,9 @@
         '</div></div>';
 
       var foot = '<div class="dr-sec"><div class="dr-panel"><div class="foot-note" style="margin-top:0">' +
-        'Buckets are Hummingbird’s own fixed aging ranges (31–60 · 61–90 · 91–120 · 121–180 · 181–360 · 361+) — ' +
-        'no exact day-level cut exists between edges. Latest snapshot per facility from the portfolio datastore, ' +
-        'refreshed twice daily with the rest of the dashboard.</div></div></div>';
+        'Aging ranges (31–60 · 61–90 · 91–120 · 121–180 · 181–360 · 361+) are days past each lease’s paid-through date. ' +
+        'Counts are delinquent leases and their open balances — the same per-lease source as the NSS Delinquency Report — ' +
+        'from the latest daily pull, refreshed twice daily with the rest of the dashboard.</div></div></div>';
 
       return {
         title: "Delinquency aging — 30+ days",
@@ -2092,7 +2094,7 @@
       '<div class="mini"><div class="lbl">Leads &amp; conversion</div><div class="v">' + f.leads_mtd + ' <small style="font-size:11px;color:var(--dim)">leads</small></div>' +
         '<div class="s">' + fmtPct(f.conversion_pct, 1) + ' converted MTD</div></div>' +
       '<div class="mini"><div class="lbl">Delinquency</div><div class="v ' + delinqClass(f.delinquency_pct) + '">' + fmtPct(f.delinquency_pct, 1) + '</div>' +
-        '<div class="s">of units delinquent</div>' + agingStrip(f) + '</div>' +
+        '<div class="s">of rent roll ($-based)</div>' + agingStrip(f) + '</div>' +
       protMini(f) +
       '<div class="mini"><div class="lbl">Net revenue · MTD</div><div class="v">' + fmtMoneyFull(f.revenue_net_mtd) + '</div>' +
         '<div class="s">' + (f.rent_per_sqft == null ? "—" : "$" + f.rent_per_sqft.toFixed(2) + " / sq ft") + '</div></div>' +
