@@ -957,7 +957,8 @@
       var mv  = e.d.move_activity_mtd;
       var yoy = e.d.revenue_yoy;
       var priorYr = new Date(DATA.generated_at).getFullYear() - 1;
-      var yoyWord = yoy.delta > 0 ? "ahead of" : yoy.delta < 0 ? "behind" : "flat vs";
+      var yoyNull = yoy.delta == null;   // no same-store prior-year data → suppress, don't read as $0-flat
+      var yoyWord = yoyNull ? "no" : yoy.delta > 0 ? "ahead of" : yoy.delta < 0 ? "behind" : "flat vs";
 
       var btn = document.createElement("button");
       btn.type = "button";
@@ -976,8 +977,8 @@
             '<div class="sub">' + mv.move_ins + ' in / ' + mv.move_outs + ' out</div></div>' +
           '<div class="divider"></div>' +
           '<div class="half"><div class="lbl">Revenue vs LY · MTD</div>' +
-            '<div class="big ' + signClass(yoy.delta) + '">' + fmtSignedMoney(yoy.delta) + '</div>' +
-            '<div class="sub">' + yoyWord + ' ' + priorYr + ' · ' + fmtMoney(yoy.current) + '</div></div>' +
+            '<div class="big ' + (yoyNull ? '' : signClass(yoy.delta)) + '">' + (yoyNull ? 'n/a' : fmtSignedMoney(yoy.delta)) + '</div>' +
+            '<div class="sub">' + (yoyNull ? 'no ' + priorYr + ' data' : yoyWord + ' ' + priorYr + ' · ' + fmtMoney(yoy.current)) + '</div></div>' +
         '</div>';
       btn.addEventListener("click", function () { setScope(e.key); });
       btn.setAttribute("data-scope", e.key);
@@ -990,7 +991,7 @@
 
       var bigs = btn.querySelectorAll(".big");
       animNum(bigs[0], mv.net_move_ins, function (v) { return fmtSigned(Math.round(v)); });
-      animNum(bigs[1], yoy.delta, fmtSignedMoney);
+      if (!yoyNull) animNum(bigs[1], yoy.delta, fmtSignedMoney);
     });
   }
 

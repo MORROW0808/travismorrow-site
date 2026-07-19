@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T07:49:16-07:00",
+  "generated_at": "2026-07-19T08:58:14-07:00",
   "portfolio": {
     "occupancy": {
       "units_total": 17066,
@@ -18,41 +18,13 @@
       "revenue_authoritative": 1376469.31
     },
     "revenue_yoy": {
-      "current": null,
-      "prior": null,
-      "delta": null,
-      "facilities_included": 0,
-      "facilities_excluded": [
-        "301",
-        "304",
-        "305",
-        "306",
-        "309",
-        "311",
-        "314",
-        "316",
-        "319",
-        "323",
-        "325",
-        "326",
-        "328",
-        "329",
-        "333",
-        "338",
-        "339",
-        "341",
-        "343",
-        "DEM1",
-        "DOV1",
-        "ELP5",
-        "ELP6",
-        "ELP7",
-        "ELP8",
-        "ELP9",
-        "GRN1",
-        "RNO1",
-        "SIL1"
-      ]
+      "current": 1376469.31,
+      "prior": 1421430.11,
+      "delta": -44960.8,
+      "as_of": "2026-07-18",
+      "prior_as_of": "2025-07-18",
+      "facilities_included": 29,
+      "facilities_excluded": []
     },
     "leads_mtd": {
       "leads_total": 440,
@@ -390,21 +362,13 @@
         "revenue_authoritative": 346476.19
       },
       "revenue_yoy": {
-        "current": null,
-        "prior": null,
-        "delta": null,
-        "facilities_included": 0,
-        "facilities_excluded": [
-          "DEM1",
-          "DOV1",
-          "ELP5",
-          "ELP6",
-          "ELP7",
-          "ELP8",
-          "ELP9",
-          "GRN1",
-          "SIL1"
-        ]
+        "current": 346476.19,
+        "prior": 343591.31,
+        "delta": 2884.88,
+        "as_of": "2026-07-18",
+        "prior_as_of": "2025-07-18",
+        "facilities_included": 9,
+        "facilities_excluded": []
       },
       "leads_mtd": {
         "leads_total": 130,
@@ -561,31 +525,13 @@
         "revenue_authoritative": 872703.78
       },
       "revenue_yoy": {
-        "current": null,
-        "prior": null,
-        "delta": null,
-        "facilities_included": 0,
-        "facilities_excluded": [
-          "301",
-          "304",
-          "305",
-          "306",
-          "309",
-          "311",
-          "314",
-          "316",
-          "319",
-          "323",
-          "325",
-          "326",
-          "328",
-          "329",
-          "333",
-          "338",
-          "339",
-          "341",
-          "343"
-        ]
+        "current": 872703.78,
+        "prior": 933323.7,
+        "delta": -60619.92,
+        "as_of": "2026-07-18",
+        "prior_as_of": "2025-07-18",
+        "facilities_included": 19,
+        "facilities_excluded": []
       },
       "leads_mtd": {
         "leads_total": 272,
@@ -886,13 +832,13 @@
         "revenue_authoritative": 157289.34
       },
       "revenue_yoy": {
-        "current": null,
-        "prior": null,
-        "delta": null,
-        "facilities_included": 0,
-        "facilities_excluded": [
-          "RNO1"
-        ]
+        "current": 157289.34,
+        "prior": 144515.1,
+        "delta": 12774.24,
+        "as_of": "2026-07-18",
+        "prior_as_of": "2025-07-18",
+        "facilities_included": 1,
+        "facilities_excluded": []
       },
       "leads_mtd": {
         "leads_total": 38,
@@ -3425,7 +3371,7 @@
   ],
   "data_notes": {
     "roas": "REAL as of 2026-07-11 (previously null \u2014 store had no LTV data). roas_standard/roas_conservative computed from facility_day's MSR-native LTV/leads/conversion columns + real ad_spend, same formula as nectar/roas.py (validated: matches the already-confirmed live-pull June ROAS figures exactly). Reflects 2026-06 (the latest month with real ad_spend) for 23 ad-running facilities; the other 6 run no ads and correctly show roas_standard=null, not a fabricated 0.",
-    "revenue_yoy": "FIXED 2026-07-18 (inflated-YoY bug): current vs. the SAME CALENDAR DATE last year, SAME-STORE ONLY, EXACT-DATE match on both sides (portfolio_query.revenue_yoy() \u2014 no 'nearest prior snapshot' fallback). Previously the 2026-07-11 one-time backfill froze AFAM/NSS/SL Reno's prior-year side at 2025-07-11 while the current side kept growing daily, silently comparing an 11-day MTD to a 17+-day MTD and inflating YoY (AFAM read +39.5% vs a true roughly-flat figure). Every export now self-heals: it live-pulls the exact prior-year same-date MSR (nectar_ingest.ingest_date) for any facility missing it before computing YoY, so the comparison can no longer silently drift out of alignment. 29 facility(ies) excluded from the comparison (no exact-date match on one side): 301, 304, 305, 306, 309, 311, 314, 316, 319, 323, 325, 326, 328, 329, 333, 338, 339, 341, 343, DEM1, DOV1, ELP5, ELP6, ELP7, ELP8, ELP9, GRN1, RNO1, SIL1.",
+    "revenue_yoy": "FIXED 2026-07-18 (inflated-YoY bug): current vs. the SAME CALENDAR DATE last year, SAME-STORE ONLY, EXACT-DATE match on both sides (portfolio_query.revenue_yoy() \u2014 no 'nearest prior snapshot' fallback). Previously the 2026-07-11 one-time backfill froze AFAM/NSS/SL Reno's prior-year side at 2025-07-11 while the current side kept growing daily, silently comparing an 11-day MTD to a 17+-day MTD and inflating YoY (AFAM read +39.5% vs a true roughly-flat figure). Every export now self-heals: it live-pulls the exact prior-year same-date MSR (nectar_ingest.ingest_date) for any facility missing it before computing YoY, so the comparison can no longer silently drift out of alignment. FIXED 2026-07-19 (flat-KPI bug): the current side is taken at yoy_as_of = the freshest complete MTD snapshot on/before the export date (the latest facility_day date with revenue_mtd_msr rows), not the raw export date \u2014 so when the export runs ahead of or without today's ingest, the exact-date match no longer finds an empty current side and collapses every scope's delta to null (which the site rendered as a misleading 'flat vs / $0' Revenue-vs-LY KPI while the MTD PDF strip, live-pulling both sides, stayed correct). prior_date is that same effective date's own same-date-prior-year, so current and prior stay calendar-aligned. Same source and same-store method as the MTD PDF's KPI strip (net_revenue.revenue_mtd), so the values match. This export's yoy_as_of = 2026-07-18, prior = 2025-07-18. All 29 facilities had an exact same-date match on both sides \u2014 none excluded.",
     "revenue_mtd_accuracy": "FIXED 2026-07-11: revenue_authoritative now reads net_revenue.revenue_mtd verbatim off each facility's latest MSR snapshot (facility_day.revenue_mtd_msr), replacing the SUM(revenue_net)-over-days proxy that overstated MTD by ~15-27% (see README.md).",
     "leads_by_channel_mtd": "real per-channel counts, but facility_day_leadsource only started 2026-07-09 \u2014 as of 2026-07-19 it covers a partial window, not the full MTD leads_total figure; fills out day by day. (Unrelated to this pass's fixes \u2014 still gapped.)",
     "ad_spend_month": "reflects 2026-06, the latest CLOSED month \u2014 ad spend refreshes monthly at month-close, not on this twice-daily cadence. roas above uses the SAME month so spend and leads/LTV are period-coherent.",
