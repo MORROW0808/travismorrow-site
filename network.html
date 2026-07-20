@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script>TMAuth.guard();</script>
+<script src="theme.js"></script>
+<script>TMTheme.init();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Data Store — living network</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  /* travismorrow.com native palette (portfolio.html/exec.html vars) */
+  :root{
+    --bg:#15171A;
+    --panel:#1F2226;
+    --panel2:#262A30;
+    --line:#313640;
+    --text:#d2d2d2;
+    --dim:#9c9c9c;
+    --bright:#f2f2f2;
+    --accent:#B92732;
+    --accent-bright:#de5964;
+    --pos:#3fb950;
+    --warn:#f5a524;
+    --neg:#f85149;
+    --flat:#8b98a5;
+    --chip-bg:rgba(255,255,255,0.04);
+    --chip-bg-hover:rgba(255,255,255,0.08);
+    --fire:#FF7A1A;          /* hover highlight — fire orange */
+    --grid-l:rgba(139,152,165,0.09);
+    --edge-c:rgba(210,214,222,0.05);
+    --edge-faint:rgba(210,214,222,0.024);
+    --edge-cold:rgba(210,214,222,0.015);
+  }
+  :root[data-theme="light"]{
+    --bg:#F2F2F0;
+    --panel:#FFFFFF;
+    --panel2:#F3F4F6;
+    --line:#D9DBDE;
+    --text:#33363B;
+    --dim:#6B6E73;
+    --bright:#111318;
+    --accent-bright:#B92732;
+    --pos:#1A7F37;
+    --warn:#9A6700;
+    --neg:#CF222E;
+    --flat:#57606A;
+    --chip-bg:rgba(0,0,0,0.035);
+    --chip-bg-hover:rgba(0,0,0,0.07);
+    --fire:#E35500;
+    --grid-l:rgba(60,66,76,0.11);
+    --edge-c:rgba(40,46,58,0.09);
+    --edge-faint:rgba(40,46,58,0.045);
+    --edge-cold:rgba(40,46,58,0.025);
+  }
+  html.theme-anim body, html.theme-anim body *{
+    transition:background-color .35s ease, color .35s ease, border-color .35s ease !important;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    overflow:hidden;
+  }
+  :root[data-theme="dark"] body{
+    background:
+      radial-gradient(ellipse 70% 50% at 55% 35%, rgba(185,39,50,0.05) 0%, rgba(21,23,26,0) 60%),
+      var(--bg);
+  }
+  svg#scene{ position:fixed; inset:0; width:100%; height:100%; display:block; }
+  text{ font-family:inherit; }
+  .mono{ font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace; }
+
+  
+  #tmhdr{ position:fixed; top:0; left:0; right:0; height:48px; z-index:50;
+    display:flex; align-items:center; justify-content:space-between; padding:0 14px;
+    background:var(--panel); border-bottom:1px solid var(--line); }
+  #tmhdr .t1{ font-size:13px; font-weight:700; letter-spacing:.14em; color:var(--bright); }
+  #tmhdr .t2{ font-size:10.5px; color:var(--dim); }
+  #tmhdr .h-right{ display:flex; gap:8px; align-items:center; }
+  a.hdr-btn, button.hdr-btn{ font-family:inherit; font-size:12px; font-weight:600;
+    text-decoration:none; color:var(--text); background:var(--chip-bg);
+    border:1px solid var(--line); border-radius:8px; padding:6px 10px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px; }
+  a.hdr-btn:hover, button.hdr-btn:hover{ background:var(--chip-bg-hover); }
+  .pill{ font-size:11px; color:var(--dim); border:1px solid var(--line);
+    border-radius:20px; padding:4px 10px; }
+  #themeBtn svg{ width:14px; height:14px; display:block; }
+  :root[data-theme="dark"] #themeBtn .icon-moon{ display:none; }
+  :root[data-theme="light"] #themeBtn .icon-sun{ display:none; }
+  svg#scene{ top:48px; height:calc(100% - 48px); }
+  @media (max-width:860px){ #tmhdr .t2{ display:none; } }
+
+
+  .hdr-title{ fill:var(--bright); font-size:15px; font-weight:700; letter-spacing:2.5px; }
+  .hdr-line{ fill:var(--dim); font-size:10px; letter-spacing:0.8px; }
+  .hdr-conn{ fill:var(--accent-bright); font-size:12px; font-weight:700; letter-spacing:1px; }
+  .layer-hd{ fill:var(--dim); font-size:10px; letter-spacing:1.8px; }
+  .layer-hd tspan{ fill:var(--text); }
+
+  .fac-label{ fill:var(--text); font-size:10.5px; cursor:pointer; }
+  .fac-val{ fill:var(--pos); font-size:8.5px; opacity:0.72; }
+  .badge-t{ fill:var(--text); font-size:8px; text-anchor:middle; }
+
+  .src-hd{ fill:var(--text); font-size:8.6px; font-weight:700; letter-spacing:0.8px; }
+  .src-cad{ fill:var(--dim); font-size:7.4px; letter-spacing:0.3px; }
+  .pt-label{ fill:var(--text); font-size:7.8px; opacity:0.78; cursor:pointer; }
+  .planned .pt-label{ opacity:0.4; }
+  .planned .src-hd{ opacity:0.55; }
+
+  .out-name{ fill:var(--bright); font-size:9.6px; font-weight:650; letter-spacing:0.3px; cursor:pointer; }
+  .out-sub{ fill:var(--dim); font-size:7.8px; letter-spacing:0.2px; }
+
+  .status-t{ fill:var(--dim); font-size:10px; letter-spacing:0.8px; }
+  .cursor{ fill:var(--pos); animation:blink 1.1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0 } }
+
+  .glyph-r{ fill:none; stroke:var(--pos); stroke-width:1.1; opacity:0.85; }
+  .glyph-p{ fill:none; stroke:var(--pos); stroke-width:1.2; stroke-linejoin:round; stroke-linecap:round; }
+  .badge-c{ fill:var(--chip-bg); stroke:var(--line); stroke-width:1; }
+  .panel{ fill:var(--panel); stroke:var(--line); stroke-width:1; }
+  .edge{ stroke:var(--edge-c); stroke-width:1; fill:none; }
+  .edge.faint{ stroke:var(--edge-faint); }
+  .edge.hot{ stroke:var(--fire); stroke-width:1.5; opacity:0.92; }
+  .edge.cold{ stroke:var(--edge-cold); }
+  .focus-bg{ fill:var(--fire); rx:3; }
+  .focus-label{ fill:#180b02 !important; font-weight:700; }
+  .out-row rect.hot-ring, rect.hot-ring{ stroke:var(--fire); stroke-width:1.6; }
+  .alert-dot{ fill:var(--neg); }
+  .pulse-dot{ fill:var(--fire); }
+  .dimmed{ opacity:0.22; }
+  g.fac-row, g.pt-row, g.out-row{ cursor:pointer; }
+  #errCard{ position:fixed; top:40%; left:50%; transform:translate(-50%,-50%); display:none;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:22px 28px;
+    color:var(--dim); font-size:13px; }
+</style>
+</head>
+<body>
+<header id="tmhdr">
+  <div class="h-title">
+    <div class="t1">THE DATA STORE</div>
+    <div class="t2">every store · every data point · every output — refreshed twice a day</div>
+  </div>
+  <div class="h-right">
+    <span class="pill" id="freshness">Loading…</span>
+    <button class="hdr-btn" id="themeBtn" title="Toggle light / dark mode" aria-label="Toggle light or dark mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.5"/>
+        <path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/>
+      </svg>
+    </button>
+    <a class="hdr-btn" href="portfolio.html">Dashboard</a>
+    <a class="hdr-btn" href="exec.html">Exec cockpit</a>
+    <a class="hdr-btn" href="memory-map.html">Memory map</a>
+    <button class="hdr-btn" id="lockBtn" title="Lock this session and return to the landing page">Lock</button>
+  </div>
+</header>
+<svg id="scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-label="Portfolio DataStore living network: stores, every data point, outputs"></svg>
+<div id="errCard">Couldn't load network-data.json — try a refresh.</div>
+
+<script>
+"use strict";
+var EMBED = /*__DATA__*/null;
+
+const NS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById("scene");
+function el(tag, attrs, parent, cls){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (cls) n.setAttribute("class", cls);
+  (parent||svg).appendChild(n);
+  return n;
+}
+function txt(x,y,str,cls,anchor,parent){
+  const t = el("text",{x,y},parent||svg,cls);
+  if (anchor) t.setAttribute("text-anchor",anchor);
+  t.textContent = str;
+  return t;
+}
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function boot(DATA){
+/* ============================================================
+   backdrop: perspective wireframe grid + back wall (site-neutral)
+============================================================ */
+(function grid(){
+  const g = el("g",{opacity:0.9});
+  const VPX=1050, HOR=560;
+  for (let i=-20;i<=20;i++){
+    const xb = VPX + i*140;
+    el("line",{x1:VPX+(xb-VPX)*0.06, y1:HOR, x2:xb, y2:940, stroke:"var(--grid-l)","stroke-width":1},g);
+  }
+  for (let j=0;j<=10;j++){
+    const t=j/10, y=HOR+(940-HOR)*t*t;
+    el("line",{x1:-40,y1:y,x2:1640,y2:y, stroke:"var(--grid-l)","stroke-width": j>7?1.3:1},g);
+  }
+  const wall = el("g",{opacity:0.32},g);
+  for (let x=400; x<=1600; x+=60) el("line",{x1:x,y1:16,x2:x,y2:HOR, stroke:"var(--grid-l)","stroke-width":1},wall);
+  for (let y=40; y<=HOR; y+=52)   el("line",{x1:400,y1:y,x2:1600,y2:y, stroke:"var(--grid-l)","stroke-width":1},wall);
+})();
+
+/* ============================================================
+   layout + data estate
+============================================================ */
+const FX = { label:196, glyph:204, badge:286, out:296 };
+const FTOP = 142, FPITCH = 25.2;
+const MID = { top:118, bot:862 };
+const OUT = { x:1178, w:334, top:118, pitch:46, h:38 };
+
+const BRAND_ORDER = { "AFAM":0, "NSS":1, "SL Reno":2 };
+const facs = [...DATA.facilities].sort((a,b)=>
+  (BRAND_ORDER[a.brand]-BRAND_ORDER[b.brand]) || a.code.localeCompare(b.code));
+const COV = { ...DATA.coverage, none:[] };
+const CC = DATA.col_counts;
+const COLS = DATA.columns;
+function occPct(f){ return f.occupancy.occupancy_units_pct; }
+function dlqRate(f){ return (f.delinquency.delinquency_units||0)/(f.occupancy.units_occupied||1); }
+
+const COLS_DEF = [
+  { x:{ inx:424, lbl:430, outx:600 }, groups:[
+    { id:"msr", name:"NECTAR · MSR DAILY", cad:"2×/DAY · 29 STORES · "+CC.facility_day+" COLS",
+      cov:"msr", outputs:["dash","exec","dlqrep","msrcsv","sil1card","alerters","weeklymtd","snapshot","roasboard","autoreport","sitechat"],
+      points: COLS.facility_day },
+  ]},
+  { x:{ inx:634, lbl:640, outx:816 }, groups:[
+    { id:"lease", name:"NECTAR · LEASE-LEVEL", cad:"DAILY 08:30 · 29 STORES",
+      cov:"lease", outputs:["dash","exec","auction","dlqrep"], points: COLS.delinquent_leases },
+    { id:"ads", name:"SUPERMETRICS · AD SPEND", cad:"MONTH-CLOSE · "+COV.ads.length+" STORES",
+      cov:"ads", outputs:["dash","roasboard"], points: COLS.ad_spend },
+    { id:"campaigns", name:"SUPERMETRICS · CAMPAIGNS", cad:"MONTH-CLOSE · "+COV.campaigns.length+" STORES",
+      cov:"campaigns", outputs:["dash","roasboard"], points: COLS.ad_campaign_performance },
+    { id:"budget", name:"ACCOUNTING · BUDGET PDF", cad:"MONTHLY · "+COV.budget.length+" STORES",
+      cov:"budget", outputs:["eom","board"], points: COLS.facility_month_budget },
+    { id:"roster", name:"ROSTER · OPS", cad:"MANUAL · 29 STORES",
+      cov:"roster", outputs:["dash","dlqrep"], points: COLS.staff_roster },
+  ]},
+  { x:{ inx:850, lbl:856, outx:1046 }, groups:[
+    { id:"facdim", name:"NECTAR · FACILITY DIM", cad:"SEED · 29 STORES",
+      cov:"facdim", outputs:["dash","exec","dlqrep","msrcsv"], points: COLS.facility },
+    { id:"exec", name:"EXEC ROSTER", cad:"MANUAL · ORG-LEVEL",
+      cov:"none", outputs:["dlqrep"], points: COLS.exec_roster },
+    { id:"qb", name:"QUICKBOOKS · JOIIN", cad:"MONTHLY CLOSE · "+COV.qb.length+" STORES",
+      cov:"qb", outputs:["eom","distributions","board"],
+      points:["gl_line_full","revenue_actual","opex_actual","noi","budget_vs_actual","variance_pct","kpi_report","fy_periods"] },
+    { id:"tractiq", name:"TRACTIQ · GEO / MARKET", cad:"STATIC BATCH · 29 STORES",
+      cov:"tractiq", outputs:["dash"],
+      points:["lat","lng","matched_address","market_overlays","facility_index_match"] },
+    { id:"ga4", name:"GA4 · WEB TRAFFIC", cad:"PARTIAL · "+COV.ga4.length+" NSS STORES",
+      cov:"ga4", outputs:["dash"], points:["sessions","users","property_map"] },
+    { id:"reviews", name:"REVIEWS", cad:"PERIODIC · "+COV.reviews.length+" STORES",
+      cov:"reviews", outputs:["autoreport"], points:["rating","review_count","history"] },
+    { id:"rate", name:"NECTAR · RATE MGMT", cad:"LIVE · NOT WIRED · 0 CONNECTIONS",
+      cov:"none", outputs:[], planned:true,
+      points:["rate_config","ecri_queue","unit_rate_history","space_groups_promos"] },
+    { id:"know", name:"INDUSTRY KNOWLEDGE", cad:"CURATED KBs · DROPBOX",
+      cov:"none", outputs:["sitechat","ceopage","board"],
+      points:["msm_knowledge_base","ceo_knowledgebase","slp_training","slp_remittance_analysis",
+              "tenant_customer_guide","operator_onboarding","sample_reports","nectar_api_docs"] },
+  ]},
+];
+
+const OUTPUTS = [
+  { id:"dash",         n:"TRAVISMORROW.COM · DASHBOARD",    s:"2×/DAY · GITHUB PAGES · GATED" },
+  { id:"exec",         n:"TRAVISMORROW.COM · EXEC COCKPIT", s:"2×/DAY · CEO ANALYTICS" },
+  { id:"auction",      n:"TRAVISMORROW.COM · AUCTION WATCH",s:"DAILY · site_aging" },
+  { id:"sitechat",     n:"TRAVISMORROW.COM · ASK TAYLOR",   s:"LIVE · CHAT WORKER" },
+  { id:"dlqrep",       n:"NSS DELINQUENCY REPORT",          s:"DAILY 08:30 · PDF + THREAD" },
+  { id:"msrcsv",       n:"DAILY MSR FEED · CSV",            s:"DAILY 06:00 · CHAT CLAUDE" },
+  { id:"sil1card",     n:"SIL1 DAILY CARD",                 s:"DAILY 18:00 · OWNERS" },
+  { id:"alerters",     n:"SIL1 MOVE-OUT / RENTAL ALERTS",   s:"CONTINUOUS · IMESSAGE" },
+  { id:"autoreport",   n:"NSS TEAM AUTO-REPORT",            s:"DAILY · TEAM THREAD" },
+  { id:"weeklymtd",    n:"PER-FACILITY MTD PAGE",           s:"WEEKLY · PDF" },
+  { id:"snapshot",     n:"PORTFOLIO SNAPSHOT",              s:"MONTHLY · PDF" },
+  { id:"roasboard",    n:"ROAS AD-SPEND LEADERBOARD",       s:"MONTHLY · PDF" },
+  { id:"eom",          n:"EOM CLOSE · LETTERS + GRAPHS",    s:"MONTHLY · OWNER PACKAGES" },
+  { id:"distributions",n:"FACILITY DISTRIBUTIONS",          s:"MONTHLY 20TH · CHASE SHEET" },
+  { id:"board",        n:"BOARD / PORTFOLIO MEMOS",         s:"AD-HOC · DROPBOX" },
+  { id:"ceopage",      n:"MSM CEO PAGE · THE SHOW",         s:"MONTHLY COLUMN · MSM" },
+];
+
+const gEdges = el("g",{});
+const gNodes = el("g",{});
+const gPulse = el("g",{});
+const edges = [];
+function edge(x1,y1,x2,y2,meta,extraCls){
+  const ln = el("line",{x1,y1,x2,y2},gEdges,"edge"+(extraCls?" "+extraCls:""));
+  edges.push({ el:ln, x1,y1,x2,y2, ...meta });
+}
+function glyph(parent, x, y, w, h, series){
+  el("rect",{x,y,width:w,height:h,rx:3},parent,"glyph-r");
+  const pts = series.filter(s=>s.occ!=null).map(s=>s.occ);
+  if (pts.length<2) return;
+  const mn=Math.min(...pts), mx=Math.max(...pts), pad=(mx-mn)*0.2+1e-4;
+  const X=i=>x+2+i/(pts.length-1)*(w-4);
+  const Y=v=>y+h-2-((v-(mn-pad))/((mx+pad)-(mn-pad)))*(h-4);
+  el("path",{d:pts.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+","+Y(v).toFixed(1)).join(" ")},parent,"glyph-p");
+}
+
+/* outputs (right) */
+const outRows = {};
+const feedsOf = oid => COLS_DEF.flatMap(c=>c.groups).filter(g=>g.outputs.includes(oid));
+OUTPUTS.forEach((o,i)=>{
+  const y = OUT.top + i*OUT.pitch;
+  const g = el("g",{},gNodes,"out-row");
+  g.setAttribute("tabindex","0");
+  const rect = el("rect",{x:OUT.x,y,width:OUT.w,height:OUT.h,rx:6},g,"panel");
+  txt(OUT.x+11, y+15, o.n, "out-name", null, g);
+  txt(OUT.x+11, y+28, o.s, "out-sub mono", null, g);
+  const nPts = feedsOf(o.id).reduce((a,s)=>a+s.points.length,0);
+  el("circle",{cx:OUT.x+OUT.w-20, cy:y+OUT.h/2, r:9.5},g,"badge-c");
+  txt(OUT.x+OUT.w-20, y+OUT.h/2+2.6, nPts, "badge-t mono", null, g);
+  outRows[o.id] = { g, rect, y:y+OUT.h/2, o, srcs:feedsOf(o.id).map(s=>s.id) };
+});
+
+/* middle: three columns, every data point */
+const HD_H = 22, GAP = 6;
+const ptRows = [];
+const srcHeaders = {};
+COLS_DEF.forEach(col=>{
+  const nPts = col.groups.reduce((a,g)=>a+g.points.length,0);
+  const nHd  = col.groups.length;
+  const rowH = (MID.bot - MID.top - nHd*(HD_H+GAP)) / nPts;
+  let py = MID.top;
+  col.groups.forEach(s=>{
+    const gh = el("g",{},gNodes, s.planned?"planned":null);
+    txt(col.x.lbl-6, py+8, s.name, "src-hd", null, gh);
+    txt(col.x.lbl-6, py+17, s.cad, "src-cad mono", null, gh);
+    py += HD_H;
+    s.points.forEach(p=>{
+      const g = el("g",{},gNodes, "pt-row"+(s.planned?" planned":""));
+      g.setAttribute("tabindex","0");
+      txt(col.x.lbl, py+2.6, p, "pt-label mono", null, g);
+      el("circle",{cx:col.x.inx, cy:py, r:1.4, fill:"var(--flat)", opacity:0.55},g);
+      el("circle",{cx:col.x.outx, cy:py, r:1.4, fill:"var(--flat)", opacity:0.55},g);
+      ptRows.push({ src:s.id, cov:s.cov, label:p, y:py, g, outputs:s.outputs,
+                    inx:col.x.inx, outx:col.x.outx });
+      py += rowH;
+    });
+    srcHeaders[s.id] = { g:gh, grp:s };
+    py += GAP;
+  });
+});
+
+/* stores (left) */
+const facRows = {};
+facs.forEach((f,i)=>{
+  const y = FTOP + i*FPITCH;
+  const g = el("g",{},gNodes,"fac-row");
+  g.setAttribute("tabindex","0");
+  const focusBg = el("rect",{x:FX.label-118, y:y-10, width:122, height:14, rx:3, opacity:0},g,"focus-bg");
+  const label = txt(FX.label, y+1, f.code, "fac-label mono", "end", g);
+  const occ = occPct(f)/100;
+  const vt = txt(FX.label, y+11, occ.toFixed(3), "fac-val mono", "end", g);
+  vt.dataset.final = occ;
+  glyph(g, FX.glyph, y-8, 34, 16, f.spark);
+  el("circle",{cx:FX.badge, cy:y, r:8},g,"badge-c");
+  const nmi = f.move_mtd.net_move_ins;
+  txt(FX.badge, y+2.6, (nmi>0?"+":"")+nmi, "badge-t mono", null, g);
+  if (dlqRate(f)>0.12) el("circle",{cx:FX.label-124, cy:y-3, r:2.6},g,"alert-dot");
+  facRows[f.code] = { g, focusBg, label, f, y };
+});
+
+/* edges */
+ptRows.forEach(pt=>{
+  COV[pt.cov].forEach(code=>{
+    const fr = facRows[code]; if (!fr) return;
+    edge(FX.out, fr.y, pt.inx-3, pt.y, { store:code, src:pt.src, pt:pt.label },
+         pt.src==="msr" ? "faint" : null);
+  });
+  pt.outputs.forEach(oid=>{
+    const or = outRows[oid]; if (!or) return;
+    edge(pt.outx+3, pt.y, OUT.x, or.y, { src:pt.src, pt:pt.label, out:oid },
+         pt.src==="msr" ? "faint" : null);
+  });
+});
+const N_EDGES = edges.length;
+
+/* ============================================================
+   fire-orange hover cascades (hover = primary; click locks)
+============================================================ */
+let locked = null;
+const focusLine = txt(OUT.x+OUT.w, OUT.top + OUTPUTS.length*OUT.pitch + 12, "", "status-t mono", "end");
+const GROUPS = COLS_DEF.flatMap(c=>c.groups);
+
+function classify(pred){
+  edges.forEach(e=>{
+    e.el.classList.remove("hot","cold");
+    const r = pred(e);
+    if (r) e.el.classList.add(r);
+  });
+}
+function litSources(ids){
+  Object.entries(srcHeaders).forEach(([id,h])=> h.g.classList.toggle("dimmed", !ids.includes(id)));
+  ptRows.forEach(p=> p.g.classList.toggle("dimmed", !ids.includes(p.src)));
+}
+function litOutputs(ids){
+  Object.values(outRows).forEach(o=>{
+    const on = ids.includes(o.o.id);
+    o.g.classList.toggle("dimmed", !on);
+    o.rect.classList.toggle("hot-ring", on && ids.length===1);
+  });
+}
+function litStores(codes){
+  Object.values(facRows).forEach(r=> r.g.classList.toggle("dimmed", !codes.includes(r.f.code)));
+}
+function clearAmber(){
+  Object.values(facRows).forEach(r=>{
+    r.focusBg.setAttribute("opacity",0);
+    r.label.classList.remove("focus-label");
+  });
+}
+function focusStore(code){
+  const srcs = GROUPS.filter(s=>COV[s.cov].includes(code)).map(s=>s.id);
+  const outs = [...new Set(GROUPS.filter(s=>srcs.includes(s.id)).flatMap(s=>s.outputs))];
+  Object.values(facRows).forEach(r=>{
+    const on = r.f.code===code;
+    r.focusBg.setAttribute("opacity", on?1:0);
+    r.label.classList.toggle("focus-label", on);
+    r.g.classList.toggle("dimmed", !on);
+  });
+  litSources(srcs); litOutputs(outs);
+  classify(e=>{
+    if (e.store===code) return "hot";
+    if (!e.store && srcs.includes(e.src)) return "hot";
+    return "cold";
+  });
+  const nPts = ptRows.filter(p=>srcs.includes(p.src)).length;
+  focusLine.textContent = "FOCUS ▸ "+code+" · "+nPts+" POINTS · "+srcs.length+" SOURCES · "+outs.length+" OUTPUTS";
+}
+function focusPoint(pt){
+  const stores = COV[pt.cov];
+  clearAmber();
+  litStores(stores);
+  litSources([pt.src]); litOutputs(pt.outputs);
+  ptRows.forEach(p=> p.g.classList.toggle("dimmed", p!==pt));
+  classify(e=> (e.pt===pt.label && e.src===pt.src) ? "hot" : "cold");
+  focusLine.textContent = "FOCUS ▸ "+pt.label+" · "+stores.length+" STORES → "+pt.outputs.length+" OUTPUTS";
+}
+function focusOutput(oid){
+  const or = outRows[oid];
+  const srcs = or.srcs;
+  const stores = [...new Set(srcs.flatMap(s=>COV[(GROUPS.find(g=>g.id===s)||{}).cov||"none"]))];
+  clearAmber();
+  litStores(stores); litSources(srcs); litOutputs([oid]);
+  classify(e=>{
+    if (e.out===oid) return "hot";
+    if (e.out && e.out!==oid) return "cold";
+    if (e.store && srcs.includes(e.src)) return "hot";
+    return "cold";
+  });
+  const nPts = ptRows.filter(p=>srcs.includes(p.src)).length;
+  focusLine.textContent = "FOCUS ▸ "+or.o.n.replace("TRAVISMORROW.COM · ","")+" ← "+nPts+" POINTS · "
+    +srcs.length+" SOURCES · "+stores.length+" STORES";
+}
+function clearFocus(){
+  clearAmber();
+  Object.values(facRows).forEach(r=> r.g.classList.remove("dimmed"));
+  ptRows.forEach(p=> p.g.classList.remove("dimmed"));
+  Object.values(srcHeaders).forEach(h=> h.g.classList.remove("dimmed"));
+  Object.values(outRows).forEach(o=>{ o.g.classList.remove("dimmed"); o.rect.classList.remove("hot-ring"); });
+  edges.forEach(e=> e.el.classList.remove("hot","cold"));
+  focusLine.textContent = "";
+}
+
+Object.entries(facRows).forEach(([code,r])=>{
+  r.g.addEventListener("pointerenter", ()=>{ if(!locked) focusStore(code); });
+  r.g.addEventListener("pointerleave", ()=>{ if(!locked) clearFocus(); });
+  r.g.addEventListener("click", ev=>{ ev.stopPropagation();
+    if (locked==="s:"+code){ locked=null; clearFocus(); }
+    else { locked="s:"+code; focusStore(code); } });
+  r.g.addEventListener("keydown", ev=>{ if(ev.key==="Enter"){ locked="s:"+code; focusStore(code); } });
+});
+ptRows.forEach(pt=>{
+  pt.g.addEventListener("pointerenter", ()=>{ if(!locked) focusPoint(pt); });
+  pt.g.addEventListener("pointerleave", ()=>{ if(!locked) clearFocus(); });
+  pt.g.addEventListener("click", ev=>{ ev.stopPropagation();
+    const k="p:"+pt.src+":"+pt.label;
+    if (locked===k){ locked=null; clearFocus(); } else { locked=k; focusPoint(pt); } });
+});
+Object.entries(outRows).forEach(([oid,o])=>{
+  o.g.addEventListener("pointerenter", ()=>{ if(!locked) focusOutput(oid); });
+  o.g.addEventListener("pointerleave", ()=>{ if(!locked) clearFocus(); });
+  o.g.addEventListener("click", ev=>{ ev.stopPropagation();
+    if (locked==="o:"+oid){ locked=null; clearFocus(); } else { locked="o:"+oid; focusOutput(oid); } });
+});
+svg.addEventListener("click", ()=>{ locked=null; clearFocus(); });
+addEventListener("keydown", e=>{ if(e.key==="Escape"){ locked=null; clearFocus(); } });
+
+/* ============================================================
+   chrome
+============================================================ */
+const totalCols = Object.values(CC).reduce((a,b)=>a+b,0);
+(function chrome(){
+  const g = el("g",{});
+  el("rect",{x:24,y:22,width:352,height:96,rx:8},g,"panel");
+  txt(40, 48, "PORTFOLIO DATA STORE", "hdr-title", null, g);
+  txt(40, 66, "STORES: 29 · SOURCES: "+GROUPS.length+" · POINTS: "+ptRows.length+" · OUTPUTS: "+OUTPUTS.length, "hdr-line mono", null, g);
+  const ct = txt(40, 84, "", "hdr-conn", null, g);
+  ct.textContent = "LIVE CONNECTIONS: "+N_EDGES.toLocaleString("en-US");
+  txt(40, 102, "AS OF: "+DATA.as_of+" · SRC: portfolio.db · Σ/Σ", "hdr-line mono", null, g);
+
+  const lh=(x,y,s,n)=>{ const t=el("text",{x,y},g,"layer-hd"); t.textContent=s+" ";
+    const sp=document.createElementNS(NS,"tspan"); sp.textContent=n; t.appendChild(sp); };
+  lh(110, FTOP-16, "STORES", "n=29");
+  lh(430, MID.top-14, "DATA POINTS · EVERY COLUMN", "n="+ptRows.length);
+  lh(OUT.x, OUT.top-14, "OUTPUTS · REPORTS + SITES", "n="+OUTPUTS.length);
+
+  el("rect",{x:1362,y:24,width:206,height:44,rx:6},g,"panel");
+  el("rect",{x:1374,y:34,width:14,height:8,rx:2},g,"glyph-r");
+  txt(1394, 42, "trend", "status-t", null, g);
+  el("rect",{x:1438,y:33,width:10,height:10,rx:2, fill:"var(--fire)"},g);
+  txt(1454, 42, "hover", "status-t", null, g);
+  el("circle",{cx:1506,cy:38,r:4, fill:"var(--neg)"},g);
+  txt(1516, 42, "alert", "status-t", null, g);
+  txt(1374, 60, "hover store · point · output", "status-t", null, g);
+})();
+
+/* ticker */
+const F = DATA.freshness;
+const tickerMsgs = [
+  "▸ "+N_EDGES.toLocaleString()+" live connections · "+ptRows.length+" data points · "+GROUPS.length+" sources",
+  "▸ msr feed "+F.facility_day+" · 29/29 stores · "+CC.facility_day+" columns",
+  "▸ lease-level pull "+F.delinquent_leases_pull+" · quickbooks close · "+COV.qb.length+"/29 tracked",
+  "▸ supermetrics "+(F.ad_spend||"—")+" month-close · "+COV.ads.length+" stores running ads",
+  "▸ rate-mgmt endpoints live · not wired · 0 connections (next frontier)",
+  "▸ industry knowledge: msm kb · ceo kb · slp · onboarding → ask-taylor chat",
+  "▸ last ingest "+String(F.last_ingest).slice(0,16).replace("T"," ")+" · refreshed twice daily",
+];
+const tickerT = txt(280, 878, "", "status-t mono");
+const cur = el("rect",{x:284,y:869,width:7,height:11},svg,"cursor");
+let tick=0, typing=null;
+function typeMsg(msg){
+  clearInterval(typing);
+  let i=0;
+  typing = setInterval(()=>{
+    i++;
+    tickerT.textContent = msg.slice(0,i);
+    cur.setAttribute("x", 284 + tickerT.getComputedTextLength());
+    if (i>=msg.length) clearInterval(typing);
+  }, reduceMotion?0:14);
+}
+typeMsg(tickerMsgs[0]);
+setInterval(()=>{ tick=(tick+1)%tickerMsgs.length; typeMsg(tickerMsgs[tick]); }, 5600);
+
+/* freshness pill hook (site header, if present) */
+const pill = document.getElementById("freshness");
+if (pill){
+  const age = (Date.now() - new Date(DATA.as_of+"T12:00:00").getTime())/864e5;
+  pill.textContent = (age>1.6 ? "STALE · " : "LIVE · as of ")+DATA.as_of;
+  if (age>1.6) pill.style.color = "var(--warn)";
+}
+
+/* ============================================================
+   live behavior
+============================================================ */
+function animateValue(t){
+  const fin = parseFloat(t.dataset.final);
+  if (reduceMotion){ t.textContent = fin.toFixed(3); return; }
+  const t0 = performance.now(), dur=700+Math.random()*500;
+  (function step(now){
+    const u = Math.min(1,(now-t0)/dur);
+    t.textContent = (fin*(u*u*(3-2*u))).toFixed(3);
+    if (u<1) requestAnimationFrame(step);
+  })(t0);
+  setTimeout(()=>{ t.textContent = fin.toFixed(3); }, dur+250);
+}
+document.querySelectorAll("text[data-final]").forEach(animateValue);
+
+function travel(x1,y1,x2,y2,ms,delay){
+  const d = el("circle",{cx:x1,cy:y1,r:2.0,opacity:0},gPulse,"pulse-dot");
+  const t0 = performance.now()+delay;
+  (function step(now){
+    const u = (now-t0)/ms;
+    if (u<0){ requestAnimationFrame(step); return; }
+    if (u>=1){ d.remove(); return; }
+    d.setAttribute("opacity", u<0.1? u*10 : u>0.9? (1-u)*10 : 1);
+    d.setAttribute("cx", x1+(x2-x1)*u);
+    d.setAttribute("cy", y1+(y2-y1)*u);
+    requestAnimationFrame(step);
+  })(t0);
+}
+const storeEdges = edges.filter(e=>e.store);
+function pulseChain(code, delay){
+  const mine = storeEdges.filter(e=>e.store===code);
+  if (!mine.length) return;
+  const e1 = mine[Math.floor(Math.random()*mine.length)];
+  travel(e1.x1,e1.y1,e1.x2,e1.y2, 620, delay);
+  const hops = edges.filter(e=>!e.store && e.src===e1.src && e.pt===e1.pt);
+  if (hops.length){
+    const e2 = hops[Math.floor(Math.random()*hops.length)];
+    travel(e2.x1,e2.y1,e2.x2,e2.y2, 600, delay+640);
+  }
+}
+if (!reduceMotion){
+  setInterval(()=>{
+    const code = facs[Math.floor(Math.random()*facs.length)].code;
+    pulseChain(code, 0); pulseChain(code, 80);
+  }, 850);
+  setInterval(()=>{
+    facs.forEach((f,i)=> pulseChain(f.code, i*32));
+  }, 9200);
+}
+} /* end boot() */
+
+if (EMBED){ boot(EMBED); }
+else {
+  fetch("network-data.json", { cache:"no-store" })
+    .then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(boot)
+    .catch(()=>{ document.getElementById("errCard").style.display="block"; });
+}
+</script>
+<script>
+  document.getElementById("themeBtn").addEventListener("click", function () { TMTheme.toggle(); });
+  document.getElementById("lockBtn").addEventListener("click", function () {
+    TMAuth.logout(); location.href = "index.html";
+  });
+</script>
+</body>
+</html>
