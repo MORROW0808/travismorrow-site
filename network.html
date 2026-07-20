@@ -143,7 +143,7 @@
 <header id="tmhdr">
   <div class="h-title">
     <div class="t1">THE DATA STORE</div>
-    <div class="t2">every store · every data point · every output — refreshed twice a day</div>
+    <div class="t2">every store · every data point · every output — refreshed weekly &amp; on demand</div>
   </div>
   <div class="h-right">
     <span class="pill" id="freshness">Loading…</span>
@@ -533,7 +533,7 @@ const tickerMsgs = [
   "▸ supermetrics "+(F.ad_spend||"—")+" month-close · "+COV.ads.length+" stores running ads",
   "▸ rate-mgmt endpoints live · not wired · 0 connections (next frontier)",
   "▸ industry knowledge: msm kb · ceo kb · slp · onboarding → ask-taylor chat",
-  "▸ last ingest "+String(F.last_ingest).slice(0,16).replace("T"," ")+" · refreshed twice daily",
+  "▸ last store ingest "+String(F.last_ingest).slice(0,16).replace("T"," ")+" · viz refreshes weekly + on-demand",
 ];
 const tickerT = txt(280, 878, "", "status-t mono");
 const cur = el("rect",{x:284,y:869,width:7,height:11},svg,"cursor");
@@ -551,12 +551,14 @@ function typeMsg(msg){
 typeMsg(tickerMsgs[0]);
 setInterval(()=>{ tick=(tick+1)%tickerMsgs.length; typeMsg(tickerMsgs[tick]); }, 5600);
 
-/* freshness pill hook (site header, if present) */
+/* freshness pill hook (site header, if present) — WEEKLY cadence:
+   the viz refreshes Sunday nights + on demand, so a few-days-old as_of is
+   normal; flag STALE only past a missed weekly cycle (~8.5 days). */
 const pill = document.getElementById("freshness");
 if (pill){
   const age = (Date.now() - new Date(DATA.as_of+"T12:00:00").getTime())/864e5;
-  pill.textContent = (age>1.6 ? "STALE · " : "LIVE · as of ")+DATA.as_of;
-  if (age>1.6) pill.style.color = "var(--warn)";
+  pill.textContent = age>8.5 ? "STALE · "+DATA.as_of : "as of "+DATA.as_of+" · weekly";
+  if (age>8.5) pill.style.color = "var(--warn)";
 }
 
 /* ============================================================
