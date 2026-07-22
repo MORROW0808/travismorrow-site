@@ -1,17 +1,17 @@
 {
- "generated_at": "2026-07-21T12:09:36-07:00",
+ "generated_at": "2026-07-21T19:07:30-07:00",
  "as_of_date": "2026-07-21",
  "auction_watch": {
   "portfolio": {
-   "tail_units": 14,
-   "tail_amount": 13135.86,
+   "tail_units": 13,
+   "tail_amount": 12274.86,
    "min_days": 90,
    "buckets": [
     {
      "bucket": "120",
      "label": "91–120",
-     "units": 8,
-     "amount": 5213.42
+     "units": 7,
+     "amount": 4352.42
     },
     {
      "bucket": "180",
@@ -32,10 +32,10 @@
      "amount": 4082.35
     }
    ],
-   "gt30_units": 161,
-   "gt30_amount": 70262.59,
+   "gt30_units": 152,
+   "gt30_amount": 66672.93,
    "goal_tail_units": 2,
-   "gap_units": 12
+   "gap_units": 11
   },
   "trend": [
    {
@@ -55,8 +55,8 @@
    },
    {
     "date": "2026-07-21",
-    "tail_units": 14,
-    "tail_amount": 13135.86
+    "tail_units": 13,
+    "tail_amount": 12274.86
    }
   ],
   "facilities": [
@@ -95,7 +95,7 @@
     "facility_code": "DEM1",
     "facility_name": "Little Vineyard Self Storage (Deming)",
     "brand": "NSS",
-    "delinquency_pct": 12.66,
+    "delinquency_pct": 12.34,
     "trend": [
      {
       "date": "2026-07-18",
@@ -154,7 +154,7 @@
     "facility_code": "DOV1",
     "facility_name": "National Self Storage - Dove Mountain",
     "brand": "NSS",
-    "delinquency_pct": 5.44,
+    "delinquency_pct": 5.09,
     "trend": [
      {
       "date": "2026-07-18",
@@ -238,15 +238,15 @@
     ]
    },
    {
-    "tail_units": 1,
-    "tail_amount": 861.0,
+    "tail_units": 0,
+    "tail_amount": 0.0,
     "min_days": 90,
     "buckets": [
      {
       "bucket": "120",
       "label": "91–120",
-      "units": 1,
-      "amount": 861.0
+      "units": 0,
+      "amount": 0.0
      },
      {
       "bucket": "180",
@@ -267,12 +267,12 @@
       "amount": 0.0
      }
     ],
-    "gt30_units": 12,
-    "gt30_amount": 4291.0,
+    "gt30_units": 11,
+    "gt30_amount": 3430.0,
     "facility_code": "ELP6",
     "facility_name": "National Self Storage - Joe Battle",
     "brand": "NSS",
-    "delinquency_pct": 12.13,
+    "delinquency_pct": 11.72,
     "trend": [
      {
       "date": "2026-07-18",
@@ -291,8 +291,8 @@
      },
      {
       "date": "2026-07-21",
-      "units": 1,
-      "amount": 861.0
+      "units": 0,
+      "amount": 0.0
      }
     ]
    },
@@ -331,7 +331,7 @@
     "facility_code": "ELP7",
     "facility_name": "National Self Storage - Trevino Drive",
     "brand": "NSS",
-    "delinquency_pct": 12.05,
+    "delinquency_pct": 11.73,
     "trend": [
      {
       "date": "2026-07-18",
@@ -449,7 +449,7 @@
     "facility_code": "ELP9",
     "facility_name": "National Self Storage - 10560 N Loop",
     "brand": "NSS",
-    "delinquency_pct": 16.18,
+    "delinquency_pct": 15.06,
     "trend": [
      {
       "date": "2026-07-18",
@@ -508,7 +508,7 @@
     "facility_code": "GRN1",
     "facility_name": "National Self Storage - Green Valley",
     "brand": "NSS",
-    "delinquency_pct": 8.27,
+    "delinquency_pct": 7.87,
     "trend": [
      {
       "date": "2026-07-18",
@@ -562,12 +562,12 @@
       "amount": 0.0
      }
     ],
-    "gt30_units": 3,
-    "gt30_amount": 873.28,
+    "gt30_units": 0,
+    "gt30_amount": 0.0,
     "facility_code": "SIL1",
     "facility_name": "National Self Storage - SIL1 (Continental Reserve)",
     "brand": "NSS",
-    "delinquency_pct": 5.45,
+    "delinquency_pct": 5.23,
     "trend": [
      {
       "date": "2026-07-18",
@@ -626,7 +626,7 @@
     "facility_code": "RNO1",
     "facility_name": "Storelocal Reno",
     "brand": "SL Reno",
-    "delinquency_pct": 4.8,
+    "delinquency_pct": 4.68,
     "trend": [
      {
       "date": "2026-07-18",
@@ -680,8 +680,8 @@
       "amount": 0.0
      }
     ],
-    "gt30_units": 3,
-    "gt30_amount": 1397.34,
+    "gt30_units": 2,
+    "gt30_amount": 997.94,
     "facility_code": "301",
     "facility_name": "A Family Storage - I-10",
     "brand": "AFAM",
@@ -744,7 +744,7 @@
     "facility_code": "304",
     "facility_name": "A Family Storage - Romero",
     "brand": "AFAM",
-    "delinquency_pct": 16.95,
+    "delinquency_pct": 16.61,
     "trend": [
      {
       "date": "2026-07-18",
@@ -803,7 +803,7 @@
     "facility_code": "305",
     "facility_name": "A Family Storage - Speedway (305)",
     "brand": "AFAM",
-    "delinquency_pct": 8.02,
+    "delinquency_pct": 7.87,
     "trend": [
      {
       "date": "2026-07-18",
@@ -862,7 +862,7 @@
     "facility_code": "306",
     "facility_name": "A Family Storage - 22nd",
     "brand": "AFAM",
-    "delinquency_pct": 5.51,
+    "delinquency_pct": 5.2,
     "trend": [
      {
       "date": "2026-07-18",
@@ -921,7 +921,7 @@
     "facility_code": "309",
     "facility_name": "A Family Storage - New Magee",
     "brand": "AFAM",
-    "delinquency_pct": 4.71,
+    "delinquency_pct": 4.69,
     "trend": [
      {
       "date": "2026-07-18",
@@ -975,12 +975,12 @@
       "amount": 0.0
      }
     ],
-    "gt30_units": 11,
-    "gt30_amount": 4562.39,
+    "gt30_units": 9,
+    "gt30_amount": 3823.33,
     "facility_code": "311",
     "facility_name": "A Family Storage - Golf Links",
     "brand": "AFAM",
-    "delinquency_pct": 10.82,
+    "delinquency_pct": 10.46,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1039,7 +1039,7 @@
     "facility_code": "314",
     "facility_name": "A Family Storage - Orange Grove",
     "brand": "AFAM",
-    "delinquency_pct": 6.05,
+    "delinquency_pct": 5.08,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1157,7 +1157,7 @@
     "facility_code": "319",
     "facility_name": "A Family Storage - Green Valley",
     "brand": "AFAM",
-    "delinquency_pct": 7.1,
+    "delinquency_pct": 6.56,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1216,7 +1216,7 @@
     "facility_code": "323",
     "facility_name": "A Family Storage - Oracle",
     "brand": "AFAM",
-    "delinquency_pct": 9.34,
+    "delinquency_pct": 8.98,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1275,7 +1275,7 @@
     "facility_code": "325",
     "facility_name": "A Family Storage - Old Magee",
     "brand": "AFAM",
-    "delinquency_pct": 5.24,
+    "delinquency_pct": 4.76,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1334,7 +1334,7 @@
     "facility_code": "326",
     "facility_name": "A Family Storage - Kolb",
     "brand": "AFAM",
-    "delinquency_pct": 10.85,
+    "delinquency_pct": 10.63,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1393,7 +1393,7 @@
     "facility_code": "328",
     "facility_name": "A Family Storage - Rita Ranch",
     "brand": "AFAM",
-    "delinquency_pct": 5.74,
+    "delinquency_pct": 4.75,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1452,7 +1452,7 @@
     "facility_code": "329",
     "facility_name": "A Family Storage - Tanque Verde",
     "brand": "AFAM",
-    "delinquency_pct": 3.59,
+    "delinquency_pct": 3.33,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1506,12 +1506,12 @@
       "amount": 0.0
      }
     ],
-    "gt30_units": 13,
-    "gt30_amount": 4776.38,
+    "gt30_units": 12,
+    "gt30_amount": 4321.1,
     "facility_code": "333",
     "facility_name": "A Family Storage - Country Club",
     "brand": "AFAM",
-    "delinquency_pct": 12.64,
+    "delinquency_pct": 12.1,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1570,7 +1570,7 @@
     "facility_code": "338",
     "facility_name": "A Family Storage - Swan",
     "brand": "AFAM",
-    "delinquency_pct": 9.25,
+    "delinquency_pct": 8.54,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1629,7 +1629,7 @@
     "facility_code": "339",
     "facility_name": "A Family Storage - Broadway",
     "brand": "AFAM",
-    "delinquency_pct": 5.86,
+    "delinquency_pct": 5.67,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1688,7 +1688,7 @@
     "facility_code": "341",
     "facility_name": "A Family Storage - Valencia",
     "brand": "AFAM",
-    "delinquency_pct": 6.32,
+    "delinquency_pct": 5.5,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1742,12 +1742,12 @@
       "amount": 0.0
      }
     ],
-    "gt30_units": 6,
-    "gt30_amount": 1840.48,
+    "gt30_units": 5,
+    "gt30_amount": 1578.84,
     "facility_code": "343",
     "facility_name": "A Family Storage - Speedway (343)",
     "brand": "AFAM",
-    "delinquency_pct": 9.35,
+    "delinquency_pct": 9.09,
     "trend": [
      {
       "date": "2026-07-18",
@@ -1775,28 +1775,28 @@
  },
  "protection": {
   "portfolio": {
-   "insured_units": 9154,
-   "units_occupied": 12643,
+   "insured_units": 9158,
+   "units_occupied": 12642,
    "units_total": 17066,
-   "penetration_occ_pct": 72.4,
-   "penetration_total_pct": 53.64,
-   "collected_mtd": 80118.83,
-   "coverage_in_force_est": 22885000,
+   "penetration_occ_pct": 72.44,
+   "penetration_total_pct": 53.66,
+   "collected_mtd": 80736.83,
+   "coverage_in_force_est": 22895000,
    "base_tier": 2500
   },
   "facilities": [
    {
     "facility_code": "DEM1",
     "insured_units": 189,
-    "units_occupied": 237,
-    "penetration_occ_pct": 79.75,
-    "collected_mtd": 1701.0
+    "units_occupied": 235,
+    "penetration_occ_pct": 80.43,
+    "collected_mtd": 1725.0
    },
    {
     "facility_code": "DOV1",
     "insured_units": 367,
-    "units_occupied": 551,
-    "penetration_occ_pct": 66.61,
+    "units_occupied": 550,
+    "penetration_occ_pct": 66.73,
     "collected_mtd": 3178.41
    },
    {
@@ -1811,14 +1811,14 @@
     "insured_units": 368,
     "units_occupied": 478,
     "penetration_occ_pct": 76.99,
-    "collected_mtd": 3329.51
+    "collected_mtd": 3341.51
    },
    {
     "facility_code": "ELP7",
     "insured_units": 256,
     "units_occupied": 307,
     "penetration_occ_pct": 83.39,
-    "collected_mtd": 2176.64
+    "collected_mtd": 2212.64
    },
    {
     "facility_code": "ELP8",
@@ -1832,77 +1832,77 @@
     "insured_units": 402,
     "units_occupied": 445,
     "penetration_occ_pct": 90.34,
-    "collected_mtd": 3051.09
+    "collected_mtd": 3123.09
    },
    {
     "facility_code": "GRN1",
-    "insured_units": 165,
-    "units_occupied": 266,
-    "penetration_occ_pct": 62.03,
-    "collected_mtd": 1443.48
+    "insured_units": 166,
+    "units_occupied": 267,
+    "penetration_occ_pct": 62.17,
+    "collected_mtd": 1467.48
    },
    {
     "facility_code": "SIL1",
     "insured_units": 311,
     "units_occupied": 440,
     "penetration_occ_pct": 70.68,
-    "collected_mtd": 2672.15
+    "collected_mtd": 2684.15
    },
    {
     "facility_code": "RNO1",
     "insured_units": 492,
-    "units_occupied": 792,
-    "penetration_occ_pct": 62.12,
-    "collected_mtd": 5756.23
+    "units_occupied": 791,
+    "penetration_occ_pct": 62.2,
+    "collected_mtd": 5768.23
    },
    {
     "facility_code": "301",
     "insured_units": 214,
     "units_occupied": 290,
     "penetration_occ_pct": 73.79,
-    "collected_mtd": 1944.68
+    "collected_mtd": 1956.68
    },
    {
     "facility_code": "304",
     "insured_units": 249,
     "units_occupied": 295,
     "penetration_occ_pct": 84.41,
-    "collected_mtd": 1980.9
+    "collected_mtd": 1992.9
    },
    {
     "facility_code": "305",
     "insured_units": 456,
     "units_occupied": 661,
     "penetration_occ_pct": 68.99,
-    "collected_mtd": 3760.04
+    "collected_mtd": 3784.04
    },
    {
     "facility_code": "306",
-    "insured_units": 244,
-    "units_occupied": 345,
-    "penetration_occ_pct": 70.72,
-    "collected_mtd": 2325.23
+    "insured_units": 245,
+    "units_occupied": 346,
+    "penetration_occ_pct": 70.81,
+    "collected_mtd": 2337.23
    },
    {
     "facility_code": "309",
-    "insured_units": 278,
-    "units_occupied": 425,
-    "penetration_occ_pct": 65.41,
-    "collected_mtd": 2382.0
+    "insured_units": 279,
+    "units_occupied": 426,
+    "penetration_occ_pct": 65.49,
+    "collected_mtd": 2394.0
    },
    {
     "facility_code": "311",
     "insured_units": 416,
     "units_occupied": 564,
     "penetration_occ_pct": 73.76,
-    "collected_mtd": 3486.7
+    "collected_mtd": 3522.7
    },
    {
     "facility_code": "314",
     "insured_units": 295,
     "units_occupied": 413,
     "penetration_occ_pct": 71.43,
-    "collected_mtd": 2670.77
+    "collected_mtd": 2718.77
    },
    {
     "facility_code": "316",
@@ -1916,21 +1916,21 @@
     "insured_units": 109,
     "units_occupied": 183,
     "penetration_occ_pct": 59.56,
-    "collected_mtd": 852.0
+    "collected_mtd": 864.0
    },
    {
     "facility_code": "323",
     "insured_units": 463,
     "units_occupied": 557,
     "penetration_occ_pct": 83.12,
-    "collected_mtd": 3811.26
+    "collected_mtd": 3841.26
    },
    {
     "facility_code": "325",
     "insured_units": 294,
     "units_occupied": 420,
     "penetration_occ_pct": 70.0,
-    "collected_mtd": 2606.8
+    "collected_mtd": 2618.8
    },
    {
     "facility_code": "326",
@@ -1944,7 +1944,7 @@
     "insured_units": 361,
     "units_occupied": 610,
     "penetration_occ_pct": 59.18,
-    "collected_mtd": 3199.0
+    "collected_mtd": 3271.0
    },
    {
     "facility_code": "329",
@@ -1956,37 +1956,37 @@
    {
     "facility_code": "333",
     "insured_units": 443,
-    "units_occupied": 538,
-    "penetration_occ_pct": 82.34,
-    "collected_mtd": 3703.26
+    "units_occupied": 537,
+    "penetration_occ_pct": 82.5,
+    "collected_mtd": 3727.26
    },
    {
     "facility_code": "338",
     "insured_units": 214,
     "units_occupied": 281,
     "penetration_occ_pct": 76.16,
-    "collected_mtd": 1775.81
+    "collected_mtd": 1787.81
    },
    {
     "facility_code": "339",
     "insured_units": 390,
     "units_occupied": 529,
     "penetration_occ_pct": 73.72,
-    "collected_mtd": 3484.07
+    "collected_mtd": 3508.07
    },
    {
     "facility_code": "341",
     "insured_units": 346,
-    "units_occupied": 601,
-    "penetration_occ_pct": 57.57,
-    "collected_mtd": 2982.42
+    "units_occupied": 600,
+    "penetration_occ_pct": 57.67,
+    "collected_mtd": 3030.42
    },
    {
     "facility_code": "343",
-    "insured_units": 293,
-    "units_occupied": 449,
-    "penetration_occ_pct": 65.26,
-    "collected_mtd": 2638.74
+    "insured_units": 294,
+    "units_occupied": 451,
+    "penetration_occ_pct": 65.19,
+    "collected_mtd": 2674.74
    }
   ]
  },
@@ -2386,13 +2386,13 @@
     "month": "2026-07",
     "partial": true,
     "occupancy_units_pct": 74.08,
-    "occupancy_sqft_pct": 77.36,
+    "occupancy_sqft_pct": 77.35,
     "move_ins": 302,
     "move_outs": 284,
     "net_move_ins": 18,
-    "delinquency_pct": 8.37,
-    "protection_penetration_occ_pct": 72.4,
-    "revenue_mtd": 1515813.89,
+    "delinquency_pct": 7.99,
+    "protection_penetration_occ_pct": 72.44,
+    "revenue_mtd": 1529163.84,
     "facilities": 29
    }
   ],
@@ -2498,9 +2498,9 @@
     },
     {
      "month": "2026-07",
-     "occupancy_units_pct": 75.0,
+     "occupancy_units_pct": 74.37,
      "net_move_ins": -3,
-     "delinquency_pct": 12.66,
+     "delinquency_pct": 12.34,
      "partial": true
     }
    ],
@@ -2605,9 +2605,9 @@
     },
     {
      "month": "2026-07",
-     "occupancy_units_pct": 86.64,
+     "occupancy_units_pct": 86.48,
      "net_move_ins": -3,
-     "delinquency_pct": 5.44,
+     "delinquency_pct": 5.09,
      "partial": true
     }
    ],
@@ -2821,7 +2821,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 91.05,
      "net_move_ins": -1,
-     "delinquency_pct": 12.13,
+     "delinquency_pct": 11.72,
      "partial": true
     }
    ],
@@ -2928,7 +2928,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 89.5,
      "net_move_ins": 4,
-     "delinquency_pct": 12.05,
+     "delinquency_pct": 11.73,
      "partial": true
     }
    ],
@@ -3142,7 +3142,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 87.08,
      "net_move_ins": -4,
-     "delinquency_pct": 16.18,
+     "delinquency_pct": 15.06,
      "partial": true
     }
    ],
@@ -3247,9 +3247,9 @@
     },
     {
      "month": "2026-07",
-     "occupancy_units_pct": 86.36,
+     "occupancy_units_pct": 86.69,
      "net_move_ins": 1,
-     "delinquency_pct": 8.27,
+     "delinquency_pct": 7.87,
      "partial": true
     }
    ],
@@ -3356,7 +3356,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 74.83,
      "net_move_ins": 17,
-     "delinquency_pct": 5.45,
+     "delinquency_pct": 5.23,
      "partial": true
     }
    ],
@@ -3461,9 +3461,9 @@
     },
     {
      "month": "2026-07",
-     "occupancy_units_pct": 79.76,
+     "occupancy_units_pct": 79.66,
      "net_move_ins": 5,
-     "delinquency_pct": 4.8,
+     "delinquency_pct": 4.68,
      "partial": true
     }
    ],
@@ -3677,7 +3677,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 55.24,
      "net_move_ins": 0,
-     "delinquency_pct": 16.95,
+     "delinquency_pct": 16.61,
      "partial": true
     }
    ],
@@ -3784,7 +3784,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 73.94,
      "net_move_ins": -9,
-     "delinquency_pct": 8.02,
+     "delinquency_pct": 7.87,
      "partial": true
     }
    ],
@@ -3889,9 +3889,9 @@
     },
     {
      "month": "2026-07",
-     "occupancy_units_pct": 78.05,
+     "occupancy_units_pct": 78.28,
      "net_move_ins": -6,
-     "delinquency_pct": 5.51,
+     "delinquency_pct": 5.2,
      "partial": true
     }
    ],
@@ -3996,9 +3996,9 @@
     },
     {
      "month": "2026-07",
-     "occupancy_units_pct": 77.13,
+     "occupancy_units_pct": 77.31,
      "net_move_ins": -4,
-     "delinquency_pct": 4.71,
+     "delinquency_pct": 4.69,
      "partial": true
     }
    ],
@@ -4105,7 +4105,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 85.84,
      "net_move_ins": -2,
-     "delinquency_pct": 10.82,
+     "delinquency_pct": 10.46,
      "partial": true
     }
    ],
@@ -4212,7 +4212,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 79.27,
      "net_move_ins": -2,
-     "delinquency_pct": 6.05,
+     "delinquency_pct": 5.08,
      "partial": true
     }
    ],
@@ -4426,7 +4426,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 53.35,
      "net_move_ins": 2,
-     "delinquency_pct": 7.1,
+     "delinquency_pct": 6.56,
      "partial": true
     }
    ],
@@ -4533,7 +4533,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 73.1,
      "net_move_ins": 1,
-     "delinquency_pct": 9.34,
+     "delinquency_pct": 8.98,
      "partial": true
     }
    ],
@@ -4640,7 +4640,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 65.52,
      "net_move_ins": 2,
-     "delinquency_pct": 5.24,
+     "delinquency_pct": 4.76,
      "partial": true
     }
    ],
@@ -4747,7 +4747,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 72.48,
      "net_move_ins": 4,
-     "delinquency_pct": 10.85,
+     "delinquency_pct": 10.63,
      "partial": true
     }
    ],
@@ -4854,7 +4854,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 55.15,
      "net_move_ins": 0,
-     "delinquency_pct": 5.74,
+     "delinquency_pct": 4.75,
      "partial": true
     }
    ],
@@ -4961,7 +4961,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 78.16,
      "net_move_ins": -1,
-     "delinquency_pct": 3.59,
+     "delinquency_pct": 3.33,
      "partial": true
     }
    ],
@@ -5066,9 +5066,9 @@
     },
     {
      "month": "2026-07",
-     "occupancy_units_pct": 79.7,
+     "occupancy_units_pct": 79.56,
      "net_move_ins": 8,
-     "delinquency_pct": 12.64,
+     "delinquency_pct": 12.1,
      "partial": true
     }
    ],
@@ -5175,7 +5175,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 75.54,
      "net_move_ins": -2,
-     "delinquency_pct": 9.25,
+     "delinquency_pct": 8.54,
      "partial": true
     }
    ],
@@ -5282,7 +5282,7 @@
      "month": "2026-07",
      "occupancy_units_pct": 76.78,
      "net_move_ins": -4,
-     "delinquency_pct": 5.86,
+     "delinquency_pct": 5.67,
      "partial": true
     }
    ],
@@ -5387,9 +5387,9 @@
     },
     {
      "month": "2026-07",
-     "occupancy_units_pct": 45.74,
+     "occupancy_units_pct": 45.66,
      "net_move_ins": 4,
-     "delinquency_pct": 6.32,
+     "delinquency_pct": 5.5,
      "partial": true
     }
    ],
@@ -5494,9 +5494,9 @@
     },
     {
      "month": "2026-07",
-     "occupancy_units_pct": 85.2,
+     "occupancy_units_pct": 85.58,
      "net_move_ins": -3,
-     "delinquency_pct": 9.35,
+     "delinquency_pct": 9.09,
      "partial": true
     }
    ]
@@ -5508,13 +5508,13 @@
    "facility_name": "Little Vineyard Self Storage (Deming)",
    "brand": "NSS",
    "units_total": 316,
-   "occupancy_units_pct": 75.0,
-   "occupancy_sqft_pct": 85.07,
+   "occupancy_units_pct": 74.37,
+   "occupancy_sqft_pct": 84.59,
    "net_move_ins_mtd": -3,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 12.66,
-   "penetration_occ_pct": 79.75,
+   "delinquency_pct": 12.34,
+   "penetration_occ_pct": 80.43,
    "roas_standard": null
   },
   {
@@ -5522,13 +5522,13 @@
    "facility_name": "National Self Storage - Dove Mountain",
    "brand": "NSS",
    "units_total": 636,
-   "occupancy_units_pct": 86.64,
-   "occupancy_sqft_pct": 91.36,
+   "occupancy_units_pct": 86.48,
+   "occupancy_sqft_pct": 91.2,
    "net_move_ins_mtd": -3,
    "tail_units": 4,
    "tail_amount": 2889.55,
-   "delinquency_pct": 5.44,
-   "penetration_occ_pct": 66.61,
+   "delinquency_pct": 5.09,
+   "penetration_occ_pct": 66.73,
    "roas_standard": null
   },
   {
@@ -5553,9 +5553,9 @@
    "occupancy_units_pct": 91.05,
    "occupancy_sqft_pct": 91.88,
    "net_move_ins_mtd": -1,
-   "tail_units": 1,
-   "tail_amount": 861.0,
-   "delinquency_pct": 12.13,
+   "tail_units": 0,
+   "tail_amount": 0.0,
+   "delinquency_pct": 11.72,
    "penetration_occ_pct": 76.99,
    "roas_standard": 23.23
   },
@@ -5569,7 +5569,7 @@
    "net_move_ins_mtd": 4,
    "tail_units": 3,
    "tail_amount": 1713.0,
-   "delinquency_pct": 12.05,
+   "delinquency_pct": 11.73,
    "penetration_occ_pct": 83.39,
    "roas_standard": null
   },
@@ -5597,7 +5597,7 @@
    "net_move_ins_mtd": -4,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 16.18,
+   "delinquency_pct": 15.06,
    "penetration_occ_pct": 90.34,
    "roas_standard": null
   },
@@ -5606,13 +5606,13 @@
    "facility_name": "National Self Storage - Green Valley",
    "brand": "NSS",
    "units_total": 308,
-   "occupancy_units_pct": 86.36,
-   "occupancy_sqft_pct": 85.97,
+   "occupancy_units_pct": 86.69,
+   "occupancy_sqft_pct": 86.38,
    "net_move_ins_mtd": 1,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 8.27,
-   "penetration_occ_pct": 62.03,
+   "delinquency_pct": 7.87,
+   "penetration_occ_pct": 62.17,
    "roas_standard": 1.58
   },
   {
@@ -5625,7 +5625,7 @@
    "net_move_ins_mtd": 17,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 5.45,
+   "delinquency_pct": 5.23,
    "penetration_occ_pct": 70.68,
    "roas_standard": 6.78
   },
@@ -5634,13 +5634,13 @@
    "facility_name": "Storelocal Reno",
    "brand": "SL Reno",
    "units_total": 993,
-   "occupancy_units_pct": 79.76,
-   "occupancy_sqft_pct": 90.04,
+   "occupancy_units_pct": 79.66,
+   "occupancy_sqft_pct": 90.02,
    "net_move_ins_mtd": 5,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 4.8,
-   "penetration_occ_pct": 62.12,
+   "delinquency_pct": 4.68,
+   "penetration_occ_pct": 62.2,
    "roas_standard": 24.02
   },
   {
@@ -5667,7 +5667,7 @@
    "net_move_ins_mtd": 0,
    "tail_units": 3,
    "tail_amount": 2506.78,
-   "delinquency_pct": 16.95,
+   "delinquency_pct": 16.61,
    "penetration_occ_pct": 84.41,
    "roas_standard": 30.3
   },
@@ -5681,7 +5681,7 @@
    "net_move_ins_mtd": -9,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 8.02,
+   "delinquency_pct": 7.87,
    "penetration_occ_pct": 68.99,
    "roas_standard": 19.31
   },
@@ -5690,13 +5690,13 @@
    "facility_name": "A Family Storage - 22nd",
    "brand": "AFAM",
    "units_total": 442,
-   "occupancy_units_pct": 78.05,
-   "occupancy_sqft_pct": 81.18,
+   "occupancy_units_pct": 78.28,
+   "occupancy_sqft_pct": 81.27,
    "net_move_ins_mtd": -6,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 5.51,
-   "penetration_occ_pct": 70.72,
+   "delinquency_pct": 5.2,
+   "penetration_occ_pct": 70.81,
    "roas_standard": 7.28
   },
   {
@@ -5704,13 +5704,13 @@
    "facility_name": "A Family Storage - New Magee",
    "brand": "AFAM",
    "units_total": 551,
-   "occupancy_units_pct": 77.13,
-   "occupancy_sqft_pct": 77.56,
+   "occupancy_units_pct": 77.31,
+   "occupancy_sqft_pct": 77.82,
    "net_move_ins_mtd": -4,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 4.71,
-   "penetration_occ_pct": 65.41,
+   "delinquency_pct": 4.69,
+   "penetration_occ_pct": 65.49,
    "roas_standard": 35.69
   },
   {
@@ -5723,7 +5723,7 @@
    "net_move_ins_mtd": -2,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 10.82,
+   "delinquency_pct": 10.46,
    "penetration_occ_pct": 73.76,
    "roas_standard": 17.77
   },
@@ -5737,7 +5737,7 @@
    "net_move_ins_mtd": -2,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 6.05,
+   "delinquency_pct": 5.08,
    "penetration_occ_pct": 71.43,
    "roas_standard": 39.65
   },
@@ -5765,7 +5765,7 @@
    "net_move_ins_mtd": 2,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 7.1,
+   "delinquency_pct": 6.56,
    "penetration_occ_pct": 59.56,
    "roas_standard": 112.5
   },
@@ -5779,7 +5779,7 @@
    "net_move_ins_mtd": 1,
    "tail_units": 1,
    "tail_amount": 268.67,
-   "delinquency_pct": 9.34,
+   "delinquency_pct": 8.98,
    "penetration_occ_pct": 83.12,
    "roas_standard": 38.62
   },
@@ -5793,7 +5793,7 @@
    "net_move_ins_mtd": 2,
    "tail_units": 2,
    "tail_amount": 4896.86,
-   "delinquency_pct": 5.24,
+   "delinquency_pct": 4.76,
    "penetration_occ_pct": 70.0,
    "roas_standard": 39.75
   },
@@ -5807,7 +5807,7 @@
    "net_move_ins_mtd": 4,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 10.85,
+   "delinquency_pct": 10.63,
    "penetration_occ_pct": 78.74,
    "roas_standard": 20.28
   },
@@ -5821,7 +5821,7 @@
    "net_move_ins_mtd": 0,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 5.74,
+   "delinquency_pct": 4.75,
    "penetration_occ_pct": 59.18,
    "roas_standard": 31.28
   },
@@ -5835,7 +5835,7 @@
    "net_move_ins_mtd": -1,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 3.59,
+   "delinquency_pct": 3.33,
    "penetration_occ_pct": 57.69,
    "roas_standard": 14.67
   },
@@ -5844,13 +5844,13 @@
    "facility_name": "A Family Storage - Country Club",
    "brand": "AFAM",
    "units_total": 675,
-   "occupancy_units_pct": 79.7,
-   "occupancy_sqft_pct": 76.99,
+   "occupancy_units_pct": 79.56,
+   "occupancy_sqft_pct": 76.8,
    "net_move_ins_mtd": 8,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 12.64,
-   "penetration_occ_pct": 82.34,
+   "delinquency_pct": 12.1,
+   "penetration_occ_pct": 82.5,
    "roas_standard": 19.5
   },
   {
@@ -5863,7 +5863,7 @@
    "net_move_ins_mtd": -2,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 9.25,
+   "delinquency_pct": 8.54,
    "penetration_occ_pct": 76.16,
    "roas_standard": 31.19
   },
@@ -5877,7 +5877,7 @@
    "net_move_ins_mtd": -4,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 5.86,
+   "delinquency_pct": 5.67,
    "penetration_occ_pct": 73.72,
    "roas_standard": 42.95
   },
@@ -5886,13 +5886,13 @@
    "facility_name": "A Family Storage - Valencia",
    "brand": "AFAM",
    "units_total": 1314,
-   "occupancy_units_pct": 45.74,
-   "occupancy_sqft_pct": 50.59,
+   "occupancy_units_pct": 45.66,
+   "occupancy_sqft_pct": 50.53,
    "net_move_ins_mtd": 4,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 6.32,
-   "penetration_occ_pct": 57.57,
+   "delinquency_pct": 5.5,
+   "penetration_occ_pct": 57.67,
    "roas_standard": 9.67
   },
   {
@@ -5900,13 +5900,13 @@
    "facility_name": "A Family Storage - Speedway (343)",
    "brand": "AFAM",
    "units_total": 527,
-   "occupancy_units_pct": 85.2,
-   "occupancy_sqft_pct": 90.5,
+   "occupancy_units_pct": 85.58,
+   "occupancy_sqft_pct": 90.89,
    "net_move_ins_mtd": -3,
    "tail_units": 0,
    "tail_amount": 0.0,
-   "delinquency_pct": 9.35,
-   "penetration_occ_pct": 65.26,
+   "delinquency_pct": 9.09,
+   "penetration_occ_pct": 65.19,
    "roas_standard": 13.36
   }
  ],
