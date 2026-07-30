@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-92 nodes and 150 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.10. The full
+103 nodes and 178 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.12. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -76,6 +76,7 @@ details, say the map only shows what exists, not private specifics.
 - **Phone Dispatch** (LIVE, since v1.3) — The mobile app's window into the same home-Mac Taylor — message a task from anywhere and the home Mac runs it.
 - **Laptop Taylor** (LIVE, since v1.3) — A one-tap project that boots from a local log, works locally, and writes back — folded into the main memory every couple hours.
 - **Chat Claude** (LIVE, since v1.3) — A third access point sharing the same portable memory as Dispatch and the home Mac.
+- **VisionClaude (Ray-Ban voice)** (LIVE, since v1.12) — A voice surface on Meta Ray-Ban glasses: Travis can talk to Taylor hands-free, with a foreground voice round-trip verified working. A same-evening on-phone crash/hung-turn symptom is a known, unconfirmed issue still being watched — the app itself is live; that specific bug is not yet explained or resolved.
 
 ### Home bases
 
@@ -110,6 +111,7 @@ details, say the map only shows what exists, not private specifics.
 - **HubSpot** (LIMITED, since v1.8) — Read-only CRM access; the THE Show registration playbook is staged and waiting on write access.
 - **'Taylor' browser** (LIVE, since v1.0) — Live browser automation for web work and JS-rendered lookups that a plain fetch can't reach.
 - **Scheduled tasks** (LIVE, since v1.0) — Time-based automation running on the home Mac — the clockwork behind daily and monthly reports.
+- **On-demand thread reader** (PENDING, since v1.12) — A read-only tool that lets any session pull recent messages from a configured group thread on request, closing a blind spot where some threads could only be answered from a stale cache. Built and staged; awaiting confirmation it's loaded and has produced one real read before it's recorded live.
 
 ### Memory & state
 
@@ -131,6 +133,11 @@ details, say the map only shows what exists, not private specifics.
 - **Calendar & TimeTree** (LIVE, since v1.0) — Where events get written back out to the calendar and travel tracker.
 - **PDF reports & dashboards** (LIVE, since v1.0) — Monthly snapshots, EOM packages, and one-pagers — the finished, ready-to-read output.
 - **travismorrow.com** (LIVE, since v1.9) — The system's first public-facing surface: a real-data portfolio dashboard, a facility map, and an embedded chat widget that knows this very memory map's own node inventory.
+- **CEO exec cockpit** (LIVE, since v1.11) — A board-level, password-gated page on travismorrow.com. Its marquee is the auction watch: the 90+ day delinquency tail (about 13 units) against the roughly two-unit goal, the dollars behind it, and which facilities carry it — over a portfolio-KPI band, 14-month trend charts, and a per-facility league with drill-downs, refreshed twice daily.
+- **Delinquency aging funnel** (LIVE, since v1.11) — An interactive, severity-graded delinquency aging funnel on the portfolio dashboard and the monthly snapshot PDF — showing where past-due balances sit by age bucket so the post-60-day cliff is the shape of the chart, scope-aware with a units/dollars toggle and per-facility drill-down.
+- **iMessage — NSS team** (LIVE, since v1.11) — A live NSS operations-team thread with full owner-group parity — financials, actual-vs-budget, operational, and delinquency lanes. Its weekly per-facility MTD report and tenant-level delinquency lookups are proven live; a third standing auto-send (a Monday delinquency PDF) is scheduled but not yet confirmed by a real Monday firing.
+- **Tenant-level delinquency lookup** (LIVE, since v1.12) — On-demand, per-lease delinquency lookup for the NSS Team thread and Travis's 1:1 — ask who's delinquent at a facility and get name, unit, days-late, and balance, worst-first, reconciling exactly to the Monday report's source. Scoped by district/regional manager too.
+- **Data Store network viz** (LIVE, since v1.12) — A ‘living network’ page on travismorrow.com visualizing the Portfolio Datastore itself — stores, the real data points behind them, and what those points feed — refreshed on a weekly-plus-on-demand cadence, built with an exporter that strips tenant/staff detail by construction. A nav door on the homepage and portfolio/exec headers links to it.
 
 ### Engineered workarounds & infrastructure
 
@@ -144,7 +151,7 @@ details, say the map only shows what exists, not private specifics.
 - **iMessage reliability stack** (LIVE, since v1.7) — Exactly-once sends, post-send delivery confirmation, and watchdog monitoring so texts don't silently fail or duplicate.
 - **Member-set thread binding** (LIVE, since v1.7) — Threads are identified by who's in them, not by a fragile stored ID — rotation-proof against platform quirks.
 - **Worker watchdog** (LIVE, since v1.6) — Heartbeat monitoring with automatic recovery if a background worker stalls.
-- **Portable state refresh** (LIVE, since v1.0) — Rebuilds the catch-up state snapshot roughly every two hours so any fresh session is current.
+- **Portable state refresh** (LIVE, since v1.0) — Taylor-STATE.md rebuilds in Dropbox roughly every 2 hours so a fresh session anywhere catches up fast, now genuinely idle-gated — a stale-signature bug that made it rebuild on every single cycle regardless of whether anything had changed was found and fixed (it was saving its ‘did anything change’ fingerprint before the rebuild instead of after, so the rebuild always invalidated its own comparison). Three consecutive real skips on quiet cycles have since confirmed the fix holds.
 - **Sports web scraping** (LIVE, since v1.0) — Gathers stats from multiple sports sites via browser and folds them into the volleyball hub.
 - **ROAS / ad-spend Q&A by text** (LIVE, since v1.9) — Ask a ROAS or ad-spend question by text — for any facility, brand, or the whole portfolio — and the lookup rail answers from live data, right in the owners' thread. No brand fencing: the NSS owners get any answer they want.
 - **Twice-daily datastore ingest** (LIVE, since v1.9) — A twice-daily job (noon + 7 PM AZ) that refreshes the portfolio datastore from live operations data across all 29 facilities, so every store-backed report stays current — loaded and verified running on the host, with healthy data flowing into the store.
@@ -153,7 +160,10 @@ details, say the map only shows what exists, not private specifics.
 - **Spawner + Approval-Loop** (LIVE, since v1.9) — Lets Taylor delegate work with a text-based go/no-go confirm loop back to Travis — proven live end to end. Never autonomous: Travis's standing decision is no self-directed AI spawner, ever.
 - **Reminder job-type** (LIVE, since v1.9) — Text 'remind me...' for a future scheduled send. The on-Mac runner now self-schedules off its own poll loop instead of depending on an external registrar task, firing by direct wall-clock comparison — proven live across a battery of test scenarios.
 - **NSS financial Q&A (Joiin-backed)** (LIVE, since v1.10) — Ask a real financial question in the owners' thread — P&L, budget vs. actual, revenue, expenses, variance — and get an answer pulled live from QuickBooks, across 28 of the 29 tracked facilities (one small property keeps its own books; a second is no longer managed). A separate lane from the ROAS/attribution Q&A above, and it's honest when the freshest answer is last month's closed books, not this month's.
-- **Idea capture** (LIVE, since v1.10) — Text an idea in the 1:1 — or just say "idea:" — and it's captured to a running ideas inbox that folds into the project backlog automatically overnight, so a passing thought doesn't get lost.
+- **Idea capture** (LIVE, since v1.10) — Text an idea in the 1:1 — or just say "idea:" — and it's captured to a running ideas inbox that folds into the project backlog automatically overnight. Now backed by a real authenticated tool the assistant calls directly, with a structured-truth guarantee: a capture is claimed only when the tool actually confirms it, so a passing thought is never falsely reported as saved.
+- **Calendar/travel lookup lane** (LIMITED, since v1.12) — Reads a cached upcoming-travel file to answer calendar/whereabouts questions in the Senators and 1:1 threads, honestly degrading when the cache goes stale. NSS threads have no calendar visibility. Live for lookups; the recurring cache-refresh job itself isn't built yet, so it's recorded as limited rather than fully live.
+- **Swim lanes (surface ownership)** (LIVE, since v1.12) — A binding ownership map across the Home, Laptop, and Web surfaces — who runs what, claiming rules before touching shared state, a fragment-naming convention, and a proposal→review→decision protocol so two surfaces can converge on a call without using Travis as courier.
+- **NEEDS HOME escalation** (LIVE, since v1.12) — Watchdogs and report cards that used to write silently now escalate real problems into a dedicated queue Home Taylor reads on every boot, replacing an absolute-mute rule that could let a real failure sit unseen. Home triages; Travis is texted only past a high bar — he must act, decide, or lose money or a deadline.
 
 ### Business workstreams
 
@@ -169,6 +179,7 @@ details, say the map only shows what exists, not private specifics.
 - **Daily operational checks** (LIVE, since v1.0) — Routine health and email checks that stay silent when everything's fine and only speak up when something's not.
 - **Adams Property Group demo** (DONE, since v1.7) — A completed live portfolio walkthrough that demonstrated strong advertising ROAS across the portfolio.
 - **Live ad-spend ROAS** (LIVE, since v1.9) — Real advertising ROAS by facility and brand — live Supermetrics ad spend against real Nectar leads, conversions, and LTV (June portfolio 22.5x) — delivered as an ad-spend leaderboard and folded into the monthly snapshot, refreshed by a monthly sync job.
+- **Chase ACH batch pipeline** (LIVE, since v1.12) — Turns the monthly owner-distribution numbers into a validated Chase-format ACH upload file — payees and pay-from accounts checked, a generator script producing the batch file. Travis reviews and submits it himself in Chase; nothing sends automatically.
 
 ### Personal workstreams
 
@@ -186,7 +197,7 @@ details, say the map only shows what exists, not private specifics.
 - **delta-booking** (LIVE, since v1.5) — Books, changes, cancels, and checks in on Delta trips, then files them to the calendar — never completes a booking without explicit go-ahead.
 - **calendar-travel** (LIVE, since v1.5) — Handles general calendar adds and travel filing with sensible defaults, and keeps flight schedules off the personal calendar by hard rule.
 - **vintage-jacks-booking** (LIVE, since v1.5) — Books a usual haircut appointment through guest checkout, stopping right before the final confirmation.
-- **daily-photo-post** (LIVE, since v1.5) — Composes a daily couple-photo post with rotating tone, keeping work topics out and protecting personal surprises.
+- **daily-photo-post** (PAUSED, since v1.5) — Composes the couple-photo post — one mode per day, work topics kept out, 1:1 surprises protected. Paused at Travis's request (7/21) until his explicit go; the randomized-cadence decider stays built but inactive.
 - **order-doordash** (LIVE, since v1.7) — End-to-end food ordering with a hard confirm-before-checkout gate — either partner can approve.
 - **introduce-taylor-to-thread** (LIVE, since v1.7) — Onboards Taylor into a brand-new group or 1:1 thread using the proven setup mechanics, turning it into a guided few-minute job.
 - **serenity-nails-booking** (LIVE, since v1.8) — Books a nail salon appointment for either partner, one person per pass, behind a hard confirmation gate.
