@@ -482,6 +482,26 @@
   .legend .s{ color:var(--dim); font-variant-numeric:tabular-nums; }
   .foot-note{ font-size:10.5px; color:var(--dim); margin-top:8px; line-height:1.45; }
 
+  /* ---------- net move-ins by month (signed bars) ----------
+     Ported from the exec page's trend card so both surfaces read the same:
+     status colours carry the SIGN (gain / loss), and the open month is
+     hatched rather than solid so a partial month is never mistaken for a
+     closed one. Full width here — it sits above the aging funnel. */
+  .nmi-card{ padding:16px 18px 12px; }
+  .nmi-card:hover{ transform:none; border-color:var(--line); box-shadow:var(--shadow-card); }
+  .nmi-card .cap{ font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--dim); margin-bottom:8px; }
+  .nmi-box{ position:relative; }
+  .nmi-box svg{ display:block; width:100%; height:auto; }
+  .nmi-box .axis{ font-size:8.5px; fill:var(--dim); }
+  .nmi-box .gline{ stroke:var(--track); stroke-width:1; }
+  .nmi-legend{ display:flex; gap:16px; margin-top:8px; font-size:10.5px; color:var(--dim); flex-wrap:wrap; }
+  .nmi-legend i{ display:inline-block; width:14px; height:0; border-top:7px solid var(--pos);
+    border-radius:2px; margin-right:5px; vertical-align:3px; }
+  .nmi-legend i.negg{ border-top-color:var(--neg); }
+  .nmi-legend i.open{ width:13px; height:8px; border:1.5px dashed var(--dim);
+    border-radius:3px; vertical-align:-1px; }
+
   /* ---------- sections ---------- */
   section.block{ margin-top:30px; }
   .sec-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
@@ -669,6 +689,24 @@
       <span class="hint">click a tile above to drill into a brand · Portfolio resets</span>
     </div>
     <div id="kpis"></div>
+
+    <!-- ===== net move-ins by month · signed bars, follows the scope selector ===== -->
+    <section class="block reveal" id="nmiSection">
+      <div class="sec-head">
+        <h2>Net move-ins &mdash; by month</h2>
+        <span class="hint">hover for exact figures &middot; rightmost bar is the open month (MTD)</span>
+      </div>
+      <div class="card nmi-card" id="nmiCard">
+        <div class="cap" id="nmiCap"></div>
+        <div class="nmi-box" id="nmiChart"></div>
+        <div class="nmi-legend" id="nmiLegend">
+          <span><i></i>net gain</span>
+          <span><i class="negg"></i>net loss</span>
+          <span><i class="open"></i>open month (MTD)</span>
+        </div>
+        <div class="foot-note" id="nmiNote" hidden></div>
+      </div>
+    </section>
 
     <!-- ===== delinquency aging funnel · 30+ days ===== -->
     <section class="block reveal" id="delinqSection" hidden>
@@ -1174,6 +1212,188 @@
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
       });
     });
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  net move-ins by month — signed bars, hatched open month
+   *
+   *  Ported from exec.html's trend card; same visual language on purpose.
+   *  The monthly series is NOT in portfolio-data.json (that file carries
+   *  MTD figures only) — it comes from exec-data.json's `trends`, loaded
+   *  alongside at boot and degraded to a note if it isn't there.
+   *
+   *  Portfolio scope uses trends.portfolio, which is authoritative. There
+   *  are no brand-level trends anywhere, so brand scopes are rolled up
+   *  client-side from trends.facilities through the facility -> brand map
+   *  in portfolio-data.json. That rollup is re-checked against the
+   *  authoritative series on every CLOSED month; if it ever stops
+   *  reconciling — the shape of a facility losing its brand mapping — the
+   *  footnote says so instead of quietly drawing understated bars.
+   * ------------------------------------------------------------------ */
+  var TRENDS = null;            // exec-data.json .trends, or null if unavailable
+
+  function nmiMonthLabel(m) {
+    var mm = m.split("-");
+    return new Date(+mm[0], +mm[1] - 1, 1).toLocaleString("en-US", { month: "short" });
+  }
+
+  /* -> { pts:[{x,y,ins,outs,partial}], warn:<string|null> } | null */
+  function nmiSeries() {
+    if (!TRENDS || !TRENDS.portfolio || !TRENDS.portfolio.length) return null;
+    var tp = TRENDS.portfolio;
+
+    if (scope === "portfolio") {
+      return {
+        pts: tp.map(function (p) {
+          return {
+            x: p.month, y: p.net_move_ins,
+            ins: p.move_ins == null ? null : p.move_ins,
+            outs: p.move_outs == null ? null : p.move_outs,
+            partial: !!p.partial
+          };
+        }),
+        warn: null
+      };
+    }
+
+    var tf = TRENDS.facilities || {};
+    var codes = Object.keys(tf);
+    if (!codes.length) return null;
+
+    var brandOf = {};
+    DATA.facilities.forEach(function (f) { brandOf[f.facility_code] = f.brand; });
+
+    var unmapped = codes.filter(function (c) { return !brandOf[c]; });
+    var mine = codes.filter(function (c) { return brandOf[c] === scope; });
+    if (!mine.length) return null;
+
+    /* one pass builds both the brand sum and the all-facility sum, so the
+       reconciliation check costs nothing extra */
+    var byMonth = {}, allMonth = {};
+    codes.forEach(function (c) {
+      (tf[c] || []).forEach(function (r) {
+        if (r.net_move_ins == null) return;
+        allMonth[r.month] = (allMonth[r.month] || 0) + r.net_move_ins;
+        if (brandOf[c] === scope) byMonth[r.month] = (byMonth[r.month] || 0) + r.net_move_ins;
+      });
+    });
+
+    var drift = tp.filter(function (p) {
+      return !p.partial && allMonth[p.month] != null && allMonth[p.month] !== p.net_move_ins;
+    }).map(function (p) { return p.month; });
+
+    var warn = null;
+    if (unmapped.length || drift.length) {
+      warn = "Brand rollup no longer reconciles to the authoritative portfolio series" +
+        (unmapped.length
+          ? " — " + unmapped.length + " facility code" + (unmapped.length > 1 ? "s have" : " has") +
+            " no brand mapping (" + unmapped.slice(0, 4).join(", ") + (unmapped.length > 4 ? "…" : "") + ")"
+          : "") +
+        (drift.length ? " — closed months where the facility sum disagrees: " + drift.join(", ") : "") +
+        ". Portfolio scope is unaffected; these brand bars may understate.";
+      if (window.console && console.warn) console.warn("[net move-ins] " + warn);
+    }
+
+    /* months with no facility record for this brand are dropped, not
+       drawn as zero — an absent month isn't a flat month */
+    var pts = tp.filter(function (p) { return byMonth[p.month] != null; })
+      .map(function (p) {
+        return { x: p.month, y: byMonth[p.month], ins: null, outs: null, partial: !!p.partial };
+      });
+    if (!pts.length) return null;
+    return { pts: pts, warn: warn };
+  }
+
+  /* signed bar chart — pos/neg status colours, hatched open month.
+     Same geometry as exec.html's barChart, widened for full-bleed use. */
+  function nmiBarChart(host, opts) {
+    var W = opts.w || 1180, H = opts.h || 250;
+    var padL = 38, padR = 14, padT = 12, padB = 22;
+    var pts = opts.pts, n = pts.length;
+    var lo = 0, hi = 0;
+    pts.forEach(function (p) { if (p.y < lo) lo = p.y; if (p.y > hi) hi = p.y; });
+    var padv = Math.max((hi - lo) * 0.12, 2);
+    lo -= padv; hi += padv;
+    function X(i) { return padL + (i + 0.5) * (W - padL - padR) / n; }
+    function Y(v) { return padT + (H - padT - padB) * (1 - (v - lo) / (hi - lo)); }
+    var bw = Math.min(opts.maxBw || 38, 0.62 * (W - padL - padR) / n);
+
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(opts.aria || "bar chart") + '">';
+    var ticks = 4, t;
+    for (t = 0; t <= ticks; t++) {
+      var tv = lo + (hi - lo) * t / ticks, ty = Y(tv);
+      svg += '<line class="gline" x1="' + padL + '" y1="' + ty.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + ty.toFixed(1) + '"/>';
+      svg += '<text class="axis" x="' + (padL - 5) + '" y="' + (ty + 3).toFixed(1) + '" text-anchor="end">' + Math.round(tv) + '</text>';
+    }
+    svg += '<line x1="' + padL + '" y1="' + Y(0).toFixed(1) + '" x2="' + (W - padR) + '" y2="' + Y(0).toFixed(1) +
+           '" stroke="var(--dim)" stroke-width="1" opacity=".6"/>';
+    var step = Math.max(1, Math.ceil(n / (opts.maxLabels || 12)));
+    for (t = 0; t < n; t += step) {
+      svg += '<text class="axis" x="' + X(t).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle">' +
+             esc(opts.xLabel(pts[t].x)) + '</text>';
+    }
+    pts.forEach(function (p, i) {
+      var y0 = Y(0), y1 = Y(p.y);
+      var top = Math.min(y0, y1), hgt = Math.max(1.5, Math.abs(y1 - y0));
+      var col = p.y >= 0 ? "var(--pos)" : "var(--neg)";
+      svg += '<rect data-i="' + i + '" x="' + (X(i) - bw / 2).toFixed(1) + '" y="' + top.toFixed(1) +
+             '" width="' + bw.toFixed(1) + '" height="' + hgt.toFixed(1) + '" rx="3" fill="' + col + '"' +
+             (p.partial ? ' fill-opacity="0.35" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="3 3"' : '') + '/>';
+    });
+    svg += '</svg><div class="drTipBox"></div>';
+    host.innerHTML = svg;
+
+    var svgEl = host.querySelector("svg"), tip = host.querySelector(".drTipBox");
+    svgEl.addEventListener("mousemove", function (ev) {
+      var r = svgEl.getBoundingClientRect();
+      var mx = (ev.clientX - r.left) * (W / r.width);
+      var best = 0, bd = Infinity, i;
+      for (i = 0; i < n; i++) { var dd = Math.abs(X(i) - mx); if (dd < bd) { bd = dd; best = i; } }
+      var p = pts[best];
+      tip.innerHTML = "<b>" + esc(opts.tipTitle(p.x)) + (p.partial ? " (MTD)" : "") + "</b><br>net: <b>" +
+                      fmtSigned(p.y) + "</b>" +
+                      (p.ins != null ? "<br><small>" + p.ins + " in / " + p.outs + " out</small>" : "");
+      tip.style.display = "block";
+      var hx = (X(best) / W) * r.width;
+      tip.style.left = Math.min(r.width - tip.offsetWidth - 4, Math.max(4, hx + 10)) + "px";
+      tip.style.top = "8px";
+    });
+    svgEl.addEventListener("mouseleave", function () { tip.style.display = "none"; });
+  }
+
+  function renderNmi() {
+    var host = document.getElementById("nmiChart");
+    var cap = document.getElementById("nmiCap");
+    var note = document.getElementById("nmiNote");
+    var legend = document.getElementById("nmiLegend");
+    var s = nmiSeries();
+
+    if (!s) {
+      cap.textContent = scopeLabel() + " — net move-ins by month";
+      host.innerHTML = "";
+      legend.hidden = true;
+      note.hidden = false;
+      note.textContent = "No monthly trend data in this export yet — it lands with the next twice-daily refresh.";
+      return;
+    }
+
+    legend.hidden = false;
+    cap.textContent = scopeLabel() + " — net move-ins by month · " + s.pts.length + " months";
+    nmiBarChart(host, {
+      pts: s.pts,
+      h: 250,
+      maxLabels: s.pts.length,
+      xLabel: nmiMonthLabel,
+      tipTitle: function (m) { return nmiMonthLabel(m) + " " + m.slice(0, 4); },
+      aria: scopeLabel() + " net move-ins by month"
+    });
+
+    var basis = scope === "portfolio"
+      ? ""
+      : "Brand totals are summed from the per-facility monthly series; the portfolio scope uses its own authoritative series.";
+    var txt = s.warn || basis;
+    note.hidden = !txt;
+    note.textContent = txt;
   }
 
   /* ------------------------------------------------------------------ *
@@ -2205,13 +2425,13 @@
     if (scope === s) return;
     scope = s; expanded = null;
     paintHeroPressed();
-    var parts = ["scopebar", "kpis", "delinqSection", "slpSection", "facSection", "campSection"].map(function (id) {
+    var parts = ["scopebar", "kpis", "nmiSection", "delinqSection", "slpSection", "facSection", "campSection"].map(function (id) {
       return document.getElementById(id);
     });
-    if (!MOTION) { renderKpis(); renderDelinq(); renderSlp(); renderFacBody(); renderCampaigns(); return; }
+    if (!MOTION) { renderKpis(); renderNmi(); renderDelinq(); renderSlp(); renderFacBody(); renderCampaigns(); return; }
     parts.forEach(function (el) { el.classList.add("swap-out"); });
     setTimeout(function () {
-      renderKpis(); renderDelinq(); renderSlp(); renderFacBody(); renderCampaigns();
+      renderKpis(); renderNmi(); renderDelinq(); renderSlp(); renderFacBody(); renderCampaigns();
       // timeout, not rAF — rAF can stall in throttled/background tabs and
       // would leave the sections faded out
       setTimeout(function () {
@@ -2230,7 +2450,7 @@
     document.getElementById("subTitle").textContent =
       DATA.facilities.length + " facilities · NSS · AFAM · SL Reno · month-to-date";
 
-    renderHero(); renderKpis(); renderDelinq(); renderSlp(); renderFacHead(); renderFacBody(); renderCampaigns();
+    renderHero(); renderKpis(); renderNmi(); renderDelinq(); renderSlp(); renderFacHead(); renderFacBody(); renderCampaigns();
     document.getElementById("status").hidden = true;
     document.getElementById("dash").hidden = false;
 
@@ -2271,12 +2491,27 @@
     })();
   })();
 
-  fetch("portfolio-data.json", { cache: "no-store" })
-    .then(function (r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
+  /* portfolio-data.json is required — the page is nothing without it.
+     exec-data.json is additive: it carries the only monthly series on the
+     site (trends), so it is fetched alongside and allowed to fail, which
+     degrades the net move-ins card to its pending note and leaves every
+     other section untouched. Both files come out of the same twice-daily
+     ingest, so they're in sync by construction. */
+  Promise.all([
+    fetch("portfolio-data.json", { cache: "no-store" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      }),
+    fetch("exec-data.json", { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .catch(function () { return null; })
+  ])
+    .then(function (a) {
+      DATA = a[0];
+      TRENDS = (a[1] && a[1].trends) || null;
+      renderAll();
     })
-    .then(function (json) { DATA = json; renderAll(); })
     .catch(function (err) {
       document.getElementById("status").innerHTML =
         '<div class="err">Couldn’t load portfolio-data.json</div>' +
