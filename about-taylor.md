@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-103 nodes and 178 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.12. The full
+106 nodes and 185 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.13. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -76,7 +76,7 @@ details, say the map only shows what exists, not private specifics.
 - **Phone Dispatch** (LIVE, since v1.3) — The mobile app's window into the same home-Mac Taylor — message a task from anywhere and the home Mac runs it.
 - **Laptop Taylor** (LIVE, since v1.3) — A one-tap project that boots from a local log, works locally, and writes back — folded into the main memory every couple hours.
 - **Chat Claude** (LIVE, since v1.3) — A third access point sharing the same portable memory as Dispatch and the home Mac.
-- **VisionClaude (Ray-Ban voice)** (LIVE, since v1.12) — A voice surface on Meta Ray-Ban glasses: Travis can talk to Taylor hands-free, with a foreground voice round-trip verified working. A same-evening on-phone crash/hung-turn symptom is a known, unconfirmed issue still being watched — the app itself is live; that specific bug is not yet explained or resolved.
+- **VisionClaude (Ray-Ban voice)** (LIMITED, since v1.13) — A voice surface on Meta Ray-Ban glasses: Travis can talk to Taylor hands-free, and the voice round-trip works when it works. The honest limit, measured rather than guessed: roughly three attempts in five hang, and nothing yet restarts it automatically. The surface is real and usable; the reliability is not there.
 
 ### Home bases
 
@@ -164,6 +164,9 @@ details, say the map only shows what exists, not private specifics.
 - **Calendar/travel lookup lane** (LIMITED, since v1.12) — Reads a cached upcoming-travel file to answer calendar/whereabouts questions in the Senators and 1:1 threads, honestly degrading when the cache goes stale. NSS threads have no calendar visibility. Live for lookups; the recurring cache-refresh job itself isn't built yet, so it's recorded as limited rather than fully live.
 - **Swim lanes (surface ownership)** (LIVE, since v1.12) — A binding ownership map across the Home, Laptop, and Web surfaces — who runs what, claiming rules before touching shared state, a fragment-naming convention, and a proposal→review→decision protocol so two surfaces can converge on a call without using Travis as courier.
 - **NEEDS HOME escalation** (LIVE, since v1.12) — Watchdogs and report cards that used to write silently now escalate real problems into a dedicated queue Home Taylor reads on every boot, replacing an absolute-mute rule that could let a real failure sit unseen. Home triages; Travis is texted only past a high bar — he must act, decide, or lose money or a deadline.
+- **Surface bus (Home ↔ Laptop)** (LIVE, since v1.13) — A private line between the two machines, so they can ask each other questions instead of routing everything through Travis. The laptop leaves a request in shared storage; the always-on Mac answers within about a minute. Version one only reads — status, file checks, task inventory, thread reads — and nothing that can change anything ships until requests are signed.
+- **Tidy-reply action rail** (LIVE, since v1.13) — Lets Travis act on a list of flagged files by simply answering the text — keep these, drop those — instead of issuing a command. An early build claimed ordinary messages that merely happened to contain everyday verbs; that hole was found in live use, closed, and then proven closed inside the running process rather than assumed.
+- **Protected-paths manifest** (LIMITED, since v1.13) — A written list of the files and folders no cleanup pass may touch — the queues, logs, and state the always-on rails depend on, several of which look like garbage precisely because a healthy queue is empty. The list is kept current and consulted by hand; wiring it in so the automatic tidy enforces it is still to come.
 
 ### Business workstreams
 
