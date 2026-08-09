@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-106 nodes and 185 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.13. The full
+111 nodes and 197 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.14. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -150,7 +150,7 @@ details, say the map only shows what exists, not private specifics.
 - **Model routing + quiet hours** (LIVE, since v1.8) — Right-sizes which AI model handles which thread, and stays quiet overnight rather than composing at odd hours.
 - **iMessage reliability stack** (LIVE, since v1.7) — Exactly-once sends, post-send delivery confirmation, and watchdog monitoring so texts don't silently fail or duplicate.
 - **Member-set thread binding** (LIVE, since v1.7) — Threads are identified by who's in them, not by a fragile stored ID — rotation-proof against platform quirks.
-- **Worker watchdog** (LIVE, since v1.6) — Heartbeat monitoring with automatic recovery if a background worker stalls.
+- **Worker watchdog** (LIMITED, since v1.14) — Watches the always-on rails and raises a hand when one stops working. It learned this month to warn before the sign-in credential expires — and then proved the point it was built to make: it warned once, went quiet through the real expiry, and is still watching a credential that was replaced days ago, insisting the problem persists while everything works fine on a credential it cannot see. It is marked limited on purpose. A guard that cannot fail is decoration.
 - **Portable state refresh** (LIVE, since v1.0) — Taylor-STATE.md rebuilds in Dropbox roughly every 2 hours so a fresh session anywhere catches up fast, now genuinely idle-gated — a stale-signature bug that made it rebuild on every single cycle regardless of whether anything had changed was found and fixed (it was saving its ‘did anything change’ fingerprint before the rebuild instead of after, so the rebuild always invalidated its own comparison). Three consecutive real skips on quiet cycles have since confirmed the fix holds.
 - **Sports web scraping** (LIVE, since v1.0) — Gathers stats from multiple sports sites via browser and folds them into the volleyball hub.
 - **ROAS / ad-spend Q&A by text** (LIVE, since v1.9) — Ask a ROAS or ad-spend question by text — for any facility, brand, or the whole portfolio — and the lookup rail answers from live data, right in the owners' thread. No brand fencing: the NSS owners get any answer they want.
@@ -167,6 +167,11 @@ details, say the map only shows what exists, not private specifics.
 - **Surface bus (Home ↔ Laptop)** (LIVE, since v1.13) — A private line between the two machines, so they can ask each other questions instead of routing everything through Travis. The laptop leaves a request in shared storage; the always-on Mac answers within about a minute. Version one only reads — status, file checks, task inventory, thread reads — and nothing that can change anything ships until requests are signed.
 - **Tidy-reply action rail** (LIVE, since v1.13) — Lets Travis act on a list of flagged files by simply answering the text — keep these, drop those — instead of issuing a command. An early build claimed ordinary messages that merely happened to contain everyday verbs; that hole was found in live use, closed, and then proven closed inside the running process rather than assumed.
 - **Protected-paths manifest** (LIMITED, since v1.13) — A written list of the files and folders no cleanup pass may touch — the queues, logs, and state the always-on rails depend on, several of which look like garbage precisely because a healthy queue is empty. The list is kept current and consulted by hand; wiring it in so the automatic tidy enforces it is still to come.
+- **Per-thread capability gate** (LIVE, since v1.14) — Every conversation now carries its own list of what Taylor is allowed to do in it. Before this, anyone in a work thread could move a calendar event or start something that costs money, simply by asking in the right room. A second gate now stands in front of the actions that spend or reschedule, and it did not exist at all until this week.
+- **Capability registry** (LIVE, since v1.14) — One place that knows what Taylor can actually do, so he answers questions about himself from the truth instead of from memory. It is now assembled from what the running system really loads rather than from a list kept by hand — the hand-kept list turned out to be missing almost half of it, which is precisely the kind of quiet wrongness it exists to prevent.
+- **Confirm-anchor veto** (LIVE, since v1.14) — A yes has to be a yes to something specific. When Taylor asks for a confirmation, the answer is pinned to the exact thing that was proposed, and it only counts from the person who was asked — so a stray agreement drifting past in a busy thread can no longer be read as approval for something else entirely.
+- **Compose-failure detection** (LIVE, since v1.14) — The first check that asks whether the work actually happened, rather than whether the program is still running. Both of those can look identical from the outside, and for a while a silent failure to write a reply looked exactly like a quiet morning. One further piece of this is built and tested but not yet wired in.
+- **Agent-first inversion** (LIMITED, since v1.14) — Specialised lanes had been quietly stealing questions meant for the general one — a question about water temperature was being answered by the calendar. Deleting the first batch of those lanes took a test set of stolen questions from every single one going astray to none of them. This is one step of a seven-step plan; the rest is Travis's call and has not shipped.
 
 ### Business workstreams
 
