@@ -1,0 +1,247 @@
+{
+ "_README": "Closed-month backstop for the net move-ins trend chart. The twice-daily ingest builds its monthly history from a ONE-TIME backfill (2025-05..2026-06) plus the current live month, so a month that closes is never appended and simply disappears \u2014 see AI Handoff/SPEC 2026-08-10 - Home - portfolio trend window drops missing months.md. portfolio.html prefers exec-data.json and falls back to this file ONLY for months the export omits. Once the exporter is fixed this file goes unused and can be deleted. It is NOT written by the ingest, so the ingest cannot overwrite it.",
+ "_SOURCE": "NSS Portfolio Reports/Portfolio Snapshot/Portfolio Snapshot 2026-07.pdf, page 1 KPI band ('Full month \u00b7 2026-07') and the per-facility detail table. Reconciles exactly: 503 in / 459 out / +44, and NSS +8 / AFAM +28 / SL Reno +8.",
+ "_HOWTO": "To add a closed month: take the portfolio KPI band and the per-facility table from that month's Portfolio Snapshot PDF, add a row per facility under 'facilities', and add the portfolio row. Verify the facility sum equals the PDF portfolio total before committing.",
+ "portfolio": [
+  {
+   "month": "2026-07",
+   "move_ins": 503,
+   "move_outs": 459,
+   "net_move_ins": 44
+  }
+ ],
+ "facilities": {
+  "DEM1": [
+   {
+    "month": "2026-07",
+    "move_ins": 6,
+    "move_outs": 14,
+    "net_move_ins": -8
+   }
+  ],
+  "DOV1": [
+   {
+    "month": "2026-07",
+    "move_ins": 13,
+    "move_outs": 21,
+    "net_move_ins": -8
+   }
+  ],
+  "ELP5": [
+   {
+    "month": "2026-07",
+    "move_ins": 11,
+    "move_outs": 14,
+    "net_move_ins": -3
+   }
+  ],
+  "ELP6": [
+   {
+    "month": "2026-07",
+    "move_ins": 17,
+    "move_outs": 18,
+    "net_move_ins": -1
+   }
+  ],
+  "ELP7": [
+   {
+    "month": "2026-07",
+    "move_ins": 10,
+    "move_outs": 8,
+    "net_move_ins": 2
+   }
+  ],
+  "ELP8": [
+   {
+    "month": "2026-07",
+    "move_ins": 29,
+    "move_outs": 25,
+    "net_move_ins": 4
+   }
+  ],
+  "ELP9": [
+   {
+    "month": "2026-07",
+    "move_ins": 27,
+    "move_outs": 28,
+    "net_move_ins": -1
+   }
+  ],
+  "GRN1": [
+   {
+    "month": "2026-07",
+    "move_ins": 6,
+    "move_outs": 6,
+    "net_move_ins": 0
+   }
+  ],
+  "SIL1": [
+   {
+    "month": "2026-07",
+    "move_ins": 35,
+    "move_outs": 12,
+    "net_move_ins": 23
+   }
+  ],
+  "RNO1": [
+   {
+    "month": "2026-07",
+    "move_ins": 31,
+    "move_outs": 23,
+    "net_move_ins": 8
+   }
+  ],
+  "301": [
+   {
+    "month": "2026-07",
+    "move_ins": 20,
+    "move_outs": 11,
+    "net_move_ins": 9
+   }
+  ],
+  "304": [
+   {
+    "month": "2026-07",
+    "move_ins": 15,
+    "move_outs": 11,
+    "net_move_ins": 4
+   }
+  ],
+  "305": [
+   {
+    "month": "2026-07",
+    "move_ins": 18,
+    "move_outs": 23,
+    "net_move_ins": -5
+   }
+  ],
+  "306": [
+   {
+    "month": "2026-07",
+    "move_ins": 9,
+    "move_outs": 12,
+    "net_move_ins": -3
+   }
+  ],
+  "309": [
+   {
+    "month": "2026-07",
+    "move_ins": 16,
+    "move_outs": 14,
+    "net_move_ins": 2
+   }
+  ],
+  "311": [
+   {
+    "month": "2026-07",
+    "move_ins": 12,
+    "move_outs": 14,
+    "net_move_ins": -2
+   }
+  ],
+  "314": [
+   {
+    "month": "2026-07",
+    "move_ins": 17,
+    "move_outs": 13,
+    "net_move_ins": 4
+   }
+  ],
+  "316": [
+   {
+    "month": "2026-07",
+    "move_ins": 15,
+    "move_outs": 18,
+    "net_move_ins": -3
+   }
+  ],
+  "319": [
+   {
+    "month": "2026-07",
+    "move_ins": 13,
+    "move_outs": 9,
+    "net_move_ins": 4
+   }
+  ],
+  "323": [
+   {
+    "month": "2026-07",
+    "move_ins": 30,
+    "move_outs": 22,
+    "net_move_ins": 8
+   }
+  ],
+  "325": [
+   {
+    "month": "2026-07",
+    "move_ins": 15,
+    "move_outs": 12,
+    "net_move_ins": 3
+   }
+  ],
+  "326": [
+   {
+    "month": "2026-07",
+    "move_ins": 18,
+    "move_outs": 12,
+    "net_move_ins": 6
+   }
+  ],
+  "328": [
+   {
+    "month": "2026-07",
+    "move_ins": 14,
+    "move_outs": 14,
+    "net_move_ins": 0
+   }
+  ],
+  "329": [
+   {
+    "month": "2026-07",
+    "move_ins": 7,
+    "move_outs": 10,
+    "net_move_ins": -3
+   }
+  ],
+  "333": [
+   {
+    "month": "2026-07",
+    "move_ins": 22,
+    "move_outs": 19,
+    "net_move_ins": 3
+   }
+  ],
+  "338": [
+   {
+    "month": "2026-07",
+    "move_ins": 13,
+    "move_outs": 16,
+    "net_move_ins": -3
+   }
+  ],
+  "339": [
+   {
+    "month": "2026-07",
+    "move_ins": 21,
+    "move_outs": 29,
+    "net_move_ins": -8
+   }
+  ],
+  "341": [
+   {
+    "month": "2026-07",
+    "move_ins": 22,
+    "move_outs": 15,
+    "net_move_ins": 7
+   }
+  ],
+  "343": [
+   {
+    "month": "2026-07",
+    "move_ins": 21,
+    "move_outs": 16,
+    "net_move_ins": 5
+   }
+  ]
+ }
+}

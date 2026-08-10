@@ -1238,6 +1238,11 @@
    * ------------------------------------------------------------------ */
   var TRENDS = null;            // exec-data.json .trends, or null if unavailable
   var TRENDS_ASOF = null;       // exec-data.json .generated_at — anchors the chart window
+  /* months supplied by trend-history.json rather than by the export, tracked
+     per scope: the export can hold a portfolio row for a month while the
+     per-facility series for that same month is missing, and the footnote must
+     only credit the scope it is actually describing */
+  var HIST_MONTHS = { portfolio: [], facilities: [] };
 
   function nmiMonthLabel(m) {
     var mm = m.split("-");
@@ -1476,7 +1481,20 @@
       ? "No monthly record in this export for " + gapMonths.join(", ") +
         " — drawn as a gap, not as zero."
       : "";
-    var txt = (s.warn || basis) + (gapTxt ? ((s.warn || basis) ? " " : "") + gapTxt : "");
+    /* provenance, not a warning: these months are real closed figures taken
+       from that month's Portfolio Snapshot PDF because the export omitted
+       them. Worth stating so nobody wonders why a month the export lacks
+       nonetheless has a bar. */
+    var shown = {};
+    s.pts.forEach(function (p) { shown[p.x] = true; });
+    var histFor = scope === "portfolio" ? HIST_MONTHS.portfolio : HIST_MONTHS.facilities;
+    var histShown = histFor.filter(function (m) { return shown[m]; });
+    var histTxt = histShown.length
+      ? "Closed figures for " + histShown.join(", ") + " come from that month's Portfolio " +
+        "Snapshot, not this export."
+      : "";
+    var parts = [s.warn || basis, gapTxt, histTxt].filter(function (t) { return !!t; });
+    var txt = parts.join(" ");
     note.hidden = !txt;
     note.textContent = txt;
   }
@@ -2582,6 +2600,43 @@
      degrades the net move-ins card to its pending note and leaves every
      other section untouched. Both files come out of the same twice-daily
      ingest, so they're in sync by construction. */
+  /* Fold closed-month rows from trend-history.json into TRENDS for any month
+     the export omitted. The export builds its monthly history from a ONE-TIME
+     backfill (2025-05 .. 2026-06) plus the current live month, so a month that
+     closes is never appended — it just disappears (2026-07 is the first
+     casualty; see AI Handoff/SPEC 2026-08-10 — Home — portfolio trend window
+     drops missing months.md). This is a stopgap, not architecture: the export
+     always wins where it has a row, so once the exporter is fixed this file
+     goes unused and can be deleted without touching any code. */
+  function mergeTrendHistory(hist) {
+    if (!hist || !TRENDS) return;
+    function fold(target, rows, seen) {
+      if (!target || !rows || !rows.length) return;
+      var have = {};
+      target.forEach(function (r) { have[r.month] = true; });
+      rows.forEach(function (r) {
+        if (r && r.month && !have[r.month]) {
+          /* copy, never hand the caller's object to the render layer — the
+             merge runs on every load and must not mutate the source file */
+          var c = {}, k;
+          for (k in r) if (Object.prototype.hasOwnProperty.call(r, k)) c[k] = r[k];
+          c.backfilled = true;
+          target.push(c);
+          if (seen.indexOf(r.month) === -1) seen.push(r.month);
+        }
+      });
+      target.sort(function (a, b) { return a.month < b.month ? -1 : a.month > b.month ? 1 : 0; });
+    }
+    fold(TRENDS.portfolio, hist.portfolio, HIST_MONTHS.portfolio);
+    if (hist.facilities && TRENDS.facilities) {
+      Object.keys(hist.facilities).forEach(function (code) {
+        if (TRENDS.facilities[code]) fold(TRENDS.facilities[code], hist.facilities[code], HIST_MONTHS.facilities);
+      });
+    }
+    HIST_MONTHS.portfolio.sort();
+    HIST_MONTHS.facilities.sort();
+  }
+
   Promise.all([
     fetch("portfolio-data.json", { cache: "no-store" })
       .then(function (r) {
@@ -2590,12 +2645,16 @@
       }),
     fetch("exec-data.json", { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .catch(function () { return null; }),
+    fetch("trend-history.json", { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .catch(function () { return null; })
   ])
     .then(function (a) {
       DATA = a[0];
       TRENDS = (a[1] && a[1].trends) || null;
       TRENDS_ASOF = (a[1] && a[1].generated_at) || null;
+      mergeTrendHistory(a[2]);
       renderAll();
     })
     .catch(function (err) {
