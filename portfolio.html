@@ -501,6 +501,11 @@
   .nmi-legend i.negg{ border-top-color:var(--neg); }
   .nmi-legend i.open{ width:13px; height:8px; border:1.5px dashed var(--dim);
     border-radius:3px; vertical-align:-1px; }
+  /* gap swatch: solid faint fill, NOT dashed. Dashed is reserved for the
+     open (current) month above — a missing closed month is an error, not
+     an in-progress one, and the two must not share a visual language. */
+  .nmi-legend i.gap{ width:8px; height:13px; border:0; background:var(--track);
+    opacity:.55; border-radius:3px; vertical-align:-3px; }
 
   /* ---------- sections ---------- */
   section.block{ margin-top:30px; }
@@ -703,6 +708,7 @@
           <span><i></i>net gain</span>
           <span><i class="negg"></i>net loss</span>
           <span><i class="open"></i>open month (MTD)</span>
+          <span id="nmiGapKey" hidden><i class="gap"></i>no data in export</span>
         </div>
         <div class="foot-note" id="nmiNote" hidden></div>
       </div>
@@ -1231,29 +1237,81 @@
    *  footnote says so instead of quietly drawing understated bars.
    * ------------------------------------------------------------------ */
   var TRENDS = null;            // exec-data.json .trends, or null if unavailable
+  var TRENDS_ASOF = null;       // exec-data.json .generated_at — anchors the chart window
 
   function nmiMonthLabel(m) {
     var mm = m.split("-");
     return new Date(+mm[0], +mm[1] - 1, 1).toLocaleString("en-US", { month: "short" });
   }
 
-  /* -> { pts:[{x,y,ins,outs,partial}], warn:<string|null> } | null */
+  /* The chart window: 14 complete months back plus the current month,
+     15 in all, built from the CALENDAR rather than from however many
+     rows the export happened to ship. Anchored on the export's own
+     generated_at — its leading "YYYY-MM" is the generator's wall-clock
+     month, and reading it straight off the string keeps every reader in
+     the generator's timezone, so the window can't drift for someone
+     viewing near midnight from another region. Returns null if there's
+     no usable timestamp, in which case the series falls back to drawing
+     exactly what the export sent (the old behaviour). */
+  function nmiWindowMonths() {
+    var m = /^(\d{4})-(\d{2})/.exec(String(TRENDS_ASOF || (DATA && DATA.generated_at) || ""));
+    if (!m) return null;
+    var y = +m[1], mo = +m[2] - 1, out = [], i, t;
+    for (i = 14; i >= 0; i--) {
+      t = mo - i;
+      out.push((y + Math.floor(t / 12)) + "-" + ("0" + (((t % 12) + 12) % 12 + 1)).slice(-2));
+    }
+    return out;
+  }
+
+  /* Lay the data onto the calendar window. A month the export skipped
+     comes back as {missing:true} so the chart draws an explicit gap —
+     a month with no data and a month with net zero move-ins are
+     different facts and must never look the same. Months older than the
+     window are dropped even if the export supplies them, so a hole in
+     the source can't silently slide the window into last year. */
+  function nmiWindowPts(win, fallbackMonths, get) {
+    var months = win || fallbackMonths;
+    /* The CURRENT month is the open month by definition — it cannot be closed
+       while we're standing in it. So the last slot in the calendar window is
+       always drawn open/MTD, whatever the export's own `partial` flag says.
+       We don't trust that flag alone: the exporter has already been observed
+       losing a month at rollover, and the failure mode of a stale flag is a
+       partial month rendered as a solid closed bar, which reads as a complete
+       month that under-counts. Wrong in the dangerous direction. Earlier
+       months still honour the flag, since only the export knows if one of
+       those was cut short. */
+    var current = months.length ? months[months.length - 1] : null;
+    var pts = months.map(function (m) {
+      var p = get(m);
+      if (!p) return { x: m, y: null, ins: null, outs: null, partial: m === current, missing: true };
+      if (m === current) p.partial = true;
+      return p;
+    });
+    var real = pts.filter(function (p) { return !p.missing; });
+    return real.length ? pts : null;
+  }
+
+  /* -> { pts:[{x,y,ins,outs,partial,missing}], warn:<string|null> } | null */
   function nmiSeries() {
     if (!TRENDS || !TRENDS.portfolio || !TRENDS.portfolio.length) return null;
     var tp = TRENDS.portfolio;
+    var win = nmiWindowMonths();
 
     if (scope === "portfolio") {
-      return {
-        pts: tp.map(function (p) {
-          return {
-            x: p.month, y: p.net_move_ins,
-            ins: p.move_ins == null ? null : p.move_ins,
-            outs: p.move_outs == null ? null : p.move_outs,
-            partial: !!p.partial
-          };
-        }),
-        warn: null
-      };
+      var byM = {};
+      tp.forEach(function (p) { byM[p.month] = p; });
+      var ppts = nmiWindowPts(win, tp.map(function (p) { return p.month; }), function (m) {
+        var p = byM[m];
+        if (!p) return null;
+        return {
+          x: p.month, y: p.net_move_ins,
+          ins: p.move_ins == null ? null : p.move_ins,
+          outs: p.move_outs == null ? null : p.move_outs,
+          partial: !!p.partial
+        };
+      });
+      return ppts ? { pts: ppts, warn: null } : null;
     }
 
     var tf = TRENDS.facilities || {};
@@ -1294,13 +1352,18 @@
       if (window.console && console.warn) console.warn("[net move-ins] " + warn);
     }
 
-    /* months with no facility record for this brand are dropped, not
-       drawn as zero — an absent month isn't a flat month */
-    var pts = tp.filter(function (p) { return byMonth[p.month] != null; })
-      .map(function (p) {
-        return { x: p.month, y: byMonth[p.month], ins: null, outs: null, partial: !!p.partial };
+    /* months with no facility record for this brand become explicit
+       gaps, never zeros — an absent month isn't a flat month */
+    var partialOf = {};
+    tp.forEach(function (p) { partialOf[p.month] = !!p.partial; });
+    var pts = nmiWindowPts(
+      win,
+      tp.map(function (p) { return p.month; }).filter(function (m) { return byMonth[m] != null; }),
+      function (m) {
+        if (byMonth[m] == null) return null;
+        return { x: m, y: byMonth[m], ins: null, outs: null, partial: !!partialOf[m] };
       });
-    if (!pts.length) return null;
+    if (!pts) return null;
     return { pts: pts, warn: warn };
   }
 
@@ -1311,7 +1374,7 @@
     var padL = 38, padR = 14, padT = 12, padB = 22;
     var pts = opts.pts, n = pts.length;
     var lo = 0, hi = 0;
-    pts.forEach(function (p) { if (p.y < lo) lo = p.y; if (p.y > hi) hi = p.y; });
+    pts.forEach(function (p) { if (p.y == null) return; if (p.y < lo) lo = p.y; if (p.y > hi) hi = p.y; });
     var padv = Math.max((hi - lo) * 0.12, 2);
     lo -= padv; hi += padv;
     function X(i) { return padL + (i + 0.5) * (W - padL - padR) / n; }
@@ -1333,6 +1396,17 @@
              esc(opts.xLabel(pts[t].x)) + '</text>';
     }
     pts.forEach(function (p, i) {
+      if (p.missing) {
+        /* explicit gap — a faint SOLID-filled empty slot. Deliberately NOT
+           dashed: the dashed outline is this chart's established signal for
+           the open month (MTD), and a closed month whose record never landed
+           is an error state, not an in-progress one. Sharing the dash made
+           the two read as the same thing. Filled-track = "nothing here". */
+        svg += '<rect data-i="' + i + '" x="' + (X(i) - bw / 2).toFixed(1) + '" y="' + padT +
+               '" width="' + bw.toFixed(1) + '" height="' + (H - padT - padB) +
+               '" rx="3" fill="var(--track)" stroke="none" opacity=".55"/>';
+        return;
+      }
       var y0 = Y(0), y1 = Y(p.y);
       var top = Math.min(y0, y1), hgt = Math.max(1.5, Math.abs(y1 - y0));
       var col = p.y >= 0 ? "var(--pos)" : "var(--neg)";
@@ -1350,9 +1424,11 @@
       var best = 0, bd = Infinity, i;
       for (i = 0; i < n; i++) { var dd = Math.abs(X(i) - mx); if (dd < bd) { bd = dd; best = i; } }
       var p = pts[best];
-      tip.innerHTML = "<b>" + esc(opts.tipTitle(p.x)) + (p.partial ? " (MTD)" : "") + "</b><br>net: <b>" +
-                      fmtSigned(p.y) + "</b>" +
-                      (p.ins != null ? "<br><small>" + p.ins + " in / " + p.outs + " out</small>" : "");
+      tip.innerHTML = p.missing
+        ? "<b>" + esc(opts.tipTitle(p.x)) + "</b><br>no data in this export"
+        : "<b>" + esc(opts.tipTitle(p.x)) + (p.partial ? " (MTD)" : "") + "</b><br>net: <b>" +
+          fmtSigned(p.y) + "</b>" +
+          (p.ins != null ? "<br><small>" + p.ins + " in / " + p.outs + " out</small>" : "");
       tip.style.display = "block";
       var hx = (X(best) / W) * r.width;
       tip.style.left = Math.min(r.width - tip.offsetWidth - 4, Math.max(4, hx + 10)) + "px";
@@ -1378,7 +1454,12 @@
     }
 
     legend.hidden = false;
-    cap.textContent = scopeLabel() + " — net move-ins by month · " + s.pts.length + " months";
+    var gapMonths = s.pts.filter(function (p) { return p.missing; })
+                         .map(function (p) { return p.x; });
+    var gapKey = document.getElementById("nmiGapKey");
+    if (gapKey) gapKey.hidden = !gapMonths.length;
+    cap.textContent = scopeLabel() + " — net move-ins by month · " + s.pts.length + " months" +
+      (gapMonths.length ? " · " + gapMonths.length + " without data" : "");
     nmiBarChart(host, {
       pts: s.pts,
       h: 250,
@@ -1391,7 +1472,11 @@
     var basis = scope === "portfolio"
       ? ""
       : "Brand totals are summed from the per-facility monthly series; the portfolio scope uses its own authoritative series.";
-    var txt = s.warn || basis;
+    var gapTxt = gapMonths.length
+      ? "No monthly record in this export for " + gapMonths.join(", ") +
+        " — drawn as a gap, not as zero."
+      : "";
+    var txt = (s.warn || basis) + (gapTxt ? ((s.warn || basis) ? " " : "") + gapTxt : "");
     note.hidden = !txt;
     note.textContent = txt;
   }
@@ -2510,6 +2595,7 @@
     .then(function (a) {
       DATA = a[0];
       TRENDS = (a[1] && a[1].trends) || null;
+      TRENDS_ASOF = (a[1] && a[1].generated_at) || null;
       renderAll();
     })
     .catch(function (err) {
