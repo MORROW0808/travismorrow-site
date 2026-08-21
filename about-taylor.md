@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-111 nodes and 197 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.14. The full
+114 nodes and 201 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.15. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -85,7 +85,7 @@ details, say the map only shows what exists, not private specifics.
 
 ### Data sources
 
-- **Hummingbird / Nectar API** (LIVE, since v1.0) — Read-only storage-ops data across the full facility portfolio — the engine behind every portfolio report.
+- **Hummingbird / Nectar API** (LIVE, since v1.15) — Read-only storage-ops API across the portfolio; engine for the reporting stack. An August pull confirmed rent-change history is retained back to April 2021.
 - **TractIQ market intel** (LIVE, since v1.0) — Live market and competition intelligence feeding the markets-overview sections of portfolio reports.
 - **Brand websites** (LIVE, since v1.0) — Source for Google reviews, scraped per brand to build a ratings history over time.
 - **MSM Publication Hub** (LIVE, since v1.0) — The archive sheet Taylor reads nightly to distill industry publication issues.
@@ -115,7 +115,7 @@ details, say the map only shows what exists, not private specifics.
 
 ### Memory & state
 
-- **LIVE-LEDGER** (LIVE, since v1.7) — The real-time shared state file every instance reads first to catch up on what's current.
+- **LIVE-LEDGER** (LIVE, since v1.15) — The rolling DON'T REDO / OPEN block plus history that lets any session catch up fast. An August fix removed status narratives that had been landing above its trim marker, cutting the derived compose prompt by roughly two-thirds.
 - **Taylor-STATE.md** (LIVE, since v1.0) — The insurance policy — a full operating picture rebuilt every couple hours so any session can catch up fast.
 - **AI Handoff journal** (LIVE, since v1.0) — An append-only cross-instance history that different sessions write into and read from.
 - **Dropbox memory lane** (LIVE, since v1.7) — The shared substrate all three instances (phone, laptop, chat) read and write memory through.
@@ -126,8 +126,8 @@ details, say the map only shows what exists, not private specifics.
 
 ### Delivery channels (where output lands)
 
-- **iMessage — Travis 1:1** (LIVE, since v1.6) — The full real-time conversation thread with Travis.
-- **iMessage — Senators** (LIVE, since v1.6) — The couple's group thread, handled in gated real time so it only responds when actually addressed.
+- **iMessage — Travis 1:1** (LIVE, since v1.15) — Taylor's always-on real-time line with Travis. The compose lane now runs on a held session turn rather than a one-shot subprocess, with an intake-drain and double-reply guard closing gaps where a message could sit unanswered or draw two replies.
+- **iMessage — Senators** (LIVE, since v1.15) — Auto-answers calendar/whereabouts and Taylor-addressed messages in the Senators group, bound to the two-human member-set rather than a stored room ID. Both replying phases now deployed and verified by a real round trip.
 - **iMessage — NSS owners** (LIVE, since v1.6) — The owner-group thread used for daily reporting to the ownership group.
 - **Dropbox deliverables** (LIVE, since v1.0) — Where reports and files land for pickup.
 - **Calendar & TimeTree** (LIVE, since v1.0) — Where events get written back out to the calendar and travel tracker.
@@ -141,7 +141,7 @@ details, say the map only shows what exists, not private specifics.
 
 ### Engineered workarounds & infrastructure
 
-- **Handoff rail** (LIVE, since v1.8) — The headline addition: listener flags a request, a durable job queue picks it up, and three executors handle lookups and gated actions — four action types are fully live.
+- **Handoff rail** (LIVE, since v1.15) — The listener hands off anything beyond a read/reply to a durable job queue, drained by dedicated executors. Routing was consolidated in August to a single handoff destination rather than several possible targets.
 - **Inbound real-time listener** (LIVE, since v1.6) — An always-on daemon that reads the Messages database every few seconds and composes real replies to genuinely new texts.
 - **Send relay (outbox→Shortcuts)** (LIVE, since v1.0) — Sends texts despite there being no direct send API — a written job picked up by a worker and a Shortcut.
 - **Save-file / HEIC pipeline** (LIVE, since v1.8) — Text 'save this photo' with an attachment and it's filed into Dropbox automatically, converting HEIC to JPEG along the way.
@@ -172,6 +172,8 @@ details, say the map only shows what exists, not private specifics.
 - **Confirm-anchor veto** (LIVE, since v1.14) — A yes has to be a yes to something specific. When Taylor asks for a confirmation, the answer is pinned to the exact thing that was proposed, and it only counts from the person who was asked — so a stray agreement drifting past in a busy thread can no longer be read as approval for something else entirely.
 - **Compose-failure detection** (LIVE, since v1.14) — The first check that asks whether the work actually happened, rather than whether the program is still running. Both of those can look identical from the outside, and for a while a silent failure to write a reply looked exactly like a quiet morning. One further piece of this is built and tested but not yet wired in.
 - **Agent-first inversion** (LIMITED, since v1.14) — Specialised lanes had been quietly stealing questions meant for the general one — a question about water temperature was being answered by the calendar. Deleting the first batch of those lanes took a test set of stolen questions from every single one going astray to none of them. This is one step of a seven-step plan; the rest is Travis's call and has not shipped.
+- **Reply doctrine enforcement** (LIVE, since v1.15) — A safety rule for 1:1 replies that used to live only as a written convention is now checked automatically, in code, before every message goes out — not something a person has to remember to follow.
+- **Self-monitoring alarm log** (LIMITED, since v1.15) — A capped, rotating internal log that surfaces faults on request. Live — but routing a real failure straight to a person hasn't been wired yet, so it's read, not yet alerted.
 
 ### Business workstreams
 
@@ -210,5 +212,6 @@ details, say the map only shows what exists, not private specifics.
 - **introduce-taylor-to-thread** (LIVE, since v1.7) — Onboards Taylor into a brand-new group or 1:1 thread using the proven setup mechanics, turning it into a guided few-minute job.
 - **serenity-nails-booking** (LIVE, since v1.8) — Books a nail salon appointment for either partner, one person per pass, behind a hard confirmation gate.
 - **atl-tsa-wait-times** (LIVE, since v1.8) — Checks the live airport security wait time at a home airport's PreCheck checkpoint — a simple, no-login lookup.
+- **facility-distributions** (LIVE, since v1.15) — Runs the monthly owner-distribution cycle across the storage portfolio: pulls each facility's financials live, applies a minimum-payout floor, and groups payouts to stay under the bank's daily transfer limit. Never moves money itself — the transfers are the owner's own step.
 
 <!-- MEMORY-MAP-NODES:END -->
