@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-114 nodes and 201 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.15. The full
+115 nodes and 202 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.16. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -174,6 +174,7 @@ details, say the map only shows what exists, not private specifics.
 - **Agent-first inversion** (LIMITED, since v1.14) — Specialised lanes had been quietly stealing questions meant for the general one — a question about water temperature was being answered by the calendar. Deleting the first batch of those lanes took a test set of stolen questions from every single one going astray to none of them. This is one step of a seven-step plan; the rest is Travis's call and has not shipped.
 - **Reply doctrine enforcement** (LIVE, since v1.15) — A safety rule for 1:1 replies that used to live only as a written convention is now checked automatically, in code, before every message goes out — not something a person has to remember to follow.
 - **Self-monitoring alarm log** (LIMITED, since v1.15) — A capped, rotating internal log that surfaces faults on request. Live — but routing a real failure straight to a person hasn't been wired yet, so it's read, not yet alerted.
+- **Shell-outage migration to launchd** (LIVE, since v1.16) — A week-long sandbox outage silently paused six scheduled jobs, including this system's own history-keeping ritual. Five of them were rebuilt to run natively on the home Mac instead, each proven with a real live run rather than just switched on.
 
 ### Business workstreams
 
