@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-115 nodes and 202 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.18. The full
+118 nodes and 206 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.19. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -123,14 +123,15 @@ details, say the map only shows what exists, not private specifics.
 - **Project backlog** (LIVE, since v1.8) — A living project tracker kept in sync between a human-facing spreadsheet and a machine-readable file.
 - **Portfolio Datastore** (LIVE, since v1.9) — A local analytics database (facilities, daily metrics, budgets, ad spend) built beside the live pipeline and validated to the penny — a queryable spine under the portfolio reports, added without disturbing the existing CSV/API path.
 - **CEO Knowledgebase (1:1 only)** (LIMITED, since v1.9) — A private knowledgebase of company briefs (Tenant, StoreLocal, SLP, MSM, Storelocal Storage). Taylor answers strictly from the briefs and never fabricates — reachable ONLY from Travis's personal 1:1, fail-closed across three independent gates so it can never surface in a group thread.
+- **Agent Memory Layer** (LIVE, since v1.19) — A second memory system alongside the Dropbox lane — one store per machine (Home, Laptop), each publishing and mirroring into a single browsable map so judgment and preferences carry across sessions and machines.
 
 ### Delivery channels (where output lands)
 
-- **iMessage — Travis 1:1** (LIVE, since v1.15) — Taylor's always-on real-time line with Travis. The compose lane now runs on a held session turn rather than a one-shot subprocess, with an intake-drain and double-reply guard closing gaps where a message could sit unanswered or draw two replies.
+- **iMessage — Travis 1:1** (LIVE, since v1.19) — Taylor's always-on real-time line with Travis. The compose lane now runs on a held session turn rather than a one-shot subprocess, with an intake-drain and double-reply guard closing gaps where a message could sit unanswered or draw two replies. As of 8/27, a spoken/typed wake word ("TDM" or "Taylor") turns the 1:1 into a real back-and-forth conversation instead of one-shot backlog filing, staying open through an idle-based ~10-minute window and closing on "stand down."
 - **iMessage — Senators** (LIVE, since v1.15) — Auto-answers calendar/whereabouts and Taylor-addressed messages in the Senators group, bound to the two-human member-set rather than a stored room ID. Both replying phases now deployed and verified by a real round trip.
 - **iMessage — NSS owners** (LIVE, since v1.6) — The owner-group thread used for daily reporting to the ownership group.
 - **Dropbox deliverables** (LIVE, since v1.0) — Where reports and files land for pickup.
-- **Calendar & TimeTree** (LIVE, since v1.0) — Where events get written back out to the calendar and travel tracker.
+- **Calendar & TimeTree** (LIVE, since v1.19) — Where events get written back out to the calendar and travel tracker. As of 8/29, TimeTree accepts real writes from the 1:1 — not just the outbound whereabouts mirror — so a request like "put these dates on TimeTree" creates the event.
 - **PDF reports & dashboards** (LIVE, since v1.0) — Monthly snapshots, EOM packages, and one-pagers — the finished, ready-to-read output.
 - **travismorrow.com** (LIVE, since v1.9) — The system's first public-facing surface: a real-data portfolio dashboard, a facility map, and an embedded chat widget that knows this very memory map's own node inventory.
 - **CEO exec cockpit** (LIVE, since v1.11) — A board-level, password-gated page on travismorrow.com. Its marquee is the auction watch: the 90+ day delinquency tail (about 13 units) against the roughly two-unit goal, the dollars behind it, and which facilities carry it — over a portfolio-KPI band, 14-month trend charts, and a per-facility league with drill-downs, refreshed twice daily.
@@ -201,6 +202,8 @@ details, say the map only shows what exists, not private specifics.
 - **Weekly streaming digest** (LIVE, since v1.0) — A Saturday-morning roundup of new streaming releases.
 - **XRP / Ripple news watch** (LIVE, since v1.0) — A standing watch on XRP/Ripple news.
 - **Calendar actions by text** (LIVE, since v1.8) — Create, update, or delete calendar events just by texting a request.
+- **Conference Audio Capture** (LIVE, since v1.19) — Record a session on the phone, share it into a Dropbox inbox, and get back a written brief with no further interaction — transcribed locally and summarized automatically, built ahead of the September SSA Fall Conference.
+- **ParentVUE — Ty's Grades** (LIVE, since v1.19) — A weekly Sunday grade check plus on-demand questions in the 1:1 ("how's Ty doing," "any missing assignments") answered from a live ParentVUE login, never a cached guess.
 
 ### Installed skills (playbooks)
 
