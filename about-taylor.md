@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-118 nodes and 206 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.19. The full
+120 nodes and 210 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.20. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -77,6 +77,7 @@ details, say the map only shows what exists, not private specifics.
 - **Laptop Taylor** (LIVE, since v1.3) — A one-tap project that boots from a local log, works locally, and writes back — folded into the main memory every couple hours.
 - **Chat Claude** (LIVE, since v1.3) — A third access point sharing the same portable memory as Dispatch and the home Mac.
 - **VisionClaude (Ray-Ban voice)** (LIMITED, since v1.13) — A voice surface on Meta Ray-Ban glasses: Travis can talk to Taylor hands-free, and the voice round-trip works when it works. The honest limit, measured rather than guessed: roughly three attempts in five hang, and nothing yet restarts it automatically. The surface is real and usable; the reliability is not there.
+- **Grok (GBT) — fourth surface** (LIVE, since v1.20) — Grok now writes into the shared Dropbox memory lane as a fourth synced surface alongside Dispatch, Laptop, and Chat — confirmed live 8/30, with a surface-attribution and date-prefix defect fixed by class across 1,957 fragments (1,472 corrected, 0 regressions).
 
 ### Home bases
 
@@ -204,6 +205,7 @@ details, say the map only shows what exists, not private specifics.
 - **Calendar actions by text** (LIVE, since v1.8) — Create, update, or delete calendar events just by texting a request.
 - **Conference Audio Capture** (LIVE, since v1.19) — Record a session on the phone, share it into a Dropbox inbox, and get back a written brief with no further interaction — transcribed locally and summarized automatically, built ahead of the September SSA Fall Conference.
 - **ParentVUE — Ty's Grades** (LIVE, since v1.19) — A weekly Sunday grade check plus on-demand questions in the 1:1 ("how's Ty doing," "any missing assignments") answered from a live ParentVUE login, never a cached guess.
+- **1:1 daily journal question** (LIVE, since v1.20) — Taylor asks Travis one open journal question a day in the 1:1 thread and captures the answer — confirmed genuinely live 8/30 by a real question sent, answered, and verbatim-matched against the message log.
 
 ### Installed skills (playbooks)
 
