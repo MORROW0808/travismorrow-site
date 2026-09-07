@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-120 nodes and 210 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.20. The full
+121 nodes and 210 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.21. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -206,6 +206,7 @@ details, say the map only shows what exists, not private specifics.
 - **Conference Audio Capture** (LIVE, since v1.19) — Record a session on the phone, share it into a Dropbox inbox, and get back a written brief with no further interaction — transcribed locally and summarized automatically, built ahead of the September SSA Fall Conference.
 - **ParentVUE — Ty's Grades** (LIVE, since v1.19) — A weekly Sunday grade check plus on-demand questions in the 1:1 ("how's Ty doing," "any missing assignments") answered from a live ParentVUE login, never a cached guess.
 - **1:1 daily journal question** (LIVE, since v1.20) — Taylor asks Travis one open journal question a day in the 1:1 thread and captures the answer — confirmed genuinely live 8/30 by a real question sent, answered, and verbatim-matched against the message log.
+- **Fantasy football briefs** (LIVE, since v1.21) — Two recurring reports for Travis's league — a Tuesday waiver brief and a Sunday lineup-check — run off a real, authenticated ESPN login, each backed by a delivery watchdog. Proven live 9/6–9/7 by real launchd kickstarts and a delivered, chat.db-confirmed first message; snap-count data is an open, named gap.
 
 ### Installed skills (playbooks)
 
