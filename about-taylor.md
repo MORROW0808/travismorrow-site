@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-122 nodes and 212 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.22. The full
+123 nodes and 214 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.23. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -193,6 +193,7 @@ details, say the map only shows what exists, not private specifics.
 - **Adams Property Group demo** (DONE, since v1.7) — A completed live portfolio walkthrough that demonstrated strong advertising ROAS across the portfolio.
 - **Live ad-spend ROAS** (LIVE, since v1.9) — Real advertising ROAS by facility and brand — live Supermetrics ad spend against real Nectar leads, conversions, and LTV (June portfolio 22.5x) — delivered as an ad-spend leaderboard and folded into the monthly snapshot, refreshed by a monthly sync job.
 - **Chase ACH batch pipeline** (LIVE, since v1.12) — Turns the monthly owner-distribution numbers into a validated Chase-format ACH upload file — payees and pay-from accounts checked, a generator script producing the batch file. Travis reviews and submits it himself in Chase; nothing sends automatically.
+- **2027 Budget Generator** (LIMITED, since v1.23) — Rebuilds a facility's owner-schedule and QuickBooks-upload workbook from scratch, matched against three real pilot facilities at essentially zero difference from the hand-built originals, with a self-test suite that catches injected defects on demand. Validated on three facilities so far, not yet run across the full portfolio and not yet connected to a live QuickBooks import.
 
 ### Personal workstreams
 
@@ -213,7 +214,7 @@ details, say the map only shows what exists, not private specifics.
 
 - **eom-close** (LIVE, since v1.5) — An installed playbook that runs the month-end close end to end — spreadsheet, graphs, and per-facility packages — leaving only the final mail-merge as a manual step.
 - **delta-booking** (LIVE, since v1.5) — Books, changes, cancels, and checks in on Delta trips, then files them to the calendar — never completes a booking without explicit go-ahead.
-- **calendar-travel** (LIVE, since v1.5) — Handles general calendar adds and travel filing with sensible defaults, and keeps flight schedules off the personal calendar by hard rule.
+- **calendar-travel** (LIVE, since v1.23) — Handles general calendar adds and travel filing with sensible defaults, keeps flight schedules off the personal calendar by hard rule, and -- per Travis's own ruling -- puts "his" calendar requests on Taylor's calendar with him invited, since his personal calendar isn't reachable from this connector.
 - **vintage-jacks-booking** (LIVE, since v1.5) — Books a usual haircut appointment through guest checkout, stopping right before the final confirmation.
 - **daily-photo-post** (PAUSED, since v1.5) — Composes the couple-photo post — one mode per day, work topics kept out, 1:1 surprises protected. Paused at Travis's request (7/21) until his explicit go; the randomized-cadence decider stays built but inactive.
 - **order-doordash** (LIVE, since v1.7) — End-to-end food ordering with a hard confirm-before-checkout gate — either partner can approve.
