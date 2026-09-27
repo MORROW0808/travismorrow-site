@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-123 nodes and 214 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.23. The full
+124 nodes and 216 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.24. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -194,6 +194,7 @@ details, say the map only shows what exists, not private specifics.
 - **Live ad-spend ROAS** (LIVE, since v1.9) — Real advertising ROAS by facility and brand — live Supermetrics ad spend against real Nectar leads, conversions, and LTV (June portfolio 22.5x) — delivered as an ad-spend leaderboard and folded into the monthly snapshot, refreshed by a monthly sync job.
 - **Chase ACH batch pipeline** (LIVE, since v1.12) — Turns the monthly owner-distribution numbers into a validated Chase-format ACH upload file — payees and pay-from accounts checked, a generator script producing the batch file. Travis reviews and submits it himself in Chase; nothing sends automatically.
 - **2027 Budget Generator** (LIMITED, since v1.23) — Rebuilds a facility's owner-schedule and QuickBooks-upload workbook from scratch, matched against three real pilot facilities at essentially zero difference from the hand-built originals, with a self-test suite that catches injected defects on demand. Validated on three facilities so far, not yet run across the full portfolio and not yet connected to a live QuickBooks import.
+- **Competition Analysis Report** (LIMITED, since v1.24) — Weekly bar-chart report comparing NSS's own unit rates (all 6 standard sizes, CC/NCC) against nearby competitors for ELP5/ELP6/DOV1/SIL1, matching the Portfolio Snapshot's visual design. First real send to the NSS owners' thread confirmed by an independent chat.db read (9/25); a recurring Monday-morning send was enabled and dry-run verified the same day, but its first real automated fire is still pending.
 
 ### Personal workstreams
 
