@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-124 nodes and 216 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.24. The full
+136 nodes and 239 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.25. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -113,6 +113,7 @@ details, say the map only shows what exists, not private specifics.
 - **'Taylor' browser** (LIVE, since v1.0) — Live browser automation for web work and JS-rendered lookups that a plain fetch can't reach.
 - **Scheduled tasks** (LIVE, since v1.0) — Time-based automation running on the home Mac — the clockwork behind daily and monthly reports.
 - **On-demand thread reader** (PENDING, since v1.12) — A read-only tool that lets any session pull recent messages from a configured group thread on request, closing a blind spot where some threads could only be answered from a stale cache. Built and staged; awaiting confirmation it's loaded and has produced one real read before it's recorded live.
+- **New Relic (read-only)** (LIVE, since v1.25) — Dashboards, metrics, logs and alert history from the Tenant account, including per-call telemetry. Taylor may query it and never changes anything in it, on any surface.
 
 ### Memory & state
 
@@ -140,6 +141,7 @@ details, say the map only shows what exists, not private specifics.
 - **iMessage — NSS team** (LIVE, since v1.11) — A live NSS operations-team thread with full owner-group parity — financials, actual-vs-budget, operational, and delinquency lanes. Its weekly per-facility MTD report and tenant-level delinquency lookups are proven live; a third standing auto-send (a Monday delinquency PDF) is scheduled but not yet confirmed by a real Monday firing.
 - **Tenant-level delinquency lookup** (LIVE, since v1.12) — On-demand, per-lease delinquency lookup for the NSS Team thread and Travis's 1:1 — ask who's delinquent at a facility and get name, unit, days-late, and balance, worst-first, reconciling exactly to the Monday report's source. Scoped by district/regional manager too.
 - **Data Store network viz** (LIVE, since v1.12) — A ‘living network’ page on travismorrow.com visualizing the Portfolio Datastore itself — stores, the real data points behind them, and what those points feed — refreshed on a weekly-plus-on-demand cadence, built with an exporter that strips tenant/staff detail by construction. A nav door on the homepage and portfolio/exec headers links to it.
+- **Call Taylor phone line** (LIMITED, since v1.25) — A phone line that answers as Taylor: approved callers get calendar answers and can ask for a text, anyone else reaches voicemail, and anything involving money or sends is only confirmed, never done. A show-safe demo mode answers general questions in short replies, and notes spoken on a call become work items. Installed and tested, but later changes are not yet confirmed on a live call.
 
 ### Engineered workarounds & infrastructure
 
@@ -159,7 +161,6 @@ details, say the map only shows what exists, not private specifics.
 - **Twice-daily datastore ingest** (LIVE, since v1.9) — A twice-daily job (noon + 7 PM AZ) that refreshes the portfolio datastore from live operations data across all 29 facilities, so every store-backed report stays current — loaded and verified running on the host, with healthy data flowing into the store.
 - **Attribution-lite Q&A by text** (LIVE, since v1.9) — Ask by text for the lead-channel mix (web / phone / walk-in / other) or the most cost-effective ad campaigns — any facility, brand, or the whole portfolio, answered live from the datastore in the owners' thread. Deeper click-to-move-in attribution still waits on a Hummingbird product change.
 - **Subagent Verifier** (LIVE, since v1.9) — An independent, fresh-eyes checker for delegated work, signed off and promoted live — its own data load and its own math, so it can catch an error the original work made rather than repeating it.
-- **Spawner + Approval-Loop** (LIVE, since v1.9) — Lets Taylor delegate work with a text-based go/no-go confirm loop back to Travis — proven live end to end. Never autonomous: Travis's standing decision is no self-directed AI spawner, ever.
 - **Reminder job-type** (LIVE, since v1.9) — Text 'remind me...' for a future scheduled send. The on-Mac runner now self-schedules off its own poll loop instead of depending on an external registrar task, firing by direct wall-clock comparison — proven live across a battery of test scenarios.
 - **NSS financial Q&A (Joiin-backed)** (LIVE, since v1.10) — Ask a real financial question in the owners' thread — P&L, budget vs. actual, revenue, expenses, variance — and get an answer pulled live from QuickBooks, across 28 of the 29 tracked facilities (one small property keeps its own books; a second is no longer managed). A separate lane from the ROAS/attribution Q&A above, and it's honest when the freshest answer is last month's closed books, not this month's.
 - **Idea capture** (LIVE, since v1.10) — Text an idea in the 1:1 — or just say "idea:" — and it's captured to a running ideas inbox that folds into the project backlog automatically overnight. Now backed by a real authenticated tool the assistant calls directly, with a structured-truth guarantee: a capture is claimed only when the tool actually confirms it, so a passing thought is never falsely reported as saved.
@@ -177,6 +178,11 @@ details, say the map only shows what exists, not private specifics.
 - **Reply doctrine enforcement** (LIVE, since v1.15) — A safety rule for 1:1 replies that used to live only as a written convention is now checked automatically, in code, before every message goes out — not something a person has to remember to follow.
 - **Self-monitoring alarm log** (LIMITED, since v1.15) — A capped, rotating internal log that surfaces faults on request. Live — but routing a real failure straight to a person hasn't been wired yet, so it's read, not yet alerted.
 - **Shell-outage migration to launchd** (LIVE, since v1.17) — A week-long sandbox outage silently paused six scheduled jobs, including this system's own history-keeping ritual. Five of them were rebuilt to run natively on the home Mac instead, each proven with a real live run rather than just switched on. One of them, the usage watchdog, was then caught firing green on schedule while taking zero real readings — a leftover retirement note in a shared file was being read as an instruction to halt. Fixed and proven with forced live fires the same day; its self-reported figures now carry an honest age instead of a bare percentage.
+- **Mac Studio is Home** (LIVE, since v1.25) — The cutover to the Mac Studio completed: the old Intel Home was retired, the bus key rotated, a text-as-attachment bug fixed, and the whole fleet now runs on the Studio.
+- **Night shift queue** (LIVE, since v1.25) — An overnight job queue that runs one job per fire between 22:00 and 06:00 under hard rules, with a morning recap. Anything it drafts waits for Travis's yes; nothing publishes itself.
+- **Bus act-signing and version stamp** (LIVE, since v1.25) — Every note now carries an explicit signed act field with a safe default, Laptop ported the same rule, and a first Laptop-to-Home act-yes note was acted. Both machines publish hashed software stamps that compare as match, drift or unknown.
+- **Bus fast path (Tailscale)** (LIVE, since v1.25) — Signed notes also travel a direct link between Home and Laptop with a warm responder on each side, replying in seconds while Dropbox stays the durable record. Windowed caps and brakes bound it.
+- **Login allowlist and keepalive** (LIVE, since v1.25) — Taylor re-logs into saved-credential sites only when a session lapses, and only for allowlisted hosts. The list started at 13 sites and now also covers CallRail, YNAB, ESPN Fantasy and TimeTree.
 
 ### Business workstreams
 
@@ -195,12 +201,17 @@ details, say the map only shows what exists, not private specifics.
 - **Chase ACH batch pipeline** (LIVE, since v1.12) — Turns the monthly owner-distribution numbers into a validated Chase-format ACH upload file — payees and pay-from accounts checked, a generator script producing the batch file. Travis reviews and submits it himself in Chase; nothing sends automatically.
 - **2027 Budget Generator** (LIMITED, since v1.23) — Rebuilds a facility's owner-schedule and QuickBooks-upload workbook from scratch, matched against three real pilot facilities at essentially zero difference from the hand-built originals, with a self-test suite that catches injected defects on demand. Validated on three facilities so far, not yet run across the full portfolio and not yet connected to a live QuickBooks import.
 - **Competition Analysis Report** (LIMITED, since v1.24) — Weekly bar-chart report comparing NSS's own unit rates (all 6 standard sizes, CC/NCC) against nearby competitors for ELP5/ELP6/DOV1/SIL1, matching the Portfolio Snapshot's visual design. First real send to the NSS owners' thread confirmed by an independent chat.db read (9/25); a recurring Monday-morning send was enabled and dry-run verified the same day, but its first real automated fire is still pending.
+- **SNS tracking-number testing** (LIVE, since v1.25) — Stop N Stor's CallRail trial numbers were built and tested end to end into Hummingbird (10 of 10 passed), then a Twilio-based call tester placed after-hours test calls (10 of 10 completed) and attribution passed on every clean call. Test numbers are bought only at test time and released after.
+- **Keynote pipeline** (LIMITED, since v1.25) — A repeatable build for the THE Show keynote: deck, script, confidence-monitor beats, click-sync, watch video, lean beats and a practice page. Version 14 is built; the earlier version stays on the projection machine until Travis approves.
+- **Chipper Simulator** (LIVE, since v1.25) — A voice-agent simulator that plays a booth-visitor persona from a persona-brief knowledge base, published 9/30 and moved to a cloned voice on 10/31.
+- **Website AEO** (LIVE, since v1.25) — Answer-engine optimization across the three brand sites: facility FAQ entries live on NSS and AFAM pages, a cost-FAQ workaround on Stop N Stor, and the Messenger archive's citations live on MSM pages through a custom module. A 30-citation audit came back all correct.
+- **Emma keynote voice agent** (LIVE, since v1.25) — The outbound voice agent for the THE Show keynote push went live 10/22 with a call-screener rule and the $899 price script; older text agents were switched off.
 
 ### Personal workstreams
 
 - **Ty volleyball stat hub** (LIVE, since v1.0) — A stat hub combining spreadsheet tracking, a stat card, and video for a family member's volleyball season.
 - **Tournament schedule watchers** (SEASONAL, since v1.0) — Seasonal watchers that pull tournament schedules into the calendar and text results as they come in.
-- **TimeTree whereabouts mirror** (LIVE, since v1.0) — Mirrors the travel calendar into Google Calendar as the source of truth for where Travis is.
+- **TimeTree whereabouts mirror** (LIVE, since v1.25) — Mirrors the travel calendar into Google Calendar as the source of truth for where Travis is.
 - **Senators watcher** (LIVE, since v1.0) — Answers calendar and whereabouts questions automatically in the couple's group thread.
 - **Weekly streaming digest** (LIVE, since v1.0) — A Saturday-morning roundup of new streaming releases.
 - **XRP / Ripple news watch** (LIVE, since v1.0) — A standing watch on XRP/Ripple news.
@@ -208,7 +219,7 @@ details, say the map only shows what exists, not private specifics.
 - **Conference Audio Capture** (LIVE, since v1.19) — Record a session on the phone, share it into a Dropbox inbox, and get back a written brief with no further interaction — transcribed locally and summarized automatically, built ahead of the September SSA Fall Conference.
 - **ParentVUE — Ty's Grades** (LIVE, since v1.19) — A weekly Sunday grade check plus on-demand questions in the 1:1 ("how's Ty doing," "any missing assignments") answered from a live ParentVUE login, never a cached guess.
 - **1:1 daily journal question** (LIVE, since v1.20) — Taylor asks Travis one open journal question a day in the 1:1 thread and captures the answer — confirmed genuinely live 8/30 by a real question sent, answered, and verbatim-matched against the message log.
-- **Fantasy football briefs** (LIVE, since v1.21) — Two recurring reports for Travis's league — a Tuesday waiver brief and a Sunday lineup-check — run off a real, authenticated ESPN login, each backed by a delivery watchdog. Proven live 9/6–9/7 by real launchd kickstarts and a delivered, chat.db-confirmed first message; snap-count data is an open, named gap.
+- **Fantasy football briefs** (LIVE, since v1.25) — Two recurring reports for Travis's league — a Tuesday waiver brief and a Sunday lineup-check — run off a real, authenticated ESPN login, each backed by a delivery watchdog. Proven live 9/6–9/7 by real launchd kickstarts and a delivered, chat.db-confirmed first message; snap-count data is an open, named gap.
 - **iCloud Mail Watch** (LIVE, since v1.22) — Triages Taylor's own forward-to inbox every 10 minutes, replies to Travis's 1:1 only when something needs him, and files flight-receipt forwards to Taylor's own calendar, one event per leg in Arizona time. A message is marked read only after a real disposition — a failed run leaves it unread.
 
 ### Installed skills (playbooks)
@@ -223,5 +234,6 @@ details, say the map only shows what exists, not private specifics.
 - **serenity-nails-booking** (LIVE, since v1.8) — Books a nail salon appointment for either partner, one person per pass, behind a hard confirmation gate.
 - **atl-tsa-wait-times** (LIVE, since v1.8) — Checks the live airport security wait time at a home airport's PreCheck checkpoint — a simple, no-login lookup.
 - **facility-distributions** (LIVE, since v1.15) — Runs the monthly owner-distribution cycle across the storage portfolio: pulls each facility's financials live, applies a minimum-payout floor, and groups payouts to stay under the bank's daily transfer limit. Never moves money itself — the transfers are the owner's own step.
+- **Call grader** (LIVE, since v1.25) — A packaged skill that scores recorded facility calls: five call types, a service rubric, attribution and misroute checks. A weekly overnight job grades the prior week's calls for Travis only.
 
 <!-- MEMORY-MAP-NODES:END -->
