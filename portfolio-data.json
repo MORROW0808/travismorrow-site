@@ -1,35 +1,35 @@
 {
-  "generated_at": "2026-11-03T19:06:50-07:00",
+  "generated_at": "2026-11-04T12:08:11-07:00",
   "portfolio": {
     "occupancy": {
       "units_total": 17203,
-      "units_occupied": 12635,
+      "units_occupied": 12636,
       "occupancy_units_pct": 73.45,
       "sqft_total": 2299067,
-      "sqft_occupied": 1813381,
-      "occupancy_sqft_pct": 78.87
+      "sqft_occupied": 1813431,
+      "occupancy_sqft_pct": 78.88
     },
     "move_activity_mtd": {
-      "move_ins": 21,
-      "move_outs": 30,
-      "net_move_ins": -9
+      "move_ins": 35,
+      "move_outs": 39,
+      "net_move_ins": -4
     },
     "revenue_mtd": {
-      "revenue_authoritative": 472528.68
+      "revenue_authoritative": 519641.54
     },
     "revenue_yoy": {
-      "current": 384663.77,
-      "prior": 155940.59,
-      "delta": 228723.18,
-      "as_of": "2026-11-02",
-      "prior_as_of": "2025-11-02",
+      "current": 472528.68,
+      "prior": 450995.51,
+      "delta": 21533.17,
+      "as_of": "2026-11-03",
+      "prior_as_of": "2025-11-03",
       "facilities_included": 29,
       "facilities_excluded": []
     },
     "leads_mtd": {
-      "leads_total": 48,
-      "leads_converted": 34,
-      "conversion_pct": 70.83
+      "leads_total": 60,
+      "leads_converted": 42,
+      "conversion_pct": 70.0
     },
     "ad_spend_month": {
       "spend": 15462.48,
@@ -72,8 +72,8 @@
           "label": "31\u201360",
           "days_min": 31,
           "days_max": 60,
-          "units": 126,
-          "amount": 42926.86
+          "units": 129,
+          "amount": 45176.2
         },
         {
           "bucket": "90",
@@ -81,7 +81,7 @@
           "days_min": 61,
           "days_max": 90,
           "units": 19,
-          "amount": 8209.01
+          "amount": 8265.34
         },
         {
           "bucket": "120",
@@ -105,7 +105,7 @@
           "days_min": 181,
           "days_max": 360,
           "units": 3,
-          "amount": 1557.06
+          "amount": 1572.06
         },
         {
           "bucket": "gt_360",
@@ -116,27 +116,27 @@
           "amount": 0.0
         }
       ],
-      "gt30_units": 151,
-      "gt30_amount": 55202.53,
-      "beyond_90_units": 6,
-      "beyond_90_amount": 4066.66,
-      "delinquent_units_all": 1041,
-      "delinquent_amount_all": 206034.3,
-      "rent_roll": 1916306.81,
-      "occupied_units": 12635,
-      "delinquency_pct_dollars": 10.75,
-      "delinquency_pct_units": 8.24
+      "gt30_units": 154,
+      "gt30_amount": 57523.2,
+      "beyond_90_units": 7,
+      "beyond_90_amount": 4477.66,
+      "delinquent_units_all": 1107,
+      "delinquent_amount_all": 215287.88,
+      "rent_roll": 1916402.81,
+      "occupied_units": 12636,
+      "delinquency_pct_dollars": 11.23,
+      "delinquency_pct_units": 8.76
     },
     "protection": {
-      "insured_units": 9331,
-      "occupied_units": 12635,
-      "penetration_occ_pct": 73.85,
-      "collected_premiums_mtd": 24089.32,
+      "insured_units": 9322,
+      "occupied_units": 12636,
+      "penetration_occ_pct": 73.77,
+      "collected_premiums_mtd": 26707.43,
       "total_units": 17203,
-      "penetration_total_pct": 54.24,
-      "insurance_revenue_mtd": 31125.48,
-      "avg_premium_per_insured_unit": 2.58,
-      "coverage_in_force_est": 23327500,
+      "penetration_total_pct": 54.19,
+      "insurance_revenue_mtd": 33795.48,
+      "avg_premium_per_insured_unit": 2.86,
+      "coverage_in_force_est": 23305000,
       "base_tier": 2500,
       "split_mtd": {
         "storelocal": 0.0,
@@ -145,15 +145,15 @@
       }
     },
     "leads_by_channel_mtd": {
-      "web_leads": 19,
-      "phone_leads": 5,
-      "walk_in_leads": 15,
-      "other_leads": 9,
+      "web_leads": 25,
+      "phone_leads": 7,
+      "walk_in_leads": 17,
+      "other_leads": 11,
       "channel_share_pct": {
-        "web_leads": 39.58,
-        "phone_leads": 10.42,
-        "walk_in_leads": 31.25,
-        "other_leads": 18.75
+        "web_leads": 41.67,
+        "phone_leads": 11.67,
+        "walk_in_leads": 28.33,
+        "other_leads": 18.33
       }
     },
     "campaign_efficiency_month": [
@@ -347,33 +347,33 @@
     "NSS": {
       "occupancy": {
         "units_total": 4059,
-        "units_occupied": 3532,
-        "occupancy_units_pct": 87.02,
+        "units_occupied": 3528,
+        "occupancy_units_pct": 86.92,
         "sqft_total": 531065,
-        "sqft_occupied": 485421,
-        "occupancy_sqft_pct": 91.41
+        "sqft_occupied": 484821,
+        "occupancy_sqft_pct": 91.29
       },
       "move_activity_mtd": {
-        "move_ins": 3,
-        "move_outs": 9,
+        "move_ins": 6,
+        "move_outs": 12,
         "net_move_ins": -6
       },
       "revenue_mtd": {
-        "revenue_authoritative": 124853.0
+        "revenue_authoritative": 136630.78
       },
       "revenue_yoy": {
-        "current": 98002.65,
-        "prior": 93117.27,
-        "delta": 4885.38,
-        "as_of": "2026-11-02",
-        "prior_as_of": "2025-11-02",
+        "current": 124853.0,
+        "prior": 119630.76,
+        "delta": 5222.24,
+        "as_of": "2026-11-03",
+        "prior_as_of": "2025-11-03",
         "facilities_included": 9,
         "facilities_excluded": []
       },
       "leads_mtd": {
-        "leads_total": 10,
+        "leads_total": 11,
         "leads_converted": 6,
-        "conversion_pct": 60.0
+        "conversion_pct": 54.55
       },
       "ad_spend_month": {
         "spend": 3694.95,
@@ -396,8 +396,8 @@
             "label": "31\u201360",
             "days_min": 31,
             "days_max": 60,
-            "units": 45,
-            "amount": 13816.06
+            "units": 46,
+            "amount": 14054.06
           },
           {
             "bucket": "90",
@@ -429,7 +429,7 @@
             "days_min": 181,
             "days_max": 360,
             "units": 3,
-            "amount": 1557.06
+            "amount": 1572.06
           },
           {
             "bucket": "gt_360",
@@ -440,27 +440,27 @@
             "amount": 0.0
           }
         ],
-        "gt30_units": 58,
-        "gt30_amount": 20778.62,
-        "beyond_90_units": 5,
-        "beyond_90_amount": 3552.46,
-        "delinquent_units_all": 385,
-        "delinquent_amount_all": 71614.29,
-        "rent_roll": 504500.23,
-        "occupied_units": 3532,
-        "delinquency_pct_dollars": 14.2,
-        "delinquency_pct_units": 10.9
+        "gt30_units": 59,
+        "gt30_amount": 21031.62,
+        "beyond_90_units": 6,
+        "beyond_90_amount": 3963.46,
+        "delinquent_units_all": 406,
+        "delinquent_amount_all": 74377.59,
+        "rent_roll": 503732.23,
+        "occupied_units": 3528,
+        "delinquency_pct_dollars": 14.77,
+        "delinquency_pct_units": 11.51
       },
       "protection": {
-        "insured_units": 2809,
-        "occupied_units": 3532,
-        "penetration_occ_pct": 79.53,
-        "collected_premiums_mtd": 7614.72,
+        "insured_units": 2804,
+        "occupied_units": 3528,
+        "penetration_occ_pct": 79.48,
+        "collected_premiums_mtd": 8376.72,
         "total_units": 4059,
-        "penetration_total_pct": 69.2,
-        "insurance_revenue_mtd": 10810.6,
-        "avg_premium_per_insured_unit": 2.71,
-        "coverage_in_force_est": 7022500,
+        "penetration_total_pct": 69.08,
+        "insurance_revenue_mtd": 11518.6,
+        "avg_premium_per_insured_unit": 2.99,
+        "coverage_in_force_est": 7010000,
         "base_tier": 2500,
         "split_mtd": {
           "storelocal": 0.0,
@@ -470,14 +470,14 @@
       },
       "leads_by_channel_mtd": {
         "web_leads": 1,
-        "phone_leads": 1,
+        "phone_leads": 2,
         "walk_in_leads": 6,
         "other_leads": 2,
         "channel_share_pct": {
-          "web_leads": 10.0,
-          "phone_leads": 10.0,
-          "walk_in_leads": 60.0,
-          "other_leads": 20.0
+          "web_leads": 9.09,
+          "phone_leads": 18.18,
+          "walk_in_leads": 54.55,
+          "other_leads": 18.18
         }
       },
       "campaign_efficiency_month": [
@@ -510,33 +510,33 @@
     "AFAM": {
       "occupancy": {
         "units_total": 12151,
-        "units_occupied": 8315,
-        "occupancy_units_pct": 68.43,
+        "units_occupied": 8319,
+        "occupancy_units_pct": 68.46,
         "sqft_total": 1639267,
-        "sqft_occupied": 1211572,
-        "occupancy_sqft_pct": 73.91
+        "sqft_occupied": 1212122,
+        "occupancy_sqft_pct": 73.94
       },
       "move_activity_mtd": {
-        "move_ins": 16,
-        "move_outs": 19,
-        "net_move_ins": -3
+        "move_ins": 27,
+        "move_outs": 25,
+        "net_move_ins": 2
       },
       "revenue_mtd": {
-        "revenue_authoritative": 204305.9
+        "revenue_authoritative": 236832.35
       },
       "revenue_yoy": {
-        "current": 147809.0,
-        "prior": 57058.5,
-        "delta": 90750.5,
-        "as_of": "2026-11-02",
-        "prior_as_of": "2025-11-02",
+        "current": 204305.9,
+        "prior": 211699.96,
+        "delta": -7394.06,
+        "as_of": "2026-11-03",
+        "prior_as_of": "2025-11-03",
         "facilities_included": 19,
         "facilities_excluded": []
       },
       "leads_mtd": {
-        "leads_total": 32,
-        "leads_converted": 26,
-        "conversion_pct": 81.25
+        "leads_total": 42,
+        "leads_converted": 33,
+        "conversion_pct": 78.57
       },
       "ad_spend_month": {
         "spend": 10429.71,
@@ -575,8 +575,8 @@
             "label": "31\u201360",
             "days_min": 31,
             "days_max": 60,
-            "units": 68,
-            "amount": 24933.8
+            "units": 70,
+            "amount": 26945.14
           },
           {
             "bucket": "90",
@@ -584,7 +584,7 @@
             "days_min": 61,
             "days_max": 90,
             "units": 9,
-            "amount": 3835.34
+            "amount": 3891.67
           },
           {
             "bucket": "120",
@@ -619,27 +619,27 @@
             "amount": 0.0
           }
         ],
-        "gt30_units": 77,
-        "gt30_amount": 28769.14,
+        "gt30_units": 79,
+        "gt30_amount": 30836.81,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 546,
-        "delinquent_amount_all": 109516.11,
-        "rent_roll": 1246349.15,
-        "occupied_units": 8315,
-        "delinquency_pct_dollars": 8.79,
-        "delinquency_pct_units": 6.57
+        "delinquent_units_all": 597,
+        "delinquent_amount_all": 117429.24,
+        "rent_roll": 1247067.15,
+        "occupied_units": 8319,
+        "delinquency_pct_dollars": 9.42,
+        "delinquency_pct_units": 7.18
       },
       "protection": {
-        "insured_units": 5914,
-        "occupied_units": 8315,
-        "penetration_occ_pct": 71.12,
-        "collected_premiums_mtd": 10283.2,
+        "insured_units": 5911,
+        "occupied_units": 8319,
+        "penetration_occ_pct": 71.05,
+        "collected_premiums_mtd": 12016.31,
         "total_units": 12151,
-        "penetration_total_pct": 48.67,
-        "insurance_revenue_mtd": 12562.0,
-        "avg_premium_per_insured_unit": 1.74,
-        "coverage_in_force_est": 14785000,
+        "penetration_total_pct": 48.65,
+        "insurance_revenue_mtd": 14524.0,
+        "avg_premium_per_insured_unit": 2.03,
+        "coverage_in_force_est": 14777500,
         "base_tier": 2500,
         "split_mtd": {
           "storelocal": 0.0,
@@ -648,15 +648,15 @@
         }
       },
       "leads_by_channel_mtd": {
-        "web_leads": 17,
-        "phone_leads": 4,
-        "walk_in_leads": 6,
-        "other_leads": 5,
+        "web_leads": 23,
+        "phone_leads": 5,
+        "walk_in_leads": 8,
+        "other_leads": 6,
         "channel_share_pct": {
-          "web_leads": 53.12,
-          "phone_leads": 12.5,
-          "walk_in_leads": 18.75,
-          "other_leads": 15.62
+          "web_leads": 54.76,
+          "phone_leads": 11.9,
+          "walk_in_leads": 19.05,
+          "other_leads": 14.29
         }
       },
       "campaign_efficiency_month": [
@@ -817,11 +817,11 @@
     "SL Reno": {
       "occupancy": {
         "units_total": 993,
-        "units_occupied": 788,
-        "occupancy_units_pct": 79.36,
+        "units_occupied": 789,
+        "occupancy_units_pct": 79.46,
         "sqft_total": 128735,
-        "sqft_occupied": 116388,
-        "occupancy_sqft_pct": 90.41
+        "sqft_occupied": 116488,
+        "occupancy_sqft_pct": 90.49
       },
       "move_activity_mtd": {
         "move_ins": 2,
@@ -829,21 +829,21 @@
         "net_move_ins": 0
       },
       "revenue_mtd": {
-        "revenue_authoritative": 143369.78
+        "revenue_authoritative": 146178.41
       },
       "revenue_yoy": {
-        "current": 138852.12,
-        "prior": 5764.82,
-        "delta": 133087.3,
-        "as_of": "2026-11-02",
-        "prior_as_of": "2025-11-02",
+        "current": 143369.78,
+        "prior": 119664.79,
+        "delta": 23704.99,
+        "as_of": "2026-11-03",
+        "prior_as_of": "2025-11-03",
         "facilities_included": 1,
         "facilities_excluded": []
       },
       "leads_mtd": {
-        "leads_total": 6,
-        "leads_converted": 2,
-        "conversion_pct": 33.33
+        "leads_total": 7,
+        "leads_converted": 3,
+        "conversion_pct": 42.86
       },
       "ad_spend_month": {
         "spend": 1337.82,
@@ -912,23 +912,23 @@
         "gt30_amount": 5654.77,
         "beyond_90_units": 1,
         "beyond_90_amount": 514.2,
-        "delinquent_units_all": 110,
-        "delinquent_amount_all": 24903.9,
-        "rent_roll": 165457.43,
-        "occupied_units": 788,
-        "delinquency_pct_dollars": 15.05,
-        "delinquency_pct_units": 13.96
+        "delinquent_units_all": 104,
+        "delinquent_amount_all": 23481.05,
+        "rent_roll": 165603.43,
+        "occupied_units": 789,
+        "delinquency_pct_dollars": 14.18,
+        "delinquency_pct_units": 13.18
       },
       "protection": {
-        "insured_units": 608,
-        "occupied_units": 788,
-        "penetration_occ_pct": 77.16,
-        "collected_premiums_mtd": 6191.4,
+        "insured_units": 607,
+        "occupied_units": 789,
+        "penetration_occ_pct": 76.93,
+        "collected_premiums_mtd": 6314.4,
         "total_units": 993,
-        "penetration_total_pct": 61.23,
+        "penetration_total_pct": 61.13,
         "insurance_revenue_mtd": 7752.88,
-        "avg_premium_per_insured_unit": 10.18,
-        "coverage_in_force_est": 1520000,
+        "avg_premium_per_insured_unit": 10.4,
+        "coverage_in_force_est": 1517500,
         "base_tier": 2500,
         "split_mtd": {
           "storelocal": 0.0,
@@ -940,12 +940,12 @@
         "web_leads": 1,
         "phone_leads": 0,
         "walk_in_leads": 3,
-        "other_leads": 2,
+        "other_leads": 3,
         "channel_share_pct": {
-          "web_leads": 16.67,
+          "web_leads": 14.29,
           "phone_leads": 0.0,
-          "walk_in_leads": 50.0,
-          "other_leads": 33.33
+          "walk_in_leads": 42.86,
+          "other_leads": 42.86
         }
       },
       "campaign_efficiency_month": [
@@ -966,16 +966,16 @@
       "facility_name": "Little Vineyard Self Storage (Deming)",
       "brand": "NSS",
       "units_total": 316,
-      "occupancy_sqft_pct": 85.85,
-      "occupancy_units_pct": 73.42,
+      "occupancy_sqft_pct": 85.78,
+      "occupancy_units_pct": 73.1,
       "rent_per_sqft": 0.49,
       "leads_mtd": 1,
       "conversion_pct": 100.0,
       "move_ins_mtd": 1,
       "move_outs_mtd": 2,
       "net_move_ins_mtd": -1,
-      "net_move_ins_ytd": 9.0,
-      "delinquency_pct": 12.62,
+      "net_move_ins_ytd": 8.0,
+      "delinquency_pct": 14.75,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1032,16 +1032,16 @@
         "gt30_amount": 360.0,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 27,
-        "delinquent_amount_all": 3797.1
+        "delinquent_units_all": 32,
+        "delinquent_amount_all": 4427.1
       },
       "protection": {
         "insured_units": 181,
-        "occupied_units": 232,
-        "penetration_occ_pct": 78.02,
-        "collected_premiums_mtd": 276.0
+        "occupied_units": 231,
+        "penetration_occ_pct": 78.35,
+        "collected_premiums_mtd": 324.0
       },
-      "revenue_net_mtd": 5100.5,
+      "revenue_net_mtd": 5609.5,
       "roas_standard": null
     },
     {
@@ -1051,14 +1051,14 @@
       "units_total": 636,
       "occupancy_sqft_pct": 88.73,
       "occupancy_units_pct": 83.65,
-      "rent_per_sqft": 1.84,
+      "rent_per_sqft": 1.83,
       "leads_mtd": 1,
       "conversion_pct": 0.0,
       "move_ins_mtd": 0,
-      "move_outs_mtd": 1,
-      "net_move_ins_mtd": -1,
+      "move_outs_mtd": 3,
+      "net_move_ins_mtd": -3,
       "net_move_ins_ytd": -3.0,
-      "delinquency_pct": 4.26,
+      "delinquency_pct": 4.53,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1100,7 +1100,7 @@
             "days_min": 181,
             "days_max": 360,
             "units": 1,
-            "amount": 1121.06
+            "amount": 1136.06
           },
           {
             "bucket": "gt_360",
@@ -1112,19 +1112,19 @@
           }
         ],
         "gt30_units": 2,
-        "gt30_amount": 1743.02,
+        "gt30_amount": 1758.02,
         "beyond_90_units": 1,
-        "beyond_90_amount": 1121.06,
-        "delinquent_units_all": 16,
-        "delinquent_amount_all": 4367.03
+        "beyond_90_amount": 1136.06,
+        "delinquent_units_all": 17,
+        "delinquent_amount_all": 4640.2
       },
       "protection": {
-        "insured_units": 374,
+        "insured_units": 372,
         "occupied_units": 532,
-        "penetration_occ_pct": 70.3,
-        "collected_premiums_mtd": 994.93
+        "penetration_occ_pct": 69.92,
+        "collected_premiums_mtd": 1090.93
       },
-      "revenue_net_mtd": 20648.15,
+      "revenue_net_mtd": 23316.39,
       "roas_standard": null
     },
     {
@@ -1141,7 +1141,7 @@
       "move_outs_mtd": 3,
       "net_move_ins_mtd": -2,
       "net_move_ins_ytd": 25.0,
-      "delinquency_pct": 15.16,
+      "delinquency_pct": 14.77,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1151,7 +1151,7 @@
             "days_min": 31,
             "days_max": 60,
             "units": 5,
-            "amount": 1827.5
+            "amount": 1829.5
           },
           {
             "bucket": "90",
@@ -1195,19 +1195,19 @@
           }
         ],
         "gt30_units": 6,
-        "gt30_amount": 2840.9,
+        "gt30_amount": 2842.9,
         "beyond_90_units": 1,
         "beyond_90_amount": 1013.4,
-        "delinquent_units_all": 38,
-        "delinquent_amount_all": 8564.85
+        "delinquent_units_all": 37,
+        "delinquent_amount_all": 8345.35
       },
       "protection": {
         "insured_units": 298,
         "occupied_units": 360,
         "penetration_occ_pct": 82.78,
-        "collected_premiums_mtd": 789.0
+        "collected_premiums_mtd": 972.0
       },
-      "revenue_net_mtd": 14095.88,
+      "revenue_net_mtd": 16372.38,
       "roas_standard": null
     },
     {
@@ -1224,7 +1224,7 @@
       "move_outs_mtd": 0,
       "net_move_ins_mtd": 1,
       "net_move_ins_ytd": -7.0,
-      "delinquency_pct": 19.24,
+      "delinquency_pct": 19.83,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1234,7 +1234,7 @@
             "days_min": 31,
             "days_max": 60,
             "units": 13,
-            "amount": 3574.4
+            "amount": 3672.4
           },
           {
             "bucket": "90",
@@ -1278,19 +1278,19 @@
           }
         ],
         "gt30_units": 13,
-        "gt30_amount": 3574.4,
+        "gt30_amount": 3672.4,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 74,
-        "delinquent_amount_all": 12930.4
+        "delinquent_units_all": 77,
+        "delinquent_amount_all": 13330.4
       },
       "protection": {
-        "insured_units": 370,
+        "insured_units": 368,
         "occupied_units": 469,
-        "penetration_occ_pct": 78.89,
-        "collected_premiums_mtd": 1722.29
+        "penetration_occ_pct": 78.46,
+        "collected_premiums_mtd": 1818.29
       },
-      "revenue_net_mtd": 30050.72,
+      "revenue_net_mtd": 31297.39,
       "roas_standard": 23.23
     },
     {
@@ -1307,7 +1307,7 @@
       "move_outs_mtd": 0,
       "net_move_ins_mtd": 0,
       "net_move_ins_ytd": 23.0,
-      "delinquency_pct": 32.81,
+      "delinquency_pct": 33.24,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1316,8 +1316,8 @@
             "label": "31\u201360",
             "days_min": 31,
             "days_max": 60,
-            "units": 7,
-            "amount": 1657.0
+            "units": 8,
+            "amount": 1750.0
           },
           {
             "bucket": "90",
@@ -1360,20 +1360,20 @@
             "amount": 0.0
           }
         ],
-        "gt30_units": 13,
-        "gt30_amount": 4629.9,
-        "beyond_90_units": 3,
-        "beyond_90_amount": 1418.0,
-        "delinquent_units_all": 65,
-        "delinquent_amount_all": 11528.2
+        "gt30_units": 14,
+        "gt30_amount": 4722.9,
+        "beyond_90_units": 4,
+        "beyond_90_amount": 1814.0,
+        "delinquent_units_all": 66,
+        "delinquent_amount_all": 11679.2
       },
       "protection": {
         "insured_units": 253,
         "occupied_units": 312,
         "penetration_occ_pct": 81.09,
-        "collected_premiums_mtd": 838.9
+        "collected_premiums_mtd": 931.9
       },
-      "revenue_net_mtd": 11412.9,
+      "revenue_net_mtd": 12894.96,
       "roas_standard": null
     },
     {
@@ -1386,11 +1386,11 @@
       "rent_per_sqft": 1.23,
       "leads_mtd": 1,
       "conversion_pct": 100.0,
-      "move_ins_mtd": 0,
+      "move_ins_mtd": 1,
       "move_outs_mtd": 0,
-      "net_move_ins_mtd": 0,
+      "net_move_ins_mtd": 1,
       "net_move_ins_ytd": 1.0,
-      "delinquency_pct": 29.62,
+      "delinquency_pct": 31.26,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1400,7 +1400,7 @@
             "days_min": 31,
             "days_max": 60,
             "units": 14,
-            "amount": 4287.2
+            "amount": 4332.2
           },
           {
             "bucket": "90",
@@ -1444,19 +1444,19 @@
           }
         ],
         "gt30_units": 17,
-        "gt30_amount": 5441.2,
+        "gt30_amount": 5486.2,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 84,
-        "delinquent_amount_all": 15965.5
+        "delinquent_units_all": 89,
+        "delinquent_amount_all": 16849.5
       },
       "protection": {
         "insured_units": 379,
         "occupied_units": 403,
         "penetration_occ_pct": 94.04,
-        "collected_premiums_mtd": 1443.0
+        "collected_premiums_mtd": 1503.0
       },
-      "revenue_net_mtd": 19481.0,
+      "revenue_net_mtd": 20054.9,
       "roas_standard": null
     },
     {
@@ -1473,7 +1473,7 @@
       "move_outs_mtd": 3,
       "net_move_ins_mtd": -3,
       "net_move_ins_ytd": 52.0,
-      "delinquency_pct": 16.52,
+      "delinquency_pct": 16.91,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1530,16 +1530,16 @@
         "gt30_amount": 2189.2,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 55,
-        "delinquent_amount_all": 10580.35
+        "delinquent_units_all": 57,
+        "delinquent_amount_all": 10828.35
       },
       "protection": {
         "insured_units": 434,
         "occupied_units": 470,
         "penetration_occ_pct": 92.34,
-        "collected_premiums_mtd": 629.6
+        "collected_premiums_mtd": 665.6
       },
-      "revenue_net_mtd": 9995.0,
+      "revenue_net_mtd": 10513.0,
       "roas_standard": null
     },
     {
@@ -1552,11 +1552,11 @@
       "rent_per_sqft": 0.92,
       "leads_mtd": 3,
       "conversion_pct": 33.33,
-      "move_ins_mtd": 0,
+      "move_ins_mtd": 1,
       "move_outs_mtd": 0,
-      "net_move_ins_mtd": 0,
+      "net_move_ins_mtd": 1,
       "net_move_ins_ytd": 5.0,
-      "delinquency_pct": 6.43,
+      "delinquency_pct": 6.86,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1613,16 +1613,16 @@
         "gt30_amount": 0.0,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 14,
-        "delinquent_amount_all": 2496.18
+        "delinquent_units_all": 16,
+        "delinquent_amount_all": 2662.14
       },
       "protection": {
         "insured_units": 182,
         "occupied_units": 268,
         "penetration_occ_pct": 67.91,
-        "collected_premiums_mtd": 336.0
+        "collected_premiums_mtd": 396.0
       },
-      "revenue_net_mtd": 6894.26,
+      "revenue_net_mtd": 8059.04,
       "roas_standard": 1.58
     },
     {
@@ -1630,16 +1630,16 @@
       "facility_name": "National Self Storage - SIL1 (Continental Reserve)",
       "brand": "NSS",
       "units_total": 588,
-      "occupancy_sqft_pct": 90.61,
-      "occupancy_units_pct": 82.65,
+      "occupancy_sqft_pct": 89.68,
+      "occupancy_units_pct": 82.14,
       "rent_per_sqft": 1.05,
-      "leads_mtd": 0,
-      "conversion_pct": 0.0,
-      "move_ins_mtd": 0,
-      "move_outs_mtd": 0,
+      "leads_mtd": 1,
+      "conversion_pct": 100.0,
+      "move_ins_mtd": 1,
+      "move_outs_mtd": 1,
       "net_move_ins_mtd": 0,
-      "net_move_ins_ytd": 122.0,
-      "delinquency_pct": 2.46,
+      "net_move_ins_ytd": 119.0,
+      "delinquency_pct": 2.9,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1696,16 +1696,16 @@
         "gt30_amount": 0.0,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 12,
-        "delinquent_amount_all": 1384.68
+        "delinquent_units_all": 15,
+        "delinquent_amount_all": 1615.35
       },
       "protection": {
-        "insured_units": 338,
-        "occupied_units": 486,
-        "penetration_occ_pct": 69.55,
-        "collected_premiums_mtd": 585.0
+        "insured_units": 337,
+        "occupied_units": 483,
+        "penetration_occ_pct": 69.77,
+        "collected_premiums_mtd": 675.0
       },
-      "revenue_net_mtd": 7174.59,
+      "revenue_net_mtd": 8513.22,
       "roas_standard": 6.78
     },
     {
@@ -1713,16 +1713,16 @@
       "facility_name": "Storelocal Reno",
       "brand": "SL Reno",
       "units_total": 993,
-      "occupancy_sqft_pct": 90.41,
-      "occupancy_units_pct": 79.36,
+      "occupancy_sqft_pct": 90.49,
+      "occupancy_units_pct": 79.46,
       "rent_per_sqft": 1.42,
-      "leads_mtd": 6,
-      "conversion_pct": 33.33,
+      "leads_mtd": 7,
+      "conversion_pct": 42.86,
       "move_ins_mtd": 2,
       "move_outs_mtd": 2,
       "net_move_ins_mtd": 0,
-      "net_move_ins_ytd": 36.0,
-      "delinquency_pct": 15.05,
+      "net_move_ins_ytd": 37.0,
+      "delinquency_pct": 14.18,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1779,16 +1779,16 @@
         "gt30_amount": 5654.77,
         "beyond_90_units": 1,
         "beyond_90_amount": 514.2,
-        "delinquent_units_all": 110,
-        "delinquent_amount_all": 24903.9
+        "delinquent_units_all": 104,
+        "delinquent_amount_all": 23481.05
       },
       "protection": {
-        "insured_units": 608,
-        "occupied_units": 788,
-        "penetration_occ_pct": 77.16,
-        "collected_premiums_mtd": 6191.4
+        "insured_units": 607,
+        "occupied_units": 789,
+        "penetration_occ_pct": 76.93,
+        "collected_premiums_mtd": 6314.4
       },
-      "revenue_net_mtd": 143369.78,
+      "revenue_net_mtd": 146178.41,
       "roas_standard": 24.02
     },
     {
@@ -1796,16 +1796,16 @@
       "facility_name": "A Family Storage - I-10",
       "brand": "AFAM",
       "units_total": 322,
-      "occupancy_sqft_pct": 92.71,
+      "occupancy_sqft_pct": 93.09,
       "occupancy_units_pct": 91.93,
       "rent_per_sqft": 0.91,
-      "leads_mtd": 2,
-      "conversion_pct": 50.0,
+      "leads_mtd": 3,
+      "conversion_pct": 66.67,
       "move_ins_mtd": 1,
       "move_outs_mtd": 3,
       "net_move_ins_mtd": -2,
       "net_move_ins_ytd": 48.0,
-      "delinquency_pct": 5.26,
+      "delinquency_pct": 6.68,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1815,7 +1815,7 @@
             "days_min": 31,
             "days_max": 60,
             "units": 1,
-            "amount": 87.3
+            "amount": 224.6
           },
           {
             "bucket": "90",
@@ -1859,19 +1859,19 @@
           }
         ],
         "gt30_units": 1,
-        "gt30_amount": 87.3,
+        "gt30_amount": 224.6,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 14,
-        "delinquent_amount_all": 2069.3
+        "delinquent_units_all": 17,
+        "delinquent_amount_all": 2639.59
       },
       "protection": {
         "insured_units": 219,
         "occupied_units": 296,
         "penetration_occ_pct": 73.99,
-        "collected_premiums_mtd": 402.0
+        "collected_premiums_mtd": 483.0
       },
-      "revenue_net_mtd": 6741.78,
+      "revenue_net_mtd": 8328.87,
       "roas_standard": 30.49
     },
     {
@@ -1884,11 +1884,11 @@
       "rent_per_sqft": 0.88,
       "leads_mtd": 2,
       "conversion_pct": 100.0,
-      "move_ins_mtd": 1,
+      "move_ins_mtd": 2,
       "move_outs_mtd": 1,
-      "net_move_ins_mtd": 0,
+      "net_move_ins_mtd": 1,
       "net_move_ins_ytd": 34.0,
-      "delinquency_pct": 12.05,
+      "delinquency_pct": 14.12,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -1898,7 +1898,7 @@
             "days_min": 31,
             "days_max": 60,
             "units": 4,
-            "amount": 1064.21
+            "amount": 1284.52
           },
           {
             "bucket": "90",
@@ -1942,19 +1942,19 @@
           }
         ],
         "gt30_units": 4,
-        "gt30_amount": 1064.21,
+        "gt30_amount": 1284.52,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 34,
-        "delinquent_amount_all": 4718.74
+        "delinquent_units_all": 39,
+        "delinquent_amount_all": 5527.87
       },
       "protection": {
         "insured_units": 252,
         "occupied_units": 295,
         "penetration_occ_pct": 85.42,
-        "collected_premiums_mtd": 444.0
+        "collected_premiums_mtd": 516.0
       },
-      "revenue_net_mtd": 6108.31,
+      "revenue_net_mtd": 7542.27,
       "roas_standard": 30.3
     },
     {
@@ -1962,16 +1962,16 @@
       "facility_name": "A Family Storage - Speedway (305)",
       "brand": "AFAM",
       "units_total": 894,
-      "occupancy_sqft_pct": 78.36,
-      "occupancy_units_pct": 72.93,
+      "occupancy_sqft_pct": 78.26,
+      "occupancy_units_pct": 72.82,
       "rent_per_sqft": 1.06,
       "leads_mtd": 0,
       "conversion_pct": 0.0,
       "move_ins_mtd": 0,
       "move_outs_mtd": 4,
       "net_move_ins_mtd": -4,
-      "net_move_ins_ytd": -11.0,
-      "delinquency_pct": 10.04,
+      "net_move_ins_ytd": -12.0,
+      "delinquency_pct": 11.78,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2028,16 +2028,16 @@
         "gt30_amount": 3951.69,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 45,
-        "delinquent_amount_all": 9045.03
+        "delinquent_units_all": 54,
+        "delinquent_amount_all": 10599.9
       },
       "protection": {
         "insured_units": 453,
-        "occupied_units": 652,
-        "penetration_occ_pct": 69.48,
-        "collected_premiums_mtd": 741.0
+        "occupied_units": 651,
+        "penetration_occ_pct": 69.59,
+        "collected_premiums_mtd": 909.0
       },
-      "revenue_net_mtd": 14560.25,
+      "revenue_net_mtd": 17045.66,
       "roas_standard": 19.31
     },
     {
@@ -2050,11 +2050,11 @@
       "rent_per_sqft": 1.07,
       "leads_mtd": 1,
       "conversion_pct": 100.0,
-      "move_ins_mtd": 0,
+      "move_ins_mtd": 1,
       "move_outs_mtd": 0,
-      "net_move_ins_mtd": 0,
+      "net_move_ins_mtd": 1,
       "net_move_ins_ytd": -5.0,
-      "delinquency_pct": 9.06,
+      "delinquency_pct": 8.72,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2112,15 +2112,15 @@
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
         "delinquent_units_all": 23,
-        "delinquent_amount_all": 4331.68
+        "delinquent_amount_all": 4167.7
       },
       "protection": {
-        "insured_units": 243,
+        "insured_units": 242,
         "occupied_units": 353,
-        "penetration_occ_pct": 68.84,
-        "collected_premiums_mtd": 481.2
+        "penetration_occ_pct": 68.56,
+        "collected_premiums_mtd": 577.2
       },
-      "revenue_net_mtd": 9742.25,
+      "revenue_net_mtd": 11397.37,
       "roas_standard": 7.28
     },
     {
@@ -2128,16 +2128,16 @@
       "facility_name": "A Family Storage - New Magee",
       "brand": "AFAM",
       "units_total": 551,
-      "occupancy_sqft_pct": 82.58,
-      "occupancy_units_pct": 82.21,
-      "rent_per_sqft": 1.11,
+      "occupancy_sqft_pct": 82.71,
+      "occupancy_units_pct": 82.4,
+      "rent_per_sqft": 1.1,
       "leads_mtd": 1,
       "conversion_pct": 0.0,
       "move_ins_mtd": 0,
       "move_outs_mtd": 0,
       "net_move_ins_mtd": 0,
-      "net_move_ins_ytd": 32.0,
-      "delinquency_pct": 3.73,
+      "net_move_ins_ytd": 33.0,
+      "delinquency_pct": 4.0,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2194,16 +2194,16 @@
         "gt30_amount": 496.1,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 14,
-        "delinquent_amount_all": 2619.47
+        "delinquent_units_all": 15,
+        "delinquent_amount_all": 2813.36
       },
       "protection": {
-        "insured_units": 314,
-        "occupied_units": 453,
-        "penetration_occ_pct": 69.32,
-        "collected_premiums_mtd": 504.0
+        "insured_units": 315,
+        "occupied_units": 454,
+        "penetration_occ_pct": 69.38,
+        "collected_premiums_mtd": 636.0
       },
-      "revenue_net_mtd": 10189.17,
+      "revenue_net_mtd": 12014.5,
       "roas_standard": 35.69
     },
     {
@@ -2214,13 +2214,13 @@
       "occupancy_sqft_pct": 82.84,
       "occupancy_units_pct": 82.19,
       "rent_per_sqft": 1.06,
-      "leads_mtd": 3,
-      "conversion_pct": 66.67,
-      "move_ins_mtd": 1,
+      "leads_mtd": 4,
+      "conversion_pct": 50.0,
+      "move_ins_mtd": 2,
       "move_outs_mtd": 0,
-      "net_move_ins_mtd": 1,
+      "net_move_ins_mtd": 2,
       "net_move_ins_ytd": -63.0,
-      "delinquency_pct": 10.51,
+      "delinquency_pct": 10.65,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2230,7 +2230,7 @@
             "days_min": 31,
             "days_max": 60,
             "units": 6,
-            "amount": 2185.37
+            "amount": 2409.8
           },
           {
             "bucket": "90",
@@ -2274,19 +2274,19 @@
           }
         ],
         "gt30_units": 6,
-        "gt30_amount": 2185.37,
+        "gt30_amount": 2409.8,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
         "delinquent_units_all": 45,
-        "delinquent_amount_all": 9615.77
+        "delinquent_amount_all": 9749.92
       },
       "protection": {
         "insured_units": 389,
         "occupied_units": 540,
         "penetration_occ_pct": 72.04,
-        "collected_premiums_mtd": 552.0
+        "collected_premiums_mtd": 684.0
       },
-      "revenue_net_mtd": 11759.23,
+      "revenue_net_mtd": 13751.26,
       "roas_standard": 17.77
     },
     {
@@ -2300,10 +2300,10 @@
       "leads_mtd": 1,
       "conversion_pct": 100.0,
       "move_ins_mtd": 1,
-      "move_outs_mtd": 0,
-      "net_move_ins_mtd": 1,
+      "move_outs_mtd": 1,
+      "net_move_ins_mtd": 0,
       "net_move_ins_ytd": 3.0,
-      "delinquency_pct": 6.45,
+      "delinquency_pct": 7.61,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2312,8 +2312,8 @@
             "label": "31\u201360",
             "days_min": 31,
             "days_max": 60,
-            "units": 6,
-            "amount": 1821.95
+            "units": 7,
+            "amount": 2536.32
           },
           {
             "bucket": "90",
@@ -2356,20 +2356,20 @@
             "amount": 0.0
           }
         ],
-        "gt30_units": 6,
-        "gt30_amount": 1821.95,
+        "gt30_units": 7,
+        "gt30_amount": 2536.32,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 20,
-        "delinquent_amount_all": 4450.34
+        "delinquent_units_all": 21,
+        "delinquent_amount_all": 5247.18
       },
       "protection": {
-        "insured_units": 301,
+        "insured_units": 299,
         "occupied_units": 411,
-        "penetration_occ_pct": 73.24,
-        "collected_premiums_mtd": 519.0
+        "penetration_occ_pct": 72.75,
+        "collected_premiums_mtd": 567.0
       },
-      "revenue_net_mtd": 11062.43,
+      "revenue_net_mtd": 12094.33,
       "roas_standard": 39.65
     },
     {
@@ -2382,11 +2382,11 @@
       "rent_per_sqft": 1.1,
       "leads_mtd": 3,
       "conversion_pct": 66.67,
-      "move_ins_mtd": 1,
-      "move_outs_mtd": 0,
-      "net_move_ins_mtd": 1,
+      "move_ins_mtd": 2,
+      "move_outs_mtd": 2,
+      "net_move_ins_mtd": 0,
       "net_move_ins_ytd": 0.0,
-      "delinquency_pct": 9.63,
+      "delinquency_pct": 9.9,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2443,16 +2443,16 @@
         "gt30_amount": 1527.06,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 29,
-        "delinquent_amount_all": 5534.88
+        "delinquent_units_all": 31,
+        "delinquent_amount_all": 5692.78
       },
       "protection": {
-        "insured_units": 276,
+        "insured_units": 275,
         "occupied_units": 343,
-        "penetration_occ_pct": 80.47,
-        "collected_premiums_mtd": 495.0
+        "penetration_occ_pct": 80.17,
+        "collected_premiums_mtd": 555.0
       },
-      "revenue_net_mtd": 8839.89,
+      "revenue_net_mtd": 10153.4,
       "roas_standard": 25.18
     },
     {
@@ -2461,15 +2461,15 @@
       "brand": "AFAM",
       "units_total": 480,
       "occupancy_sqft_pct": 57.82,
-      "occupancy_units_pct": 39.58,
+      "occupancy_units_pct": 39.79,
       "rent_per_sqft": 1.01,
-      "leads_mtd": 2,
-      "conversion_pct": 150.0,
-      "move_ins_mtd": 2,
+      "leads_mtd": 3,
+      "conversion_pct": 133.33,
+      "move_ins_mtd": 3,
       "move_outs_mtd": 2,
-      "net_move_ins_mtd": 0,
-      "net_move_ins_ytd": 14.0,
-      "delinquency_pct": 10.55,
+      "net_move_ins_mtd": 1,
+      "net_move_ins_ytd": 15.0,
+      "delinquency_pct": 10.72,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2526,16 +2526,16 @@
         "gt30_amount": 1038.0,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 13,
-        "delinquent_amount_all": 3161.32
+        "delinquent_units_all": 14,
+        "delinquent_amount_all": 3240.72
       },
       "protection": {
         "insured_units": 105,
-        "occupied_units": 190,
-        "penetration_occ_pct": 55.26,
-        "collected_premiums_mtd": 180.0
+        "occupied_units": 191,
+        "penetration_occ_pct": 54.97,
+        "collected_premiums_mtd": 192.0
       },
-      "revenue_net_mtd": 4962.14,
+      "revenue_net_mtd": 5169.21,
       "roas_standard": 112.5
     },
     {
@@ -2552,7 +2552,7 @@
       "move_outs_mtd": 2,
       "net_move_ins_mtd": -2,
       "net_move_ins_ytd": 17.0,
-      "delinquency_pct": 18.2,
+      "delinquency_pct": 18.86,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2570,7 +2570,7 @@
             "days_min": 61,
             "days_max": 90,
             "units": 4,
-            "amount": 1171.65
+            "amount": 1227.98
           },
           {
             "bucket": "120",
@@ -2606,19 +2606,19 @@
           }
         ],
         "gt30_units": 19,
-        "gt30_amount": 6686.69,
+        "gt30_amount": 6743.02,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 58,
-        "delinquent_amount_all": 13726.28
+        "delinquent_units_all": 61,
+        "delinquent_amount_all": 14218.54
       },
       "protection": {
         "insured_units": 440,
         "occupied_units": 531,
         "penetration_occ_pct": 82.86,
-        "collected_premiums_mtd": 876.0
+        "collected_premiums_mtd": 1034.4
       },
-      "revenue_net_mtd": 14690.53,
+      "revenue_net_mtd": 17247.97,
       "roas_standard": 38.62
     },
     {
@@ -2631,11 +2631,11 @@
       "rent_per_sqft": 1.19,
       "leads_mtd": 2,
       "conversion_pct": 50.0,
-      "move_ins_mtd": 1,
+      "move_ins_mtd": 2,
       "move_outs_mtd": 1,
-      "net_move_ins_mtd": 0,
+      "net_move_ins_mtd": 1,
       "net_move_ins_ytd": -21.0,
-      "delinquency_pct": 3.93,
+      "delinquency_pct": 4.45,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2692,16 +2692,16 @@
         "gt30_amount": 191.66,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 14,
-        "delinquent_amount_all": 2433.33
+        "delinquent_units_all": 17,
+        "delinquent_amount_all": 2759.78
       },
       "protection": {
         "insured_units": 291,
         "occupied_units": 412,
         "penetration_occ_pct": 70.63,
-        "collected_premiums_mtd": 588.0
+        "collected_premiums_mtd": 660.0
       },
-      "revenue_net_mtd": 11618.19,
+      "revenue_net_mtd": 12716.31,
       "roas_standard": 39.75
     },
     {
@@ -2712,13 +2712,13 @@
       "occupancy_sqft_pct": 73.76,
       "occupancy_units_pct": 71.7,
       "rent_per_sqft": 1.05,
-      "leads_mtd": 1,
-      "conversion_pct": 100.0,
-      "move_ins_mtd": 0,
-      "move_outs_mtd": 0,
+      "leads_mtd": 4,
+      "conversion_pct": 25.0,
+      "move_ins_mtd": 1,
+      "move_outs_mtd": 1,
       "net_move_ins_mtd": 0,
       "net_move_ins_ytd": -12.0,
-      "delinquency_pct": 15.63,
+      "delinquency_pct": 17.63,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2728,7 +2728,7 @@
             "days_min": 31,
             "days_max": 60,
             "units": 7,
-            "amount": 2951.43
+            "amount": 3240.63
           },
           {
             "bucket": "90",
@@ -2772,19 +2772,19 @@
           }
         ],
         "gt30_units": 11,
-        "gt30_amount": 4946.67,
+        "gt30_amount": 5235.87,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 43,
-        "delinquent_amount_all": 10069.58
+        "delinquent_units_all": 49,
+        "delinquent_amount_all": 11356.63
       },
       "protection": {
         "insured_units": 360,
         "occupied_units": 456,
         "penetration_occ_pct": 78.95,
-        "collected_premiums_mtd": 666.0
+        "collected_premiums_mtd": 750.0
       },
-      "revenue_net_mtd": 10387.67,
+      "revenue_net_mtd": 11901.2,
       "roas_standard": 20.28
     },
     {
@@ -2792,16 +2792,16 @@
       "facility_name": "A Family Storage - Rita Ranch",
       "brand": "AFAM",
       "units_total": 1106,
-      "occupancy_sqft_pct": 59.87,
-      "occupancy_units_pct": 55.33,
+      "occupancy_sqft_pct": 59.92,
+      "occupancy_units_pct": 55.42,
       "rent_per_sqft": 1.03,
-      "leads_mtd": 0,
-      "conversion_pct": 0.0,
+      "leads_mtd": 1,
+      "conversion_pct": 300.0,
       "move_ins_mtd": 2,
       "move_outs_mtd": 1,
       "net_move_ins_mtd": 1,
-      "net_move_ins_ytd": -21.0,
-      "delinquency_pct": 7.34,
+      "net_move_ins_ytd": -20.0,
+      "delinquency_pct": 7.37,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2859,15 +2859,15 @@
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
         "delinquent_units_all": 30,
-        "delinquent_amount_all": 7173.0
+        "delinquent_amount_all": 7203.0
       },
       "protection": {
         "insured_units": 365,
-        "occupied_units": 612,
-        "penetration_occ_pct": 59.64,
-        "collected_premiums_mtd": 726.0
+        "occupied_units": 613,
+        "penetration_occ_pct": 59.54,
+        "collected_premiums_mtd": 801.0
       },
-      "revenue_net_mtd": 18865.18,
+      "revenue_net_mtd": 20715.61,
       "roas_standard": 31.28
     },
     {
@@ -2884,7 +2884,7 @@
       "move_outs_mtd": 1,
       "net_move_ins_mtd": -1,
       "net_move_ins_ytd": 2.0,
-      "delinquency_pct": 3.07,
+      "delinquency_pct": 3.29,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -2941,16 +2941,16 @@
         "gt30_amount": 0.0,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 12,
-        "delinquent_amount_all": 1937.67
+        "delinquent_units_all": 13,
+        "delinquent_amount_all": 2075.82
       },
       "protection": {
         "insured_units": 231,
         "occupied_units": 396,
         "penetration_occ_pct": 58.33,
-        "collected_premiums_mtd": 276.0
+        "collected_premiums_mtd": 336.0
       },
-      "revenue_net_mtd": 7978.16,
+      "revenue_net_mtd": 9828.47,
       "roas_standard": 14.67
     },
     {
@@ -2959,15 +2959,15 @@
       "brand": "AFAM",
       "units_total": 675,
       "occupancy_sqft_pct": 83.12,
-      "occupancy_units_pct": 77.93,
-      "rent_per_sqft": 0.96,
+      "occupancy_units_pct": 78.07,
+      "rent_per_sqft": 0.97,
       "leads_mtd": 3,
-      "conversion_pct": 66.67,
+      "conversion_pct": 100.0,
       "move_ins_mtd": 2,
-      "move_outs_mtd": 1,
-      "net_move_ins_mtd": 1,
-      "net_move_ins_ytd": 22.0,
-      "delinquency_pct": 10.69,
+      "move_outs_mtd": 2,
+      "net_move_ins_mtd": 0,
+      "net_move_ins_ytd": 23.0,
+      "delinquency_pct": 11.83,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -3024,16 +3024,16 @@
         "gt30_amount": 438.04,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 48,
-        "delinquent_amount_all": 6707.22
+        "delinquent_units_all": 54,
+        "delinquent_amount_all": 7426.57
       },
       "protection": {
-        "insured_units": 437,
-        "occupied_units": 526,
-        "penetration_occ_pct": 83.08,
-        "collected_premiums_mtd": 711.0
+        "insured_units": 436,
+        "occupied_units": 527,
+        "penetration_occ_pct": 82.73,
+        "collected_premiums_mtd": 855.0
       },
-      "revenue_net_mtd": 9676.15,
+      "revenue_net_mtd": 12133.49,
       "roas_standard": 19.5
     },
     {
@@ -3041,16 +3041,16 @@
       "facility_name": "A Family Storage - Swan",
       "brand": "AFAM",
       "units_total": 372,
-      "occupancy_sqft_pct": 77.15,
-      "occupancy_units_pct": 77.69,
+      "occupancy_sqft_pct": 76.96,
+      "occupancy_units_pct": 77.42,
       "rent_per_sqft": 1.0,
-      "leads_mtd": 1,
-      "conversion_pct": 200.0,
+      "leads_mtd": 2,
+      "conversion_pct": 150.0,
       "move_ins_mtd": 2,
       "move_outs_mtd": 0,
       "net_move_ins_mtd": 2,
-      "net_move_ins_ytd": 19.0,
-      "delinquency_pct": 7.78,
+      "net_move_ins_ytd": 18.0,
+      "delinquency_pct": 8.44,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -3107,16 +3107,16 @@
         "gt30_amount": 564.78,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 16,
-        "delinquent_amount_all": 3187.46
+        "delinquent_units_all": 18,
+        "delinquent_amount_all": 3451.02
       },
       "protection": {
-        "insured_units": 222,
-        "occupied_units": 289,
-        "penetration_occ_pct": 76.82,
-        "collected_premiums_mtd": 336.0
+        "insured_units": 223,
+        "occupied_units": 288,
+        "penetration_occ_pct": 77.43,
+        "collected_premiums_mtd": 360.0
       },
-      "revenue_net_mtd": 7704.96,
+      "revenue_net_mtd": 8469.78,
       "roas_standard": 31.19
     },
     {
@@ -3124,16 +3124,16 @@
       "facility_name": "A Family Storage - Broadway",
       "brand": "AFAM",
       "units_total": 689,
-      "occupancy_sqft_pct": 79.51,
-      "occupancy_units_pct": 76.05,
+      "occupancy_sqft_pct": 79.7,
+      "occupancy_units_pct": 76.2,
       "rent_per_sqft": 0.96,
-      "leads_mtd": 5,
-      "conversion_pct": 60.0,
-      "move_ins_mtd": 1,
+      "leads_mtd": 6,
+      "conversion_pct": 66.67,
+      "move_ins_mtd": 3,
       "move_outs_mtd": 2,
-      "net_move_ins_mtd": -1,
-      "net_move_ins_ytd": -5.0,
-      "delinquency_pct": 6.64,
+      "net_move_ins_mtd": 1,
+      "net_move_ins_ytd": -4.0,
+      "delinquency_pct": 7.41,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -3190,16 +3190,16 @@
         "gt30_amount": 1191.43,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 27,
-        "delinquent_amount_all": 5444.59
+        "delinquent_units_all": 32,
+        "delinquent_amount_all": 6073.09
       },
       "protection": {
-        "insured_units": 395,
-        "occupied_units": 524,
-        "penetration_occ_pct": 75.38,
-        "collected_premiums_mtd": 732.0
+        "insured_units": 396,
+        "occupied_units": 525,
+        "penetration_occ_pct": 75.43,
+        "collected_premiums_mtd": 816.0
       },
-      "revenue_net_mtd": 14174.62,
+      "revenue_net_mtd": 15616.09,
       "roas_standard": 42.95
     },
     {
@@ -3207,16 +3207,16 @@
       "facility_name": "A Family Storage - Valencia",
       "brand": "AFAM",
       "units_total": 1314,
-      "occupancy_sqft_pct": 51.61,
-      "occupancy_units_pct": 45.28,
+      "occupancy_sqft_pct": 51.73,
+      "occupancy_units_pct": 45.36,
       "rent_per_sqft": 1.1,
-      "leads_mtd": 3,
-      "conversion_pct": 66.67,
-      "move_ins_mtd": 0,
-      "move_outs_mtd": 0,
-      "net_move_ins_mtd": 0,
-      "net_move_ins_ytd": -19.0,
-      "delinquency_pct": 8.09,
+      "leads_mtd": 4,
+      "conversion_pct": 75.0,
+      "move_ins_mtd": 2,
+      "move_outs_mtd": 1,
+      "net_move_ins_mtd": 1,
+      "net_move_ins_ytd": -18.0,
+      "delinquency_pct": 7.06,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -3273,16 +3273,16 @@
         "gt30_amount": 332.88,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 32,
-        "delinquent_amount_all": 7303.18
+        "delinquent_units_all": 31,
+        "delinquent_amount_all": 6383.52
       },
       "protection": {
         "insured_units": 338,
-        "occupied_units": 595,
-        "penetration_occ_pct": 56.81,
-        "collected_premiums_mtd": 550.0
+        "occupied_units": 596,
+        "penetration_occ_pct": 56.71,
+        "collected_premiums_mtd": 682.0
       },
-      "revenue_net_mtd": 13303.96,
+      "revenue_net_mtd": 16394.27,
       "roas_standard": 9.67
     },
     {
@@ -3299,7 +3299,7 @@
       "move_outs_mtd": 1,
       "net_move_ins_mtd": 0,
       "net_move_ins_ytd": -20.0,
-      "delinquency_pct": 8.15,
+      "delinquency_pct": 9.26,
       "delinquency_aging": {
         "basis": "delinquent_leases",
         "buckets": [
@@ -3308,8 +3308,8 @@
             "label": "31\u201360",
             "days_min": 31,
             "days_max": 60,
-            "units": 2,
-            "amount": 608.57
+            "units": 3,
+            "amount": 1034.3
           },
           {
             "bucket": "90",
@@ -3352,29 +3352,29 @@
             "amount": 0.0
           }
         ],
-        "gt30_units": 2,
-        "gt30_amount": 608.57,
+        "gt30_units": 3,
+        "gt30_amount": 1034.3,
         "beyond_90_units": 0,
         "beyond_90_amount": 0.0,
-        "delinquent_units_all": 29,
-        "delinquent_amount_all": 5987.27
+        "delinquent_units_all": 33,
+        "delinquent_amount_all": 6802.25
       },
       "protection": {
-        "insured_units": 283,
+        "insured_units": 282,
         "occupied_units": 441,
-        "penetration_occ_pct": 64.17,
-        "collected_premiums_mtd": 504.0
+        "penetration_occ_pct": 63.95,
+        "collected_premiums_mtd": 602.71
       },
-      "revenue_net_mtd": 11941.03,
+      "revenue_net_mtd": 14312.29,
       "roas_standard": 13.36
     }
   ],
   "data_notes": {
     "roas": "REAL as of 2026-07-11 (previously null \u2014 store had no LTV data). roas_standard/roas_conservative computed from facility_day's MSR-native LTV/leads/conversion columns + real ad_spend, same formula as nectar/roas.py (validated: matches the already-confirmed live-pull June ROAS figures exactly). Reflects 2026-06 (the latest month with real ad_spend) for 23 ad-running facilities; the other 6 run no ads and correctly show roas_standard=null, not a fabricated 0.",
-    "revenue_yoy": "FIXED 2026-07-18 (inflated-YoY bug): current vs. the SAME CALENDAR DATE last year, SAME-STORE ONLY, EXACT-DATE match on both sides (portfolio_query.revenue_yoy() \u2014 no 'nearest prior snapshot' fallback). Previously the 2026-07-11 one-time backfill froze AFAM/NSS/SL Reno's prior-year side at 2025-07-11 while the current side kept growing daily, silently comparing an 11-day MTD to a 17+-day MTD and inflating YoY (AFAM read +39.5% vs a true roughly-flat figure). Every export now self-heals: it live-pulls the exact prior-year same-date MSR (nectar_ingest.ingest_date) for any facility missing it before computing YoY, so the comparison can no longer silently drift out of alignment. FIXED 2026-07-19 (flat-KPI bug + partial-day pin): the current side is taken at mtd_as_of = the freshest COMPLETE MTD snapshot on/before the export date (latest facility_day date with revenue_mtd_msr, EXCLUDING the in-progress current day), not the raw export date \u2014 so (a) when the export runs ahead of / without today's ingest the exact-date match no longer finds an empty current side and collapses every scope's delta to null (which the site rendered as a misleading 'flat vs / $0' Revenue-vs-LY KPI), and (b) an intraday snapshot never pits a partial current day against a complete prior-year day. prior_date is that same effective date's own same-date-prior-year, so current and prior stay calendar-aligned. Same source and same-store method as the MTD PDF's KPI strip (net_revenue.revenue_mtd), so the values match. This export's mtd_as_of = 2026-11-02, prior = 2025-11-02. All 29 facilities had an exact same-date match on both sides \u2014 none excluded.",
+    "revenue_yoy": "FIXED 2026-07-18 (inflated-YoY bug): current vs. the SAME CALENDAR DATE last year, SAME-STORE ONLY, EXACT-DATE match on both sides (portfolio_query.revenue_yoy() \u2014 no 'nearest prior snapshot' fallback). Previously the 2026-07-11 one-time backfill froze AFAM/NSS/SL Reno's prior-year side at 2025-07-11 while the current side kept growing daily, silently comparing an 11-day MTD to a 17+-day MTD and inflating YoY (AFAM read +39.5% vs a true roughly-flat figure). Every export now self-heals: it live-pulls the exact prior-year same-date MSR (nectar_ingest.ingest_date) for any facility missing it before computing YoY, so the comparison can no longer silently drift out of alignment. FIXED 2026-07-19 (flat-KPI bug + partial-day pin): the current side is taken at mtd_as_of = the freshest COMPLETE MTD snapshot on/before the export date (latest facility_day date with revenue_mtd_msr, EXCLUDING the in-progress current day), not the raw export date \u2014 so (a) when the export runs ahead of / without today's ingest the exact-date match no longer finds an empty current side and collapses every scope's delta to null (which the site rendered as a misleading 'flat vs / $0' Revenue-vs-LY KPI), and (b) an intraday snapshot never pits a partial current day against a complete prior-year day. prior_date is that same effective date's own same-date-prior-year, so current and prior stay calendar-aligned. Same source and same-store method as the MTD PDF's KPI strip (net_revenue.revenue_mtd), so the values match. This export's mtd_as_of = 2026-11-03, prior = 2025-11-03. All 29 facilities had an exact same-date match on both sides \u2014 none excluded.",
     "revenue_mtd_accuracy": "FIXED 2026-07-11: revenue_authoritative now reads net_revenue.revenue_mtd verbatim off each facility's latest MSR snapshot (facility_day.revenue_mtd_msr), replacing the SUM(revenue_net)-over-days proxy that overstated MTD by ~15-27% (see README.md).",
     "net_move_ins_mtd": "RECONCILED 2026-07-19 (Travis-approved): move_activity_mtd.{move_ins,move_outs,net_move_ins} and facilities[].{move_ins_mtd,move_outs_mtd,net_move_ins_mtd} now read Nectar's OWN MTD counters (facility_day.move_ins_mtd_msr / move_outs_mtd_msr, written verbatim off rental_metrics.*.mtd by nectar_ingest) via portfolio_query.move_activity_mtd_msr() \u2014 the SAME source the weekly MTD PDF's KPI strip uses \u2014 instead of the daily-sum of the move_ins/move_outs columns, which ran a few units low (portfolio 16 vs the PDF's 20). Any facility whose MSR-native column isn't populated yet falls back to its daily sum, so the total is never silently undercounted.",
-    "leads_by_channel_mtd": "real per-channel counts, but facility_day_leadsource only started 2026-07-09 \u2014 as of 2026-11-03 it covers a partial window, not the full MTD leads_total figure; fills out day by day. (Unrelated to this pass's fixes \u2014 still gapped.)",
+    "leads_by_channel_mtd": "real per-channel counts, but facility_day_leadsource only started 2026-07-09 \u2014 as of 2026-11-04 it covers a partial window, not the full MTD leads_total figure; fills out day by day. (Unrelated to this pass's fixes \u2014 still gapped.)",
     "ad_spend_month": "reflects 2026-06, the latest CLOSED month \u2014 ad spend refreshes monthly at month-close, not on this twice-daily cadence. roas above uses the SAME month so spend and leads/LTV are period-coherent.",
     "rent_per_sqft": "FIXED 2026-07-11: now reads space_metrics.average_rent_area.occupied verbatim (Travis's \"economic occupancy $/sqft\") off each facility's latest MSR snapshot \u2014 captured on every ingest, no derived/summed proxy.",
     "units_total_and_net_move_ins_ytd": "ADDED 2026-07-11 for the facility map hover cards. facilities[].units_total is the latest facility_day snapshot (store-native, no extra API call). facilities[].net_move_ins_ytd is read verbatim from a live MSR pull's own rental_metrics.net_count_movein_moveout.ytd field (same reasoning as nectar/sil1_daily_card.py) because facility_day's daily move_ins/move_outs only cover 2026-07-01 onward, too short a window to sum a full-year YTD locally. All 29 facilities returned a real YTD figure.",
