@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-136 nodes and 239 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.25. The full
+140 nodes and 243 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.26. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -180,9 +180,11 @@ details, say the map only shows what exists, not private specifics.
 - **Shell-outage migration to launchd** (LIVE, since v1.17) — A week-long sandbox outage silently paused six scheduled jobs, including this system's own history-keeping ritual. Five of them were rebuilt to run natively on the home Mac instead, each proven with a real live run rather than just switched on. One of them, the usage watchdog, was then caught firing green on schedule while taking zero real readings — a leftover retirement note in a shared file was being read as an instruction to halt. Fixed and proven with forced live fires the same day; its self-reported figures now carry an honest age instead of a bare percentage.
 - **Mac Studio is Home** (LIVE, since v1.25) — The cutover to the Mac Studio completed: the old Intel Home was retired, the bus key rotated, a text-as-attachment bug fixed, and the whole fleet now runs on the Studio.
 - **Night shift queue** (LIVE, since v1.25) — An overnight job queue that runs one job per fire between 22:00 and 06:00 under hard rules, with a morning recap. Anything it drafts waits for Travis's yes; nothing publishes itself.
-- **Bus act-signing and version stamp** (LIVE, since v1.25) — Every note now carries an explicit signed act field with a safe default, Laptop ported the same rule, and a first Laptop-to-Home act-yes note was acted. Both machines publish hashed software stamps that compare as match, drift or unknown.
+- **Bus act-signing and version stamp** (LIVE, since v1.26) — Every note carries an explicit signed act field with a safe default, and both machines publish hashed software stamps that compare as match, drift or unknown -- as of 11/2 the Laptop consumer publishes its stamp automatically on every real wake too. A 'needs none' authoring convention with a defined boundary was adopted 11/7.
 - **Bus fast path (Tailscale)** (LIVE, since v1.25) — Signed notes also travel a direct link between Home and Laptop with a warm responder on each side, replying in seconds while Dropbox stays the durable record. Windowed caps and brakes bound it.
-- **Login allowlist and keepalive** (LIVE, since v1.25) — Taylor re-logs into saved-credential sites only when a session lapses, and only for allowlisted hosts. The list started at 13 sites and now also covers CallRail, YNAB, ESPN Fantasy and TimeTree.
+- **Login allowlist and keepalive** (LIVE, since v1.26) — Taylor re-logs into saved-credential sites only when a session lapses, and only for allowlisted hosts. As of 11/1 the list consolidated into one shared Dropbox list (24 entries, with vFairs and Atlas set to expire 11/15), and a click-to-login step -- Taylor can click Login on a saved sign-in, not just detect a lapsed one -- was verified end to end.
+- **Unattended act path -- deny floor** (LIMITED, since v1.26) — A first step toward letting the surface bus act without a human relaying it: a deny floor and a code-allowlist ceiling were installed and live-probed both ways on Laptop. No launcher or headless session runs on it yet, so it's limited, not live.
+- **Hand-off intake to attended launcher** (LIVE, since v1.26) — File hand-offs from the 1:1 listener now route into the existing attended launcher instead of a separate path, with a received-check confirming the launcher actually accepted the job; the old text-only sign-off is retired.
 
 ### Business workstreams
 
@@ -206,6 +208,8 @@ details, say the map only shows what exists, not private specifics.
 - **Chipper Simulator** (LIVE, since v1.25) — A voice-agent simulator that plays a booth-visitor persona from a persona-brief knowledge base, published 9/30 and moved to a cloned voice on 10/31.
 - **Website AEO** (LIVE, since v1.25) — Answer-engine optimization across the three brand sites: facility FAQ entries live on NSS and AFAM pages, a cost-FAQ workaround on Stop N Stor, and the Messenger archive's citations live on MSM pages through a custom module. A 30-citation audit came back all correct.
 - **Emma keynote voice agent** (LIVE, since v1.25) — The outbound voice agent for the THE Show keynote push went live 10/22 with a call-screener rule and the $899 price script; older text agents were switched off.
+- **THE Show 2026 photo pages** (LIVE, since v1.26) — Public photo pages for THE Show 2026 (GWCC) went live in stages on Travis's go -- a landing page plus Days 1, 2 and 3 (985 photos on Day 3 alone) -- each read back as published and live, with Dropbox download links wired into all three.
+- **THE Show recordings & program archive** (LIVE, since v1.26) — Nine conference session recordings were transcribed into a searchable index and installed as the canonical set, and the nine-file program camera feed was copied into Dropbox and verified file by file against its own checksums.
 
 ### Personal workstreams
 
