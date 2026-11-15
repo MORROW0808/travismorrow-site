@@ -54,8 +54,8 @@ will say so and redirect to what it *can* help with.
 ## The memory map — full public node inventory
 
 The interactive memory map at /memory-map.html (password-gated page) renders
-140 nodes and 243 connections — every system, workflow, and
-automation in Taylor's operation, as of Living History v1.26. The full
+154 nodes and 265 connections — every system, workflow, and
+automation in Taylor's operation, as of Living History v1.28. The full
 node inventory below is exactly what the map itself displays (labels, status,
 and the same descriptions shown on its hover cards). Statuses: LIVE (running),
 LIMITED (partial/gated), PLANNED, SEASONAL, DONE (completed).
@@ -114,6 +114,8 @@ details, say the map only shows what exists, not private specifics.
 - **Scheduled tasks** (LIVE, since v1.0) — Time-based automation running on the home Mac — the clockwork behind daily and monthly reports.
 - **On-demand thread reader** (PENDING, since v1.12) — A read-only tool that lets any session pull recent messages from a configured group thread on request, closing a blind spot where some threads could only be answered from a stale cache. Built and staged; awaiting confirmation it's loaded and has produced one real read before it's recorded live.
 - **New Relic (read-only)** (LIVE, since v1.25) — Dashboards, metrics, logs and alert history from the Tenant account, including per-call telemetry. Taylor may query it and never changes anything in it, on any surface.
+- **Wingman tester connector** (LIVE, since v1.27) — An invite-only hosted connector that gives a person's own Claude a home base and working rules. It went live on two web addresses (one per world), with founder-issued invites, a click-through agreement on finalized tester terms, and a first family tester; three more testers have been invited and had not yet signed in at last reading.
+- **NSS Data connector** (LIVE, since v1.27) — A separate read-only connector, with its own app, storage and invite codes, that answers portfolio questions (occupancy, leads, move-ins, delinquency totals, ad spend, budget vs. actual) from a nightly aggregates-only export. Financials answer only for closed months, and any export with tenant-level data is refused.
 
 ### Memory & state
 
@@ -126,6 +128,7 @@ details, say the map only shows what exists, not private specifics.
 - **Portfolio Datastore** (LIVE, since v1.9) — A local analytics database (facilities, daily metrics, budgets, ad spend) built beside the live pipeline and validated to the penny — a queryable spine under the portfolio reports, added without disturbing the existing CSV/API path.
 - **CEO Knowledgebase (1:1 only)** (LIMITED, since v1.9) — A private knowledgebase of company briefs (Tenant, StoreLocal, SLP, MSM, Storelocal Storage). Taylor answers strictly from the briefs and never fabricates — reachable ONLY from Travis's personal 1:1, fail-closed across three independent gates so it can never surface in a group thread.
 - **Agent Memory Layer** (LIVE, since v1.19) — A second memory system alongside the Dropbox lane — one store per machine (Home, Laptop), each publishing and mirroring into a single browsable map so judgment and preferences carry across sessions and machines.
+- **Datastore nightly backup** (LIVE, since v1.27) — A verified online backup of the portfolio store every night -- integrity check, row counts and checksums re-checked on the Dropbox copy, 14 dailies kept -- followed by the aggregates-only export. Fired and verified through launchd; the first scheduled fire was still due at last reading.
 
 ### Delivery channels (where output lands)
 
@@ -142,6 +145,7 @@ details, say the map only shows what exists, not private specifics.
 - **Tenant-level delinquency lookup** (LIVE, since v1.12) — On-demand, per-lease delinquency lookup for the NSS Team thread and Travis's 1:1 — ask who's delinquent at a facility and get name, unit, days-late, and balance, worst-first, reconciling exactly to the Monday report's source. Scoped by district/regional manager too.
 - **Data Store network viz** (LIVE, since v1.12) — A ‘living network’ page on travismorrow.com visualizing the Portfolio Datastore itself — stores, the real data points behind them, and what those points feed — refreshed on a weekly-plus-on-demand cadence, built with an exporter that strips tenant/staff detail by construction. A nav door on the homepage and portfolio/exec headers links to it.
 - **Call Taylor phone line** (LIMITED, since v1.25) — A phone line that answers as Taylor: approved callers get calendar answers and can ask for a text, anyone else reaches voicemail, and anything involving money or sends is only confirmed, never done. A show-safe demo mode answers general questions in short replies, and notes spoken on a call become work items. Installed and tested, but later changes are not yet confirmed on a live call.
+- **Wingman group thread** (LIVE, since v1.27) — A small iMessage group that Taylor answers in compose-only mode: Wingman and business topics only, web search as its only tool, no hand-offs and no actions. A real round trip was proven against the live message database.
 
 ### Engineered workarounds & infrastructure
 
@@ -185,6 +189,15 @@ details, say the map only shows what exists, not private specifics.
 - **Login allowlist and keepalive** (LIVE, since v1.26) — Taylor re-logs into saved-credential sites only when a session lapses, and only for allowlisted hosts. As of 11/1 the list consolidated into one shared Dropbox list (24 entries, with vFairs and Atlas set to expire 11/15), and a click-to-login step -- Taylor can click Login on a saved sign-in, not just detect a lapsed one -- was verified end to end.
 - **Unattended act path -- deny floor** (LIMITED, since v1.26) — A first step toward letting the surface bus act without a human relaying it: a deny floor and a code-allowlist ceiling were installed and live-probed both ways on Laptop. No launcher or headless session runs on it yet, so it's limited, not live.
 - **Hand-off intake to attended launcher** (LIVE, since v1.26) — File hand-offs from the 1:1 listener now route into the existing attended launcher instead of a separate path, with a received-check confirming the launcher actually accepted the job; the old text-only sign-off is retired.
+- **Wingman lean setup mode** (LIVE, since v1.27) — Setup now serves one small step at a time, loads rules and templates only when needed, and offers a fresh-chat break, cutting estimated setup re-reading by about 60% in the best case. An estimate from a real run, not yet measured on a live tester.
+- **Wingman monitoring** (LIVE, since v1.27) — A 15-minute canary plus a client recorder, a one-per-tester first-sign-in flag, hourly request counts and bytes served per tool. Failures raise one alarm line to Home, never to Travis, and each signal was proven live with a temporary test client before going on.
+- **Shared-folder watcher** (LIVE, since v1.27) — A read-only watcher checks the shared Wingman folder every 15 minutes and routes changes to Home as a note, never texting Travis. Its first real catch was a tester assistant's first-run feedback files.
+- **Assistant-to-assistant feedback loop** (LIVE, since v1.27) — A tester's own assistant wrote its first-run feedback into the shared folder, the watcher flagged it, and Taylor wrote replies back -- two assistants closing a loop through files with the humans in charge. The flags sat unread for a while before a Home session found them; a restricted reader path was added.
+- **Feed-coverage guard** (LIVE, since v1.27) — Every data feed must be registered with its cadence, and a daily guard flags any feed that is stale, empty or errored, or any table or source that is not registered. Added after budget and ad-spend data silently stopped months earlier; proven with a positive control.
+- **Monthly budget and ad-spend feeds** (LIVE, since v1.27) — Two scheduled jobs now load the prior month's budget-vs-actual and Google Ads spend into the store after the books close, after a backfill from May and June to October tied out to the filed reports. Two further feeds (TractIQ comps, campaign conversions) are registered but dormant.
+- **Wingman B2B marketing module** (LIVE, since v1.28) — A B2B marketing module for the Wingman tester connector promoted from a draft to a live module, with its own health check re-verified against the new build.
+- **Janus invoice guard** (LIVE, since v1.28) — A read-only hourly check compares MSM's own ad invoices against the agreed media plan and lets Travis know only when something doesn't match.
+- **Gated installer + attended launcher** (LIVE, since v1.28) — A reviewed-package installer and launcher on the Laptop, proven with one real install and one deliberate rollback that restored the original file exactly.
 
 ### Business workstreams
 
@@ -201,7 +214,7 @@ details, say the map only shows what exists, not private specifics.
 - **Adams Property Group demo** (DONE, since v1.7) — A completed live portfolio walkthrough that demonstrated strong advertising ROAS across the portfolio.
 - **Live ad-spend ROAS** (LIVE, since v1.9) — Real advertising ROAS by facility and brand — live Supermetrics ad spend against real Nectar leads, conversions, and LTV (June portfolio 22.5x) — delivered as an ad-spend leaderboard and folded into the monthly snapshot, refreshed by a monthly sync job.
 - **Chase ACH batch pipeline** (LIVE, since v1.12) — Turns the monthly owner-distribution numbers into a validated Chase-format ACH upload file — payees and pay-from accounts checked, a generator script producing the batch file. Travis reviews and submits it himself in Chase; nothing sends automatically.
-- **2027 Budget Generator** (LIMITED, since v1.23) — Rebuilds a facility's owner-schedule and QuickBooks-upload workbook from scratch, matched against three real pilot facilities at essentially zero difference from the hand-built originals, with a self-test suite that catches injected defects on demand. Validated on three facilities so far, not yet run across the full portfolio and not yet connected to a live QuickBooks import.
+- **2027 Budget Generator** (LIMITED, since v1.27) — Rebuilds a facility's owner-schedule and QuickBooks-upload workbook from scratch, matched against three real pilot facilities at essentially zero difference from the hand-built originals, with a self-test suite that catches injected defects on demand. Validated on three pilot facilities, then not yet connected to a live QuickBooks import. As of 11/13 it was run for all 28 stores from fresh October actuals -- nine NSS review workbooks, one covering the AFAM stores, QuickBooks upload files and a decision sheet -- and is ready for Travis's review; nothing has been imported.
 - **Competition Analysis Report** (LIMITED, since v1.24) — Weekly bar-chart report comparing NSS's own unit rates (all 6 standard sizes, CC/NCC) against nearby competitors for ELP5/ELP6/DOV1/SIL1, matching the Portfolio Snapshot's visual design. First real send to the NSS owners' thread confirmed by an independent chat.db read (9/25); a recurring Monday-morning send was enabled and dry-run verified the same day, but its first real automated fire is still pending.
 - **SNS tracking-number testing** (LIVE, since v1.25) — Stop N Stor's CallRail trial numbers were built and tested end to end into Hummingbird (10 of 10 passed), then a Twilio-based call tester placed after-hours test calls (10 of 10 completed) and attribution passed on every clean call. Test numbers are bought only at test time and released after.
 - **Keynote pipeline** (LIMITED, since v1.25) — A repeatable build for the THE Show keynote: deck, script, confidence-monitor beats, click-sync, watch video, lean beats and a practice page. Version 14 is built; the earlier version stays on the projection machine until Travis approves.
@@ -225,6 +238,7 @@ details, say the map only shows what exists, not private specifics.
 - **1:1 daily journal question** (LIVE, since v1.20) — Taylor asks Travis one open journal question a day in the 1:1 thread and captures the answer — confirmed genuinely live 8/30 by a real question sent, answered, and verbatim-matched against the message log.
 - **Fantasy football briefs** (LIVE, since v1.25) — Two recurring reports for Travis's league — a Tuesday waiver brief and a Sunday lineup-check — run off a real, authenticated ESPN login, each backed by a delivery watchdog. Proven live 9/6–9/7 by real launchd kickstarts and a delivered, chat.db-confirmed first message; snap-count data is an open, named gap.
 - **iCloud Mail Watch** (LIVE, since v1.22) — Triages Taylor's own forward-to inbox every 10 minutes, replies to Travis's 1:1 only when something needs him, and files flight-receipt forwards to Taylor's own calendar, one event per leg in Arizona time. A message is marked read only after a real disposition — a failed run leaves it unread.
+- **WHEREABOUTS awareness loop** (LIVE, since v1.28) — Tracks Travis's current location, time zone, and next travel leg from his calendar and flight confirmations, so every session knows where he is without asking. Sends nothing on its own -- it only keeps the record current.
 
 ### Installed skills (playbooks)
 
